@@ -1,15 +1,18 @@
 package androidUtils.awt.geom;
 
+import android.graphics.Rect;
 import android.graphics.RectF;
 
-import androidUtils.awt.Shape;
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Rectangle;
+
+import java.awt.Shape;
 
 public abstract class Rectangle2D implements Shape {
 
 
     public abstract double getWidth();
     public abstract double getHeight();
-    public abstract RectF getBounds();
 
     public abstract int getX();
 
@@ -28,6 +31,22 @@ public abstract class Rectangle2D implements Shape {
         {
             rectangleBounds = new RectF();
             setPoint(0,0,0,0);
+        }
+        public Double(RectF rect)
+        {
+            rectangleBounds = rect;
+            setPoint(rect.centerX(), rect.centerY(), rect.right,rect.bottom);
+        }
+
+        public Double(RectF rect, float x, float y, float w, float h)
+        {
+            rectangleBounds = rect;
+            setPoint(rect.centerX(), rect.centerY(), rect.right,rect.bottom);
+        }
+        public Double(Rect rect)
+        {
+            rectangleBounds = new RectF(rect);
+            setPoint(rect.centerX(), rect.centerY(), rect.right,rect.bottom);
         }
 
         private void setPoint(float x, float y, float w, float h)
@@ -61,8 +80,25 @@ public abstract class Rectangle2D implements Shape {
             setPoint((float) x, (float) y, (float) w, (float) h);
         }
 
-        public RectF getBounds() {
-            return rectangleBounds;
+        @Override
+        public void acceptFill(Graphics2D graph) {
+            graph.fillRect(x, y, width, height);
+        }
+
+        public Rectangle getBounds() {
+            Rect rect = new Rect((int) rectangleBounds.centerX(), (int) rectangleBounds.bottom, (int) rectangleBounds.centerY(), (int) rectangleBounds.top);
+            return new Rectangle(rect);
+        }
+
+        @Override
+        public Shape copy() {
+            RectF rectangle = new RectF(rectangleBounds);
+
+            float width = this.width;
+            float height = this.height;
+            float x = this.x;
+            float y = this.y;
+            return new Rectangle2D.Double(rectangle, x, y, width, height);
         }
 
         public int getX() {
@@ -84,7 +120,7 @@ public abstract class Rectangle2D implements Shape {
         }
 
         public void setRect(Rectangle2D.Double rect) {
-            rectangleBounds = rect.getBounds();
+            rectangleBounds = rect.getBounds().rectangleBounds;
         }
         public void setRect(double x, double y, double width, double height) {
             rectangleBounds = new RectF((float) x, (float) y, (float) width, (float) height);
@@ -92,7 +128,7 @@ public abstract class Rectangle2D implements Shape {
 
         public void add(Rectangle2D.Double rect)
         {
-            rectangleBounds.union(rect.getBounds());
+            rectangleBounds.union(rect.getBounds().rectangleBounds);
         }
 
 

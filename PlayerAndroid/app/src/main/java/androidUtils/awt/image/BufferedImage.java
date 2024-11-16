@@ -7,6 +7,7 @@ import androidUtils.awt.Image;
 
 public class BufferedImage {
     public static Bitmap.Config TYPE_INT_ARGB = Bitmap.Config.ARGB_8888;
+    public static Bitmap.Config TYPE_INT_RGB = Bitmap.Config.RGB_565;
 
 
     Bitmap bitmap;
@@ -89,5 +90,9 @@ public class BufferedImage {
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
         raster.setData(width, height, pixels);
         return raster;
+    }
+
+    public Graphics2D getGraphics() {
+        return createGraphics();
     }
 }

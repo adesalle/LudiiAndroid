@@ -4,8 +4,7 @@ package androidUtils.awt.geom;
 public abstract class Point2D {
 
 
-    public static class Double extends Point2D
-    {
+    public static class Double extends Point2D {
         public float x;
         public float y;
 
@@ -13,6 +12,7 @@ public abstract class Point2D {
             x = 0;
             y = 0;
         }
+
         public Double(double x, double y) {
 
             this.x = (float) x;
@@ -23,6 +23,12 @@ public abstract class Point2D {
 
             this.x = x;
             this.y = y;
+        }
+
+        public Double(Double point2D)
+        {
+            x = point2D.x;
+            y = point2D.y;
         }
 
         @Override

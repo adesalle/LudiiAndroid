@@ -1,6 +1,9 @@
 package androidUtils.awt;
 
 
+import android.graphics.Rect;
+import android.graphics.RectF;
+
 import androidUtils.awt.geom.Rectangle2D;
 
 public class Rectangle extends Rectangle2D.Double {
@@ -23,6 +26,15 @@ public class Rectangle extends Rectangle2D.Double {
         super();
     }
 
+    public Rectangle(Rect rect)
+    {
+        super(rect);
+        x = rect.centerX();
+        y = rect.centerY();
+        width = rect.width();
+        height = rect.height();
+    }
+
     public float getCenterX()
     {
         return rectangleBounds.centerX();
@@ -31,5 +43,16 @@ public class Rectangle extends Rectangle2D.Double {
     {
         return rectangleBounds.centerY();
     }
+
+    public boolean contains(Point point)
+    {
+        return rectangleBounds.contains(point.x, point.y);
+    }
+
+    public RectF getRectBound()
+    {
+        return rectangleBounds;
+    }
+
 
 }
