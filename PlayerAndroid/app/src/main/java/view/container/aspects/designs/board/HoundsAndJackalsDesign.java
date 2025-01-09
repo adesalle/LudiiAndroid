@@ -8,7 +8,7 @@ import androidUtils.awt.geom.Arc2D;
 import androidUtils.awt.geom.GeneralPath;
 import java.util.BitSet;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import other.context.Context;

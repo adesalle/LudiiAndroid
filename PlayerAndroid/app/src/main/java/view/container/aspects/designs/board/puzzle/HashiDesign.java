@@ -2,7 +2,7 @@ package view.container.aspects.designs.board.puzzle;
 
 import androidUtils.awt.Color;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import other.context.Context;

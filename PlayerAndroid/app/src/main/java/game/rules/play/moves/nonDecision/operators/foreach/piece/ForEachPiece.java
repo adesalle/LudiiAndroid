@@ -155,9 +155,9 @@ public final class ForEachPiece extends Operator {
             private final int cont = containerId.eval(context);
             private final ContainerState cs = context.containerState(cont);
             private final int minIndex = cs == null ? 0 : context.game().equipment().sitesFrom()[cont];
+            private final SiteType realType = (type != null) ? type : context.game().board().defaultSite();
             private final int maxIndex = cs == null ? 0 : minIndex + ((cont != 0) ? context.containers()[cont].numSites()
                     : context.topology().getGraphElements(realType).size());
-            private final SiteType realType = (type != null) ? type : context.game().board().defaultSite();
             private final boolean top = topFn.eval(context);
             private final int[] moverCompIndices = compIndicesPerPlayer[specificPlayer];
             // Compute our first move to return

@@ -5,8 +5,8 @@ public abstract class Point2D {
 
 
     public static class Double extends Point2D {
-        public float x;
-        public float y;
+        public double x;
+        public double y;
 
         public Double() {
             x = 0;

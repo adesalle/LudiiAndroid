@@ -2,7 +2,10 @@ package androidUtils.awt;
 
 public class Color {
 
+    public static final Color PINK = Color.valueOf(android.graphics.Color.parseColor("#FFC0CB"));
+    public static final Color ORANGE = Color.valueOf(android.graphics.Color.parseColor("0xFFFFA500"));
     public static final Color GRAY = Color.valueOf(android.graphics.Color.GRAY);
+    public static final Color BLUE = Color.valueOf(android.graphics.Color.BLUE);
     public static Color WHITE = Color.valueOf(android.graphics.Color.WHITE);
     public static Color GREEN = Color.valueOf(android.graphics.Color.GREEN);
     public static Color BLACK = Color.valueOf(android.graphics.Color.BLACK);
@@ -10,6 +13,7 @@ public class Color {
     public static Color RED = Color.valueOf(android.graphics.Color.RED);
     public static Color white = Color.valueOf(android.graphics.Color.WHITE);
     public static Color black = Color.valueOf(android.graphics.Color.BLACK);
+    public static Color blue = Color.valueOf(android.graphics.Color.BLUE);
 
     android.graphics.Color color;
 

@@ -9,7 +9,7 @@ import androidUtils.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import main.math.MathRoutines;

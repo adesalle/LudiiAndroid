@@ -5,7 +5,7 @@ import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Point;
 import androidUtils.awt.geom.Ellipse2D;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import other.context.Context;

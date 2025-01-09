@@ -8,7 +8,7 @@ import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import game.types.board.SiteType;

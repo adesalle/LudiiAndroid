@@ -24,6 +24,11 @@ public abstract class Line2D implements Shape {
         {
             this((float) p1.getX(), (float) p1.getY(), (float) p2.getX(), (float) p2.getY());
         }
+
+        public Double(double rungLx, double rungLy, double rungRx, double rungRy) {
+            this((float) rungLx, (float) rungLy, (float) rungRx, (float)rungRy);
+        }
+
         @Override
         public int getX1() {
             return (int) x1;

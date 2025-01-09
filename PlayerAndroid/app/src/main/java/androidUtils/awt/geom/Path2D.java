@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidUtils.awt.Graphics2D;
+import androidUtils.awt.PathIterator;
 import androidUtils.awt.Rectangle;
 
 import java.awt.Shape;
@@ -25,6 +26,11 @@ public abstract class Path2D implements Shape {
         public Float()
         {
             path = new Path();
+        }
+
+        public Float(Path path)
+        {
+            this.path = path;
         }
 
         @Override
@@ -125,10 +131,29 @@ public abstract class Path2D implements Shape {
 
         @Override
         public Rectangle getBounds() {
-            RectF bounds = new RectF();
-            path.computeBounds(bounds, true);
+            RectF bounds = getRect();
             Rect rect = new Rect((int) bounds.centerX(), (int) bounds.bottom, (int) bounds.centerY(), (int) bounds.top);
             return new Rectangle(rect);
+        }
+
+        private RectF getRect()
+        {
+            RectF bounds = new RectF();
+            path.computeBounds(bounds, true);
+            return bounds;
+        }
+
+        public boolean isEmpty(){
+            return path.isEmpty();
+        }
+
+        public PathIterator getPathIterator(AffineTransform transform)
+        {
+            return new PathIterator(path);
+        }
+
+        public Rectangle2D getBounds2D() {
+            return new Rectangle2D.Double(getRect());
         }
     }
 

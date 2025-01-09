@@ -1,6 +1,7 @@
 package androidUtils.awt.image;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Image;
@@ -9,12 +10,32 @@ public class BufferedImage {
     public static Bitmap.Config TYPE_INT_ARGB = Bitmap.Config.ARGB_8888;
     public static Bitmap.Config TYPE_INT_RGB = Bitmap.Config.RGB_565;
 
-
+    public static Bitmap.Config getBitmapConfigByInt(int type) {
+        switch (type) {
+            case 2:
+                return TYPE_INT_ARGB;  // ARGB_8888
+            case 1:
+                return TYPE_INT_RGB;   // RGB_565
+            default:
+                return Bitmap.Config.RGBA_F16;
+        }
+    }
     Bitmap bitmap;
     boolean translucent = false;
 
     public BufferedImage(int x, int y, Bitmap.Config config)
     {
+        if( config == Bitmap.Config.RGBA_F16)
+        {
+            bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+            translucent = true;
+        }
+        else bitmap = Bitmap.createBitmap(x, y, config);
+    }
+
+    public BufferedImage(int x, int y, int index)
+    {
+        Bitmap.Config config = getBitmapConfigByInt(index);
         if( config == Bitmap.Config.RGBA_F16)
         {
             bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
@@ -94,5 +115,9 @@ public class BufferedImage {
 
     public Graphics2D getGraphics() {
         return createGraphics();
+    }
+
+    public Canvas createCanvas() {
+        return new Canvas(bitmap);
     }
 }

@@ -29,20 +29,12 @@ public class Rectangle extends Rectangle2D.Double {
     public Rectangle(Rect rect)
     {
         super(rect);
-        x = rect.centerX();
-        y = rect.centerY();
+        x = rect.left;
+        y = rect.top;
         width = rect.width();
         height = rect.height();
     }
 
-    public float getCenterX()
-    {
-        return rectangleBounds.centerX();
-    }
-    public float getCenterY()
-    {
-        return rectangleBounds.centerY();
-    }
 
     public boolean contains(Point point)
     {
@@ -55,4 +47,16 @@ public class Rectangle extends Rectangle2D.Double {
     }
 
 
+    public void setBounds(int startX, int startY, int width, int toolHeight) {
+        super.setBounds(startX, startY, width, toolHeight);
+        x = startX;
+        y = startY;
+        this.width = width;
+        height = toolHeight;
+    }
+
+    public Rectangle clone()
+    {
+        return new Rectangle(x, y, width, height);
+    }
 }

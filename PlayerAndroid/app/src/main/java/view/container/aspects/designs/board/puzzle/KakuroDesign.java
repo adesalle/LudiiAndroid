@@ -2,7 +2,7 @@ package view.container.aspects.designs.board.puzzle;
 
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
-import androidUtils.Font;
+import androidUtils.awt.Font;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Point;
 import androidUtils.awt.geom.GeneralPath;
@@ -10,7 +10,7 @@ import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
 import java.util.List;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import game.types.board.SiteType;

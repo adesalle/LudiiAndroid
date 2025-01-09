@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RenderingHints {
-    private final Map<Key, Object> hintsMap = new HashMap<>();
+    private final Map<Object, Object> hintsMap = new HashMap<>();
 
-    public RenderingHints(Key key, Object value)
+    public RenderingHints(Object key, Object value)
     {
         hintsMap.put(key, value);
     }
@@ -14,11 +14,14 @@ public class RenderingHints {
     {
     }
 
+    public RenderingHints(Object o) {
+    }
+
     public void add(RenderingHints hint) {
         hintsMap.putAll(hint.hintsMap);
     }
 
-    public void put(Key key, Object value) {
+    public void put(Object key, Object value) {
         hintsMap.put(key, value);
     }
 

@@ -7,10 +7,13 @@ import androidUtils.awt.Rectangle;
 import androidUtils.awt.geom.Arc2D;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
+import androidUtils.swing.action.ActionEvent;
+import androidUtils.swing.action.ActionListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Timer;
+import androidUtils.swing.Timer;
 
 /**
  * Functions for the spinner graphic

@@ -604,7 +604,7 @@ public class SVGtoImage {
 
     /**
      * @param in
-     * @param target
+
      * @return Number corresponding to label in string, else 0.
      */
     int findPositiveInteger(final String in, final String label) {

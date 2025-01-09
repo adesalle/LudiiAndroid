@@ -3,11 +3,11 @@ package app.utils;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
+import androidUtils.sound.AudioInputStream;
+import androidUtils.sound.AudioSystem;
+import androidUtils.sound.Clip;
+import androidUtils.sound.LineEvent;
+import androidUtils.sound.LineListener;
 
 /**
  * Functions relating to the playing of sounds/music.

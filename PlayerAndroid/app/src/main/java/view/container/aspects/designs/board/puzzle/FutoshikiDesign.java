@@ -2,7 +2,7 @@ package view.container.aspects.designs.board.puzzle;
 
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
-import androidUtils.Font;
+import androidUtils.awt.Font;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Point;
 import androidUtils.awt.geom.Point2D;

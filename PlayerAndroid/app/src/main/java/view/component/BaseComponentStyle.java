@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 
-//import org.jfree.graphics2d.svg.SVGGraphics2D; ->awt
+//import androidUtils.awt.SVGGraphics2D; ->awt
 
 import bridge.Bridge;
 import game.equipment.component.Component;

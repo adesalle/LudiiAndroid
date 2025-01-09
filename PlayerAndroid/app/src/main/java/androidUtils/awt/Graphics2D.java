@@ -13,6 +13,7 @@ import android.graphics.Typeface;
 import java.awt.Shape;
 
 import androidUtils.awt.geom.AffineTransform;
+import androidUtils.awt.geom.Arc2D;
 import androidUtils.awt.geom.Ellipse2D;
 import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Rectangle2D;
@@ -213,15 +214,22 @@ public class Graphics2D {
 
     public void draw(Shape ellipse)
     {
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(ellipse.getBounds().getRectBound(), paint);
-        paint = new Paint(paint);
+        if(ellipse instanceof Line2D.Double)draw((Line2D.Double)ellipse);
+        else if(ellipse instanceof Ellipse2D.Double)draw((Ellipse2D.Double)ellipse);
+        else if(ellipse instanceof Arc2D.Double)drawArc((Arc2D.Double) ellipse);
     }
 
     public void draw(GeneralPath path)
     {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(path.getPath(), paint);
+        paint = new Paint(paint);
+    }
+
+    public void draw(Ellipse2D.Double ellipse2D)
+    {
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawOval(ellipse2D.getBounds().getRectBound(), paint);
         paint = new Paint(paint);
     }
 
@@ -325,6 +333,14 @@ public class Graphics2D {
     {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawArc(x, y, r, r1, startAngle, endAngle, true, paint);
+        paint = new Paint(paint);
+    }
+
+    public void drawArc(Arc2D.Double arc)
+    {
+        paint.setStyle(Paint.Style.STROKE);
+        RectF arc2d = arc.getArc();
+        canvas.drawArc(arc2d.left, arc2d.top, arc2d.width() - arc2d.left, arc2d.height() - arc2d.top, arc.getStartAngle(), arc.getEndAngle(), true, paint);
         paint = new Paint(paint);
     }
 

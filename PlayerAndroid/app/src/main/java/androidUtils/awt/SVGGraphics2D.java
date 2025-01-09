@@ -17,8 +17,10 @@ import android.util.Base64;
 
 
 import androidUtils.awt.geom.AffineTransform;
+import androidUtils.awt.geom.Arc2D;
 import androidUtils.awt.geom.Ellipse2D;
 import androidUtils.awt.geom.GeneralPath;
+import androidUtils.awt.geom.Line2D;
 import androidUtils.awt.geom.Rectangle2D;
 import androidUtils.awt.image.BufferedImage;
 
@@ -63,18 +65,52 @@ public class SVGGraphics2D extends Graphics2D{
     @Override
     public void draw(Shape ellipse)
     {
-        super.draw(ellipse);
+        if(ellipse instanceof Line2D.Double)draw((Line2D.Double)ellipse);
+        else if(ellipse instanceof Ellipse2D.Double)draw((Ellipse2D.Double)ellipse);
+        else if(ellipse instanceof Arc2D.Double)drawArc((Arc2D.Double) ellipse);
+
     }
+    @Override
+    public void draw(Ellipse2D.Double ellipse2D)
+    {
+        super.draw(ellipse2D);
+        RectF ellipse = ellipse2D.getBounds().getRectBound();
+        @SuppressLint("DefaultLocale") String svgElement = String.format(
+                "<ellipse cx=\"%f\" cy=\"%f\" rx=\"%f\" ry=\"%f\" style=\"stroke: black; fill: none;\" />",
+                ellipse.centerX(),
+                ellipse.centerY(),
+                ellipse.width() / 2.0,
+                ellipse.height() / 2.0
+        );
+        svgElements.add(svgElement);
+    }
+    @Override
+    public void draw(Line2D.Double line)
+    {
+        super.draw(line);
+        @SuppressLint("DefaultLocale") String svgElement = String.format(
+                "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" style=\"stroke: black;\" />",
+                line.getX1(),
+                line.getY1(),
+                line.getX2(),
+                line.getY2()
+        );
+        svgElements.add(svgElement);
+
+    }
+
     @Override
     public void draw(GeneralPath path)
     {
         super.draw(path);
         String pathCommands = path.toSVG();
-
-        String pathElement = String.format(
-                "<path d=\"%s\" fill=\"%s\" />",
+        String color = String.format("#%06X", (paint.getColor() & 0xFFFFFF));
+        @SuppressLint("DefaultLocale") String pathElement = String.format(
+                "<path d=\"%s\" fill=\"%s\" stroke=\"%s\" stroke-width=\"%.2f\"/>",
                 pathCommands,
-                paint.getColor()
+                paint.getStyle() == Paint.Style.FILL ? color : "none",
+                paint.getStyle() == Paint.Style.STROKE ? color : "none",
+                paint.getStrokeWidth()
         );
 
         svgElements.add(pathElement);
@@ -88,6 +124,17 @@ public class SVGGraphics2D extends Graphics2D{
                 x, y, paint.getColor(), fontSize, text
         );
         svgElements.add(textElement);
+    }
+    @Override
+    public void drawRect(float x, float y, float w, float h)
+    {
+        super.drawRect(x, y, w, h);
+
+        @SuppressLint("DefaultLocale") String svgElement = String.format(
+                "<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" style=\"stroke: black; fill: none;\" />",
+                x, y, w, h
+        );
+        svgElements.add(svgElement);
     }
 
 
@@ -145,6 +192,50 @@ public class SVGGraphics2D extends Graphics2D{
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         byte[] byteArray = outputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
+    }
+    @Override
+    public void drawArc(int x, int y, int r, int r1, int startAngle, int endAngle)
+    {
+        super.drawArc(x, y, r, r1, startAngle, endAngle);
+
+        double startRadians = Math.toRadians(startAngle);
+        double endRadians = Math.toRadians(endAngle);
+
+        @SuppressLint("DefaultLocale") String svgElement = String.format(
+                "<path d=\"M %f %f A %f %f 0 0 1 %f %f\" style=\"stroke: black; fill: none;\" />",
+                x + r / 2.0 + r / 2.0 * Math.cos(startRadians),
+                y + r1 / 2.0 - r1 / 2.0 * Math.sin(startRadians),
+                r / 2.0,
+                r1 / 2.0,
+                x + r / 2.0 + r / 2.0 * Math.cos(endRadians),
+                y + r1 / 2.0 - r1 / 2.0 * Math.sin(endRadians)
+        );
+        svgElements.add(svgElement);
+    }
+    @Override
+    public void drawArc(Arc2D.Double arc2D)
+    {
+        super.drawArc(arc2D);
+
+        RectF arc = arc2D.getArc();
+        float cx = arc.centerX();
+        float cy = arc.centerY();
+        float rx = arc.width() / 2;
+        float ry = arc.height() / 2;
+
+        double startRadians = Math.toRadians(arc2D.getStartAngle());
+        double endRadians = Math.toRadians(arc2D.getEndAngle());
+
+        double startX = cx + rx * Math.cos(startRadians);
+        double startY = cy - ry * Math.sin(startRadians);
+        double endX = cx + rx * Math.cos(endRadians);
+        double endY = cy - ry * Math.sin(endRadians);
+
+        @SuppressLint("DefaultLocale") String svgElement = String.format(
+                "<path d=\"M %f %f A %f %f 0 0 1 %f %f\" style=\"stroke: black; fill: none;\" />",
+                startX, startY, rx, ry, endX, endY
+        );
+        svgElements.add(svgElement);
     }
 
     @Override

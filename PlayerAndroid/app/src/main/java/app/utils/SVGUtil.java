@@ -1,7 +1,12 @@
 package app.utils;
 
+import androidUtils.awt.batik.SVGAbstractTranscoder;
 import androidUtils.awt.image.BufferedImage;
 import androidUtils.awt.RenderingHints;
+import androidUtils.awt.batik.TranscoderInput;
+import androidUtils.awt.batik.ImageTranscoder;
+import androidUtils.awt.batik.ImageRenderer;
+import androidUtils.awt.batik.TranscoderOutput;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

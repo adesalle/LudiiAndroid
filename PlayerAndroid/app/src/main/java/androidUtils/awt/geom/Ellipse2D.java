@@ -32,7 +32,7 @@ public abstract class Ellipse2D implements Shape {
         }
 
         @Override
-        public void accept(Graphics2D graph) {
+        public void acceptFill(Graphics2D graph) {
             graph.fill(this);
         }
 

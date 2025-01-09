@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.JTable;
+import androidUtils.swing.JTable;
 
 import game.Game;
 import main.collections.FVector;

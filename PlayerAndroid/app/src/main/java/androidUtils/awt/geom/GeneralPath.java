@@ -12,7 +12,7 @@ import androidUtils.awt.Graphics2D;
 public class GeneralPath extends  Path2D.Float{
 
 
-    Point2D.Double point2D = new Point2D.Double(0f,0f);
+    protected Point2D.Double point2D = new Point2D.Double(0f,0f);
 
     private String svgTransform = "";
 
@@ -122,8 +122,7 @@ public class GeneralPath extends  Path2D.Float{
         return pathCommands;
     }
     public String toSVG() {
-        StringBuilder svgPath = new StringBuilder();
-
+        StringBuilder svgPath = new StringBuilder("<path");
         if (!svgTransform.isEmpty()) {
             svgPath.append(String.format(" transform=\"%s\"", svgTransform));
         }
@@ -132,9 +131,14 @@ public class GeneralPath extends  Path2D.Float{
         for (String command : pathCommands) {
             svgPath.append(command).append(" ");
         }
-        svgPath.append("\"");
+        svgPath.append("\"/>");
 
         return svgPath.toString();
+    }
+
+    public void close()
+    {
+        closePath();
     }
     @Override
     public void acceptFill(Graphics2D graph) {

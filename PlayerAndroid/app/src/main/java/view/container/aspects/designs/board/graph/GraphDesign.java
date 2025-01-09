@@ -4,7 +4,7 @@ import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Point;
-import androidUtils.Polygon;
+import androidUtils.awt.Polygon;
 import androidUtils.awt.Stroke;
 import androidUtils.awt.geom.AffineTransform;
 import androidUtils.awt.geom.Line2D;

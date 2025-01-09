@@ -1,10 +1,10 @@
 package utils.experiments;
 
-import androidUtils.GridLayout;
-import androidUtils.event.ActionEvent;
-import androidUtils.event.ActionListener;
-import androidUtils.event.WindowAdapter;
-import androidUtils.event.WindowEvent;
+import androidUtils.awt.GridLayout;
+import androidUtils.swing.action.ActionEvent;
+import androidUtils.swing.action.ActionListener;
+import androidUtils.awt.event.WindowAdapter;
+import androidUtils.awt.event.WindowEvent;
 import androidUtils.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,10 +12,10 @@ import java.net.URL;
 import java.time.LocalDateTime;
 
 import androidUtils.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import androidUtils.swing.JButton;
+import androidUtils.swing.JFrame;
+import androidUtils.swing.JPanel;
+import androidUtils.swing.WindowConstants;
 
 /**
  * A wrapper around a (long) interruptible experiment. This class
@@ -80,6 +80,7 @@ public abstract class InterruptableExperiment {
 
         if (useGUI) {
             frame = new JFrame("Ludii Interruptible Experiment");
+
             frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
             frame.addWindowListener(new WindowAdapter() {

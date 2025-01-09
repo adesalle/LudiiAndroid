@@ -492,7 +492,7 @@ public class ParallelEvalMultiGamesMultiAgents {
                 json.put("iterationLimit", iterationLimit);
                 json.put("warmingUpSecs", warmingUpSecs);
                 json.put("outDir", outDir);
-                final JSONArray agentStringsJsonArray = new JSONArray(Arrays.asList(agentStrings));
+                final JSONArray agentStringsJsonArray = new JSONArray(Arrays.asList(Arrays.asList(agentStrings).toArray()));
                 json.put("agentStrings", agentStringsJsonArray);
                 json.put("outputSummary", outputSummary);
                 json.put("outputAlphaRankData", outputAlphaRankData);

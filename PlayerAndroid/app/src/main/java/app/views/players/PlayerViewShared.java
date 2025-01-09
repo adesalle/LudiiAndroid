@@ -36,7 +36,7 @@ public class PlayerViewShared extends PlayerViewUser {
 //		}
 
         if (hand != null) {
-            final Context context = playerAndroid.contextSnapshot().getContext(playerAndroid);
+            final Context context = app.contextSnapshot().getContext(app);
             final Rectangle containerPlacement = new Rectangle((placement.x), placement.y - placement.height / 2, (placement.width), placement.height);
             playerView.paintHand(g2d, context, containerPlacement, hand.index());
         }

@@ -5,6 +5,7 @@ import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
+import androidUtils.awt.PathIterator;
 import java.util.BitSet;
 
 import game.types.board.SiteType;

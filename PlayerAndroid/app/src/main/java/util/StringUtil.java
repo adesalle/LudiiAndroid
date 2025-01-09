@@ -6,7 +6,7 @@ import androidUtils.awt.Graphics2D;
 import androidUtils.awt.RenderingHints;
 import  androidUtils.awt.FontRenderContext;
 import java.awt.Shape;
-import androidUtils.font.TextLayout;
+import androidUtils.awt.font.TextLayout;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
 

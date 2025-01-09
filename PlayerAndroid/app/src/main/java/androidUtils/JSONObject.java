@@ -115,4 +115,11 @@ public class JSONObject {
         return jsonObject.optBoolean(name, fallback);
     }
 
+    public JSONArray getJSONArray(String name){
+        try {
+            return  new JSONArray(jsonObject.getJSONArray(name));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

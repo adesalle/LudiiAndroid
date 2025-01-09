@@ -10,6 +10,8 @@ import androidUtils.awt.geom.Ellipse2D;
 import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
+
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
 import androidUtils.awt.SVGGraphics2D;
@@ -151,13 +153,13 @@ public class BoardDesign extends ContainerDesign {
 
     /**
      * @param context
-     * @param colorLines
+     * @param colorIn
      * @param colorFill1
      * @param colorFill2
      * @param colorFill3
      * @param colorFill4
      * @param colorDecoration
-     * @param colorBorder
+     * @param swThick
      */
     protected void setStrokesAndColours
     (
@@ -312,8 +314,8 @@ public class BoardDesign extends ContainerDesign {
 
     /**
      * @param g2d
-     * @param fillColor
-     * @param stroke
+     * @param context
+     * @param bridge
      */
     protected void fillCells(final Bridge bridge, final Graphics2D g2d, final Context context) {
         g2d.setStroke(strokeThin);
@@ -548,12 +550,12 @@ public class BoardDesign extends ContainerDesign {
                     pt.setLocation(pt.x, pt.y + offsetY);
 
                     g2d.setColor(borderColor);
-                    final java.awt.Shape ellipseO = new Ellipse2D.Double(pt.x - rO, pt.y - rO, 2 * rO, 2 * rO);
+                    final Shape ellipseO = new Ellipse2D.Double(pt.x - rO, pt.y - rO, 2 * rO, 2 * rO);
                     g2d.fill(ellipseO);
 
                     final Color playerColour = bridge.settingsColour().playerColour(context, owner);
                     g2d.setColor(playerColour);
-                    final java.awt.Shape ellipseI = new Ellipse2D.Double(pt.x - rI, pt.y - rI, 2 * rI, 2 * rI);
+                    final Shape ellipseI = new Ellipse2D.Double(pt.x - rI, pt.y - rI, 2 * rI, 2 * rI);
                     g2d.fill(ellipseI);
                 }
             }
@@ -584,7 +586,7 @@ public class BoardDesign extends ContainerDesign {
             pt.setLocation(pt.x, pt.y + offsetY);
 
             // Draw the vertex
-            final java.awt.Shape ellipseO = new Ellipse2D.Double(pt.x - radius, pt.y - radius, 2 * radius, 2 * radius);
+            final Shape ellipseO = new Ellipse2D.Double(pt.x - radius, pt.y - radius, 2 * radius, 2 * radius);
             g2d.fill(ellipseO);
         }
     }

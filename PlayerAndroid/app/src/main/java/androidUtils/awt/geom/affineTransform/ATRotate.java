@@ -16,6 +16,15 @@ public class ATRotate implements AffineTransformObject{
         this.x = x;
         this.y = y;
     }
+
+    public ATRotate(Matrix matrice, double rads)
+    {
+        this.matrice = matrice;
+        degree = (float) Math.toDegrees(rads);
+        this.x = 0;
+        this.y = 0;
+    }
+
     @Override
     public void performPost() {
         matrice.postRotate(degree, x, y);
