@@ -1,5 +1,7 @@
 package grammar;
 
+import android.util.Log;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -214,7 +216,6 @@ public class Grammar {
                         alias = anno.alias();
                     }
             }
-
             final Symbol symbolValue = new Symbol
                     (
                             LudemeType.Constant, path, alias,
@@ -587,11 +588,14 @@ public class Grammar {
         Class<?> clsRoot = null;
         try {
             clsRoot = Class.forName(rootPackageName);
+
         } catch (final ClassNotFoundException e) {
+
             e.printStackTrace();
         }
 
         final List<Class<?>> classes = ClassEnumerator.getClassesForPackage(clsRoot.getPackage());
+
 
         for (final Class<?> cls : classes) {
             if (cls.getName().contains("$"))
@@ -611,6 +615,7 @@ public class Grammar {
                 }
             }
 
+
             final String classPath = cls.getName();
 
             // **
@@ -618,6 +623,7 @@ public class Grammar {
             // **
 
             final Symbol symbol = new Symbol(LudemeType.Ludeme, classPath, alias, cls);
+
             symbol.setReturnType(symbol);  // returns itself (unless superseded by eval())
             symbols.add(symbol);
 
@@ -632,6 +638,7 @@ public class Grammar {
             if (p >= packages.size())
                 packages.add(new PackageInfo(packageName));
         }
+
     }
 
     //-------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 package app.views.tools;
 
+import java.util.ArrayList;
+
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
-import java.util.ArrayList;
-
 import app.PlayerApp;
 import app.utils.SettingsExhibition;
 import game.rules.play.moves.Moves;

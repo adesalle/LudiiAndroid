@@ -33,12 +33,12 @@ public abstract class Point2D {
 
         @Override
         public double getX() {
-            return 0;
+            return x;
         }
 
         @Override
         public double getY() {
-            return 0;
+            return y;
         }
 
         @Override

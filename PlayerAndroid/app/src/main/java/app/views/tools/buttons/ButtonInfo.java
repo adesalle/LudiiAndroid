@@ -3,7 +3,6 @@ package app.views.tools.buttons;
 import androidUtils.awt.Color;
 import androidUtils.awt.Font;
 import androidUtils.awt.Graphics2D;
-
 import app.PlayerApp;
 import app.views.tools.ToolButton;
 import main.Constants;

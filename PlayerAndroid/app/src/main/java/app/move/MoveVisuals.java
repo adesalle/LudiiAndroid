@@ -1,13 +1,13 @@
 package app.move;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;
 import androidUtils.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
-
 import app.PlayerApp;
 import game.Game;
 import game.rules.end.EndRule;
@@ -167,7 +167,7 @@ public class MoveVisuals {
                                     position = otherLocation;
 
                                 if (position != null) {
-                                    final int maxRadius = ((Math.min(position.width, position.height))) / 2;
+                                    final int maxRadius = (int) (((Math.min(position.width, position.height))) / 2);
                                     final int minRadius = maxRadius / 4;
 
                                     final int midX = (int) position.getCenterX();
@@ -356,7 +356,7 @@ public class MoveVisuals {
                     position = otherLocation;
 
                 if (position != null)
-                    g2d.fillOval(position.x, position.y, position.width, position.height);
+                    g2d.fillOval((int) position.x, (int) position.y, (int) position.width, (int) position.height);
             }
         }
     }

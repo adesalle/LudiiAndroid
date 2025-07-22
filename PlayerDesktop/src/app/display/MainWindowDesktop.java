@@ -159,6 +159,8 @@ public class MainWindowDesktop extends JPanel implements MouseListener, MouseMot
 
 	//-------------------------------------------------------------------------
 
+
+
 	@Override
 	public void paintComponent(final Graphics g)
 	{

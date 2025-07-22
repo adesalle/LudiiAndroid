@@ -1,10 +1,10 @@
 package app.utils;
 
+import org.apache.commons.rng.core.RandomProviderDefaultState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.apache.commons.rng.core.RandomProviderDefaultState;
 
 import app.PlayerApp;
 import compiler.Compiler;
@@ -33,8 +33,11 @@ public class GameSetup {
         report.setReportMessageFunctions(new ReportMessengerGUI(app));
 
         try {
+
             final Game game = (Game) Compiler.compile(gameDescription, app.manager().settingsManager().userSelections(), report, debug);
+
             app.manager().ref().setGame(app.manager(), game);
+
 
             printCompilationMessages(app, game, debug, report);
 
@@ -50,7 +53,7 @@ public class GameSetup {
         }
 
         // Try to make Java run GC in case previous game occupied a lot of memory
-        System.gc();
+        // System.gc();
     }
 
     //-------------------------------------------------------------------------

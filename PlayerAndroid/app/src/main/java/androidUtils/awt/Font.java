@@ -20,7 +20,8 @@ public class Font {
     public static int PLAIN = Typeface.NORMAL;
     public static Typeface SANS_SERIF = Typeface.SANS_SERIF;
     public static Typeface SERIF = Typeface.SERIF;
-    protected int 	style;
+
+    protected int style;
 
     Typeface font;
     int size  = -1;
@@ -34,6 +35,7 @@ public class Font {
     }
     public Font(Font font)
     {
+
         this.font = Typeface.create(font.getFont(),font.getFont().getStyle());
         this.style = font.getFont().getStyle();
         this.size = font.getSize();
@@ -82,6 +84,15 @@ public class Font {
         return null;
     }
 
+    public String getFamily()
+    {
+        return name;
+    }
+
+    public int getStyle()
+    {
+        return font.getStyle();
+    }
 
     public Typeface getFont()
     {
@@ -111,4 +122,25 @@ public class Font {
 
         return this;
     }
+
+    public boolean isBold() {
+        return style == BOLD;
+    }
+
+    public boolean isItalic() {
+        return style == ITALIC;
+    }
+
+    public int stringWidth(String str) {
+        if (str == null || str.isEmpty()) {
+            return 0;
+        }
+
+        Paint paint = new Paint();
+        paint.setTypeface(font);
+        paint.setTextSize(size);
+
+        return (int) Math.ceil(paint.measureText(str));
+    }
+
 }

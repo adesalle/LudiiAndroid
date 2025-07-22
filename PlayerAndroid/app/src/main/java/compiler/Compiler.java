@@ -25,6 +25,7 @@ import main.grammar.Symbol;
 import main.grammar.Symbol.LudemeType;
 import main.grammar.Token;
 import main.options.UserSelections;
+import metadata.Metadata;
 import parser.Parser;
 
 //-----------------------------------------------------------------------------
@@ -100,6 +101,7 @@ public class Compiler {
         } catch (final CompilerException e) {
             //if (isVerbose)
             e.printStackTrace();
+
             throw new CompilerException(e.getMessageBody(description.raw()), e);
         } catch (final Exception e) {
             e.printStackTrace();
@@ -131,7 +133,9 @@ public class Compiler {
 
 //		if (!parser.parse(description, userSelections, isVerbose))
 //			throw new CompilerErrorWithMessageException("Failed to parse game description.");
+
         Parser.expandAndParse(description, userSelections, report, true, isVerbose);
+
         if (report.isError()) {
             System.out.println("Failed to parse game description:");
             for (final String error : report.errors()) {
@@ -251,13 +255,7 @@ public class Compiler {
         if (md == null) {
             //md = new Metadata(null, null, null);
             try {
-                md = loadExternalClass
-                        (
-                                "../Core/src/metadata/",
-                                "metadata.Metadata"
-                        )
-                        .getDeclaredConstructor()
-                        .newInstance();
+                md = new Metadata();
             } catch (final Exception e) {
                 e.printStackTrace();
             }

@@ -1,9 +1,9 @@
 package app.utils;
 
-import androidUtils.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidUtils.awt.EventQueue;
 import app.PlayerApp;
 import app.move.MoveHandler;
 import app.move.animation.MoveAnimation;

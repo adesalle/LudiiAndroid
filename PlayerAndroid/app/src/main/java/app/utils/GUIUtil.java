@@ -1,9 +1,9 @@
 package app.utils;
 
-import androidUtils.awt.Point;
-import androidUtils.awt.Rectangle;
 import java.util.List;
 
+import androidUtils.awt.Point;
+import androidUtils.awt.Rectangle;
 import app.views.View;
 
 

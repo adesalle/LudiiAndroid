@@ -1,15 +1,31 @@
 package androidUtils.awt.event;
 
+import android.view.View;
+
+import androidUtils.swing.JDialog;
+
 public class WindowEvent {
 
-    public static final int WINDOW_CLOSING = 1;
-    public static final int WINDOW_CLOSED = 2;
-    public static final int WINDOW_OPENED = 3;
+    public static final int WINDOW_OPENED = 100;
+    public static final int WINDOW_CLOSING = 101;
+    public static final int WINDOW_CLOSED = 102;
 
+    private final View source;
     private final int id;
 
-    public WindowEvent(int id) {
+    public WindowEvent(View source, int id) {
+        this.source = source;
         this.id = id;
+    }
+
+    public WindowEvent(JDialog source, int id) {
+        this.source = source.getRootPane();
+        this.id = id;
+    }
+
+
+    public View getSource() {
+        return source;
     }
 
     public int getID() {

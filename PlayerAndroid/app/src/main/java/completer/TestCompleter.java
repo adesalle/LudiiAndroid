@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import androidUtils.CompleterAndroid;
+
 //import org.junit.Test;
 
 //import main.grammar.Report;
@@ -123,7 +125,7 @@ public class TestCompleter {
                 final int suffixAt = fileName.indexOf(".lud");
                 final String outFileName = fileName.substring(0, suffixAt) + "-" + n;
                 try {
-                    Completer.saveCompletion(outFilePath, outFileName, completion);
+                    CompleterAndroid.saveCompletion(outFilePath, outFileName, completion);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

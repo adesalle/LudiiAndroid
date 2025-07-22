@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -74,12 +75,14 @@ public final class SVGLoader {
     public static String[] listSVGs() {
         // Try loading from JAR file
         if (choices == null) {
-            choices = FileHandling.getResourceListing(SVGLoader.class, "svg/", ".svg");
+            choices = FileHandling.getResourceListing(SVGLoader.class, "svg", ".svg");
+            System.out.println(Arrays.toString(choices));
             if (choices == null) {
                 try {
                     // Try loading from memory in IDE
                     // Start with known .svg file
-                    final URL url = SVGLoader.class.getResource("/svg/misc/dot.svg");
+                    final URL url = SVGLoader.class.getResource("img/svg/misc/dot.svg");
+                    assert url != null;
                     String path = new File(url.toURI()).getPath();
                     path = path.substring(0, path.length() - "misc/dot.svg".length());
 

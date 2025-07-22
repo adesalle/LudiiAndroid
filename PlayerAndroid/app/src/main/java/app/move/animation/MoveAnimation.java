@@ -1,14 +1,14 @@
 package app.move.animation;
 
-import androidUtils.awt.Graphics2D;
-import androidUtils.awt.Point;
-import androidUtils.awt.geom.Point2D;
-import androidUtils.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Point;
+import androidUtils.awt.geom.Point2D;
+import androidUtils.awt.image.BufferedImage;
 import app.PlayerApp;
 import app.utils.BufferedImageUtil;
 import app.utils.DrawnImageInfo;

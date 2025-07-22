@@ -1,5 +1,7 @@
 package parser;
 
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -14,6 +18,7 @@ import java.util.regex.Pattern;
 import main.FileHandling;
 import main.grammar.Define;
 import main.grammar.Report;
+import playerAndroid.app.StartAndroidApp;
 
 //-----------------------------------------------------------------------------
 
@@ -34,6 +39,7 @@ public class KnownDefines {
     KnownDefines() {
         final Report report = new Report();
         loadKnownDefines(report);
+        System.out.println("loaded");
         if (report.isError())
             System.out.println(report);
     }
@@ -64,21 +70,32 @@ public class KnownDefines {
             final String defFilePath,
             final String defRoot,
             final Report report
-    ) {
-        final InputStream in = KnownDefines.class.getResourceAsStream(defFilePath.substring(defFilePath.indexOf(defRoot)));
+    )
+    {
+        Context context = StartAndroidApp.getAppContext();
+        try {
 
-        // Extract the definition text from file
-        final StringBuilder sb = new StringBuilder();
-        try (final BufferedReader rdr = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
-            String line;
-            while ((line = rdr.readLine()) != null)
-                sb.append(line + "\n");
-        } catch (final IOException e) {
+
+            final InputStream in = context.getAssets().open(defFilePath);
+
+            // Extract the definition text from file
+            final StringBuilder sb = new StringBuilder();
+            try (final BufferedReader rdr = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
+                String line;
+                while ((line = rdr.readLine()) != null)
+                    sb.append(line + "\n");
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+
+            final Define define = Expander.interpretDefine(sb.toString(), null, report, true);
+            return define;
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
-
-        final Define define = Expander.interpretDefine(sb.toString(), null, report, true);
-        return define;
+        return null;
     }
 
     /**
@@ -93,36 +110,49 @@ public class KnownDefines {
     /**
      * Load known defines from file.
      */
-    void loadKnownDefines(final Report report) {
+    void loadKnownDefines(final Report report)
+    {
         knownDefines.clear();
 
 //       System.out.println("File.separator is '" + File.separator + "'.");
 
         // Try loading from JAR file
-        final String[] defs = FileHandling.getResourceListing(KnownDefines.class, "def/", ".def");
+        final String[] defs = FileHandling.getResourceListing(KnownDefines.class, "def", ".def");
 
-        if (defs == null) {
+        if (defs == null)
+        {
+            System.out.println("notHere");
             // Not a JAR
-            try {
+            try
+            {
                 // Start with known .def file
                 final URL url = KnownDefines.class.getResource("def/rules/play/moves/StepToEmpty.def");
                 String path = new File(url.toURI()).getPath();
                 path = path.substring(0, path.length() - "rules/play/moves/StepToEmpty.def".length());
 
                 // Get the list of .def files in this directory and subdirectories
-                try {
+                try
+                {
                     recurseKnownDefines(path, report);
                     if (report.isError())
                         return;
-                } catch (final Exception e) {
+                }
+                catch (final Exception e)
+                {
                     e.printStackTrace();
                 }
-            } catch (final URISyntaxException exception) {
+            }
+            catch (final URISyntaxException exception)
+            {
                 exception.printStackTrace();
             }
-        } else {
+        }
+        else
+        {
+            System.out.println("here");
             // JAR file
-            for (final String def : defs) {
+            for (final String def : defs)
+            {
                 final Define define = processDefFile(def.replaceAll(Pattern.quote("\\"), "/"), "/def/", report);
                 if (report.isError())
                     return;

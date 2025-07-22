@@ -2,13 +2,17 @@ package androidUtils;
 
 import org.json.JSONException;
 
-public class JSONObject {
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+public class JSONObject{
     org.json.JSONObject jsonObject;
     public JSONObject(){
         jsonObject = new org.json.JSONObject();
     }
 
-    private JSONObject(org.json.JSONObject object)
+    public JSONObject(org.json.JSONObject object)
     {
         jsonObject = object;
     }
@@ -21,10 +25,41 @@ public class JSONObject {
             throw new RuntimeException(e);
         }
     }
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        Iterator<String> keys = jsonObject.keys();
+
+        while (keys.hasNext()) {
+            String key = keys.next();
+            try {
+                Object value = jsonObject.get(key);
+
+                // Conversion récursive des valeurs JSON
+                if (value instanceof org.json.JSONObject) {
+                    value = new JSONObject((org.json.JSONObject) value).toMap();
+                } else if (value instanceof org.json.JSONArray) {
+                    value = new JSONArray((org.json.JSONArray) value).toList();
+                }
+
+                map.put(key, value);
+            } catch (JSONException e) {
+                throw new RuntimeException("Error converting JSONObject to Map", e);
+            }
+        }
+
+        return map;
+    }
+
+
 
     public JSONObject put(String name, Object value){
         try {
-            return new JSONObject(jsonObject.put(name, value));
+            if (value instanceof JSONObject) {
+                jsonObject.put(name, ((JSONObject) value).jsonObject); // Extract the inner org.json.JSONObject
+            } else {
+                jsonObject.put(name, value);
+            }
+            return this;
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -121,5 +156,28 @@ public class JSONObject {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String optString(String puzzleValueSelection, String name) {
+        return jsonObject.optString(puzzleValueSelection, name);
+    }
+
+
+    public int optInt(String tabFontSize, int i) {
+
+        return jsonObject.optInt(tabFontSize, i);
+    }
+
+    public JSONObject optJSONObject(String s) {
+
+        return new JSONObject(jsonObject.optJSONObject(s));
+    }
+
+    public double optDouble(String s, double v) {
+        return jsonObject.optDouble(s, v);
+    }
+
+    public Iterator<?> keys() {
+        return jsonObject.keys();
     }
 }

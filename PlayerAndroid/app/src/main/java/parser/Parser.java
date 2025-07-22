@@ -1,10 +1,13 @@
 package parser;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidUtils.CompleterAndroid;
 import compiler.Arg;
 import compiler.ArgClass;
 import compiler.ArgTerminal;
@@ -29,13 +32,15 @@ import main.options.UserSelections;
  *
  * @author cambolbro
  */
-public class Parser {
+public class Parser
+{
     //-------------------------------------------------------------------------
 
     /**
      * Private constructor; don't allow class to be constructed.
      */
-    private Parser() {
+    private Parser()
+    {
     }
 
     //-------------------------------------------------------------------------
@@ -56,7 +61,8 @@ public class Parser {
             final UserSelections userSelections,
             final Report report,
             final boolean isVerbose
-    ) {
+    )
+    {
         return expandAndParse(description, userSelections, report, true, isVerbose);
     }
 
@@ -75,7 +81,8 @@ public class Parser {
             final UserSelections userSelections,
             final Report report,
             final boolean isVerbose
-    ) {
+    )
+    {
         final boolean allowExamples = false;
         return expandAndParse(description, userSelections, report, allowExamples, isVerbose);
     }
@@ -95,7 +102,8 @@ public class Parser {
             final Report report,
             final boolean allowExamples,
             final boolean isVerbose
-    ) {
+    )
+    {
         if (Completer.needsCompleting(description.rawGameDescription())) {
             String rawGame = description.rawGameDescription();
 //			System.out.println("Raw game description is: \n" + rawGame);
@@ -105,7 +113,7 @@ public class Parser {
 //			System.out.println("Raw game description after cleaning up is: \n" + rawGame);
 
             //final List<Completion> completions = Completer.completeExhaustive(rawGame, description.maxReconstructions(), report);
-            final List<Completion> completions = Completer.completeSampled(rawGame, description.maxReconstructions(), report);
+            final List<Completion> completions = CompleterAndroid.completeSampled(rawGame, description.maxReconstructions(), report);
             System.out.println(completions.size() + " completions found.");
 
             if (!completions.isEmpty()) {
@@ -118,7 +126,6 @@ public class Parser {
         try {
             try {
                 //report.clear();
-
                 Expander.expand(description, userSelections, report, isVerbose);
                 if (report.isError()) {
 //					System.out.println("Errors while expanding (A):");
@@ -143,6 +150,7 @@ public class Parser {
                 //errors.add("Catching exception from Expander...");  //new String(e.getMessage()));
                 //errors.add("Could not expand game description. Maybe a misplaced bracket pair '(..)' or '{..}'?");
             }
+
             return parseExpanded(description, userSelections, report, allowExamples, isVerbose);
         } catch (final CompilerException e) {
             if (isVerbose)
@@ -171,7 +179,8 @@ public class Parser {
             final Report report,
             final boolean allowExamples,
             final boolean isVerbose
-    ) {
+    )
+    {
         //report.clear();
 
 //		if (Constants.argCombos == null)
@@ -215,6 +224,7 @@ public class Parser {
         //--------------- Check expanded text ----------------
 
         if (description.expanded() == null) {
+
             // Allow more specific tests above to check the problem
             report.addError("Could not expand. Check that bracket pairs '(..)' and '{..}' match.");
             return false;
@@ -457,6 +467,7 @@ public class Parser {
             case Class:
                 // Find matching symbols and their clauses
                 arg = new ArgClass(item.token().name(), item.token().parameterLabel());
+
                 arg.matchSymbols(grammar, report);
 
                 for (final Instance instance : arg.instances())

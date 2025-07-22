@@ -47,32 +47,32 @@ public abstract class RoundRectangle2D extends Rectangle2D.Double{
         }
 
         @Override
-        public int getX() {
+        public double getX() {
             return (int) (x + width/2)  ;
         }
 
         @Override
-        public int getY() {
+        public double getY() {
             return (int)  (y + height/2);
         }
 
         @Override
-        public int getMinX() {
+        public double getMinX() {
             return (int) x;
         }
 
         @Override
-        public int getMinY() {
+        public double getMinY() {
             return (int) y;
         }
 
         @Override
-        public int getMaxX() {
+        public double getMaxX() {
             return (int) (x + width);
         }
 
         @Override
-        public int getMaxY() {
+        public double getMaxY() {
             return (int) (y + height) ;
         }
 

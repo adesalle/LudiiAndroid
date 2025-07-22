@@ -79,6 +79,9 @@ public class LocationUtil {
         for (final Move m : context.moves(context).moves())
             if (m.getFromLocation().equals(bridge.settingsVC().selectedFromLocation()))
                 allLocations.add(m.getToLocation());
+
+
+
         return new ArrayList<>(allLocations);
     }
 
@@ -92,6 +95,7 @@ public class LocationUtil {
 
         for (final Container container : context.equipment().containers()) {
             location = bridge.getContainerController(container.index()).calculateNearestLocation(context, pt, legalLocations);
+
             if (!location.equals(new FullLocation(Constants.UNDEFINED)))
                 return location;
         }

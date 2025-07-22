@@ -1,12 +1,21 @@
 package graphics.svg;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.Ellipse2D;
 import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
+
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
+
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,6 +27,7 @@ import java.util.List;
 import graphics.svg.SVGPathOp.PathOpType;
 import main.StringRoutines;
 import main.math.MathRoutines;
+import playerAndroid.app.StartAndroidApp;
 
 //-----------------------------------------------------------------------------
 
@@ -36,6 +46,8 @@ public class SVGtoImage {
     final boolean verbose = false;
 
     //-------------------------------------------------------------------------
+
+    private static InputStream stream;
 
     public SVGtoImage() {
     }
@@ -96,8 +108,18 @@ public class SVGtoImage {
             final Graphics2D g2d, final String filePath, final Rectangle2D rectangle,
             final Color borderColour, final Color fillColour, final int rotation
     ) {
-        final BufferedReader reader = getBufferedReaderFromImagePath(filePath);
-        loadFromReader(g2d, reader, rectangle, borderColour, fillColour, rotation);
+        //final BufferedReader reader = getBufferedReaderFromImagePath(filePath);
+        try
+        {
+
+            stream = StartAndroidApp.startAndroidApp().getInputStreamFromFilesDir(filePath);
+            loadFromReader(g2d, null, rectangle, borderColour, fillColour, rotation);
+        }
+        catch (Exception e)
+        {
+            return;
+        }
+
     }
 
     //-------------------------------------------------------------------------
@@ -115,19 +137,39 @@ public class SVGtoImage {
     (
             final Graphics2D g2d, final BufferedReader bufferedReader, final Rectangle2D rectangle,
             final Color borderColour, final Color fillColour, final int rotation
-    ) {
+    )  {
         // Load the string from file
-        String svg = "";
-        String line = null;
         try {
-            while ((line = bufferedReader.readLine()) != null)
-                svg += line + "\n";
-            bufferedReader.close();
-        } catch (final Exception ex) {
-            ex.printStackTrace();
+            SVG svg = SVG.getFromInputStream(stream);
+
+            g2d.save();
+            g2d.rotate(rotation, rectangle.getWidth() / 2f, rectangle.getHeight() / 2f);
+
+            if (borderColour.toArgb() != Integer.MIN_VALUE || fillColour.toArgb() != Integer.MIN_VALUE) {
+                Paint paint = new Paint();
+                if (borderColour.toArgb() != Integer.MIN_VALUE) {
+                    paint.setColor(borderColour.toArgb());
+                    paint.setStyle(Paint.Style.STROKE);
+                    paint.setStrokeWidth(2f); // Épaisseur de la bordure
+                }
+                if (fillColour.toArgb() != Integer.MIN_VALUE) {
+                    paint.setColor(fillColour.toArgb());
+                    paint.setStyle(Paint.Style.FILL);
+                }
+                g2d.drawPaint(paint);
+            }
+
+            // 3. Redimensionner et dessiner
+            svg.setDocumentWidth("90%");
+            svg.setDocumentHeight("90%");
+            g2d.renderToCanvas(svg, (int) rectangle.getWidth(), (int) rectangle.getHeight());
+            g2d.restore();
+            //loadFromSource(g2d, svg, rectangle, borderColour, fillColour, rotation);
+        }catch(Exception e)
+        {
+            return;
         }
 
-        loadFromSource(g2d, svg, rectangle, borderColour, fillColour, rotation);
     }
 
     //-------------------------------------------------------------------------
@@ -215,8 +257,8 @@ public class SVGtoImage {
 
             final double scale = imgSz / (double) Math.max(sx, sy);
 
-            bounds.width = (int) (scale * sx + 0.5);
-            bounds.height = (int) (scale * sy + 0.5);
+
+            bounds.setWidthHeight(scale * sx + 0.5, scale * sy + 0.5);
 
             return bounds;
         }
@@ -282,12 +324,14 @@ public class SVGtoImage {
      */
     private static BufferedReader getBufferedReaderFromImagePath(final String filePath) {
         try {
-            final InputStream in = SVGtoImage.class.getResourceAsStream(filePath);
-            return new BufferedReader(new InputStreamReader(in));
+            System.out.println("SVGToImage " + filePath);
+            stream = StartAndroidApp.startAndroidApp().getInputStreamFromFilesDir(filePath);
+            return null;
         } catch (final Exception e) {
             // Could not find SVG within resource folder, might be an absolute path.
             try {
-                return new BufferedReader(new FileReader(filePath));
+                stream = new FileInputStream(filePath);
+                return null;
             } catch (final FileNotFoundException e1) {
                 e.printStackTrace();
                 e1.printStackTrace();

@@ -303,10 +303,10 @@ public class FeatureToEPS {
             // write useful variables for our pieces / cells / shapes / etc.
             w.println("%--------------- Variables ------------------");
             w.println("");
-            w.println("/HexRadius " + HEX_RADIUS + " def");
+            w.println("/HexRadius " + HEX_RADIUS + "def");
             w.println("/HexDiameter { HexRadius 2 mul } def");
             w.println("");
-            w.println("/SquareSide " + SQUARE_SIDE + " def");
+            w.println("/SquareSide " + SQUARE_SIDE + "def");
             w.println("");
             w.println("/CircleRadius { 17 .75 mul }  def");
             w.println("/CircleLineWidth 2 def");

@@ -1,12 +1,11 @@
 package app.utils;
 
-import androidUtils.awt.Graphics2D;
-import androidUtils.awt.Point;
-import androidUtils.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Point;
 import androidUtils.awt.SVGGraphics2D;
-
+import androidUtils.awt.image.BufferedImage;
 import bridge.Bridge;
 import game.equipment.component.Component;
 import game.equipment.container.other.Dice;
@@ -49,14 +48,14 @@ public class GraphicsCache {
         BufferedImage componentImage = null;
         if (svg != null) {
             if (component.isLargePiece()) {
-                componentImage = SVGUtil.createSVGImage(svg.getSVGDocument(), componentStyle.largePieceSize().x, componentStyle.largePieceSize().y);
+                componentImage = SVGGraphics2D.getBufferedImageFrom64(svg.getSVGDocument());
                 if (containerId != 0) {
                     final int maxSize = Math.max(componentStyle.largePieceSize().x, componentStyle.largePieceSize().y);
                     final double scaleFactor = 0.9 * imageSize / maxSize;
                     componentImage = BufferedImageUtil.resize(componentImage, (int) (scaleFactor * componentStyle.largePieceSize().x), (int) (scaleFactor * componentStyle.largePieceSize().y));
                 }
             } else {
-                componentImage = SVGUtil.createSVGImage(svg.getSVGDocument(), imageSize, imageSize);
+                componentImage = SVGGraphics2D.getBufferedImageFrom64(svg.getSVGDocument());
             }
         }
 
@@ -170,6 +169,7 @@ public class GraphicsCache {
             final int rotation,
             final boolean secondary
     ) {
+
         final int componentId = component.index();
         final ComponentStyle componentStyle = bridge.getComponentStyle(component.index());
 
@@ -186,6 +186,7 @@ public class GraphicsCache {
 
         // If the component does not have a stored image for the provided local state, then create one from its SVG string
         if (cacheImage == null || cacheImageSize != imageSize) {
+
             // create the image for the given local state value
             if (containerId > 0 && component.isLargePiece())
                 componentStyle.renderImageSVG(context, containerId, bridge.getContainerStyle(0).cellRadiusPixels() * 2, localState, value, true, hiddenValue, rotation);

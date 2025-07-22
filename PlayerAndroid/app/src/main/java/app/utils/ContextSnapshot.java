@@ -27,6 +27,7 @@ public class ContextSnapshot {
 
     private static int getInformationContextPlayerNumber(final PlayerApp app) {
         final Context context = app.manager().ref().context();
+
         int mover = context.state().mover();
 
         if (context.game().isDeductionPuzzle())

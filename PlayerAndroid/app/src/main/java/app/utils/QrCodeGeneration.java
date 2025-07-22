@@ -1,11 +1,10 @@
 package app.utils;
 
-import androidUtils.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import androidUtils.ImageIO;
-
+import androidUtils.awt.image.BufferedImage;
+import androidUtils.imageio.ImageIO;
 import game.Game;
 import graphics.qr_codes.QrCode;
 import graphics.qr_codes.ToImage;

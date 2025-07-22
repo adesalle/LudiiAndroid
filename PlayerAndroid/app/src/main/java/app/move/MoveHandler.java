@@ -1,8 +1,8 @@
 package app.move;
 
-import androidUtils.awt.EventQueue;
 import java.util.ArrayList;
 
+import androidUtils.awt.EventQueue;
 import app.PlayerApp;
 import app.utils.PuzzleSelectionType;
 import game.equipment.component.Component;
@@ -40,6 +40,7 @@ public class MoveHandler {
      * @return True if a matching legal move found, false otherwise
      */
     public static boolean tryGameMove(final PlayerApp app, final Location locnFromInfo, final Location locnToInfo, final boolean passMove, final int selectPlayerMove) {
+
         final Context context = app.manager().ref().context();
         final Moves legal = context.game().moves(context);
         final FastArrayList<Move> possibleMoves = new FastArrayList<>();
@@ -55,6 +56,7 @@ public class MoveHandler {
             applyConsequenceChosen(app, locnToInfo);
             return true;
         }
+
 
         if (passMove) {
             for (final Move m : legal.moves()) {
@@ -115,7 +117,6 @@ public class MoveHandler {
                 return true; // move found
             }
         }
-
         return false; // move not found
     }
 
@@ -553,7 +554,6 @@ public class MoveHandler {
         final Context context = app.manager().ref().context();
 
         if (!move.isAlwaysGUILegal() && !context.model().verifyMoveLegal(context, move)) {
-            System.err.println("Selected illegal move: " + move.getActionsWithConsequences(context));
             app.addTextToStatusPanel("Selected illegal move: " + move.getActionsWithConsequences(context) + "\n");
             return false;
         }

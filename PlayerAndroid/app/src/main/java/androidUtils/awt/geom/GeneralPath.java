@@ -1,149 +1,138 @@
 package androidUtils.awt.geom;
 
-import android.annotation.SuppressLint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import java.awt.Shape;
+import android.util.Log;
 
+import java.awt.Shape;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidUtils.awt.Graphics2D;
 
-public class GeneralPath extends  Path2D.Float{
+public class GeneralPath extends Path2D.Float {
 
-
-    protected Point2D.Double point2D = new Point2D.Double(0f,0f);
-
+    protected Point2D.Double currentPoint = new Point2D.Double(0,0);
     private String svgTransform = "";
+    private List<String> pathCommands = new ArrayList<>();
+
+    public GeneralPath() {
+        this(Path.FillType.WINDING);
+    }
+
+    public GeneralPath(Path.FillType rule) {
+        this(rule, 20); // Capacité initiale par défaut
+    }
+
+    public GeneralPath(Path.FillType rule, int initialCapacity) {
+        path = new Path();
+        path.setFillType(rule);
+    }
 
     @Override
     public Shape copy() {
-        GeneralPath path = new GeneralPath();
-        path.path = new Path(this.path);
-        point2D = new Point2D.Double(point2D);
+        GeneralPath copy = new GeneralPath(path.getFillType());
+        copy.path = new Path(this.path);
+        copy.currentPoint = new Point2D.Double(currentPoint.x, currentPoint.y);
+        copy.svgTransform = this.svgTransform;
+        copy.pathCommands = new ArrayList<>(this.pathCommands);
+        return copy;
+    }
+
+    public Path getPath() {
         return path;
     }
 
-    public GeneralPath()
-    {
-        path = new Path();
-    }
-    public GeneralPath(Path.FillType rule)
-    {
-        path = new Path();
-        path.setFillType(rule);
-    }
-    public GeneralPath(Path.FillType rule, int initialCapacity)
-    {
-        path = new Path();
-        path.setFillType(rule);
-    }
-    public GeneralPath(Shape shape)
-    {
-        path = new Path();
-
+    public Point2D getCurrentPoint() {
+        return new Point2D.Double(currentPoint.x, currentPoint.y);
     }
 
-    public Path getPath()
-    {
-        return path;
-    }
-
-    public Point2D getCurrentPoint()
-    {
-        return point2D;
-    }
-
-    @SuppressLint("DefaultLocale")
-    public void lineTo(double x, double y)
-    {
+    public void lineTo(double x, double y) {
         path.lineTo((float) x, (float) y);
-        point2D.setLocation(x, y);
-        pathCommands.add(String.format("L %f %f", x, y));
+        updateCurrentPoint(x, y);
     }
-    @SuppressLint("DefaultLocale")
-    public void lineTo(float x, float y)
-    {
+
+    public void lineTo(float x, float y) {
         path.lineTo(x, y);
-        point2D.setLocation(x, y);
-        pathCommands.add(String.format("L %f %f", x, y));
+        updateCurrentPoint(x, y);
     }
 
-    @SuppressLint("DefaultLocale")
-    public void moveTo(double x, double y)
-    {
+    public void moveTo(double x, double y) {
         path.moveTo((float) x, (float) y);
-        point2D.setLocation(x, y);
-        pathCommands.add(String.format("M %f %f", x, y));
+        updateCurrentPoint(x, y);
     }
-    @SuppressLint("DefaultLocale")
-    public void moveTo(float x, float y)
-    {
+
+    public void moveTo(float x, float y) {
         path.moveTo(x, y);
-        point2D.setLocation(x, y);
-        pathCommands.add(String.format("M %f %f", x, y));
-    }
-    @SuppressLint("DefaultLocale")
-    public void quadTo(float x, float y, float x0, float y0)
-    {
-        path.quadTo(x, y, x0, y0);
-        point2D.setLocation(x0, y0);
-        pathCommands.add(String.format("Q %f %f %f %f", x, y, x0, y0));
-    }
-    @SuppressLint("DefaultLocale")
-    public void quadTo(double x, double y, double x0, double y0)
-    {
-        path.quadTo((float) x, (float) y, (float) x0, (float) y0);
-        point2D.setLocation(x0, y0);
-        pathCommands.add(String.format("Q %f %f %f %f", x, y, x0, y0));
+        updateCurrentPoint(x, y);
     }
 
-    @SuppressLint("DefaultLocale")
-    public void curveTo(double x, double y, double x0, double y0, double x1, double y1)
-    {
-        path.cubicTo((float) x, (float) y, (float) x0, (float) y0, (float) x1, (float) y1);
-        pathCommands.add(String.format("C %f %f %f %f %f %f", x, y, x0, y0, x1, y1));
+    public void quadTo(float x1, float y1, float x2, float y2) {
+        path.quadTo(x1, y1, x2, y2);
+        updateCurrentPoint(x2, y2);
     }
 
-    public void transform(AffineTransform at)
-    {
-        path.transform(at.getMatrix());
-        svgTransform = at.toString();
+    public void quadTo(double x1, double y1, double x2, double y2) {
+        path.quadTo((float) x1, (float) y1, (float) x2, (float) y2);
+        updateCurrentPoint(x2, y2);
     }
 
-    public void closePath()
-    {
-        path.close();
-        pathCommands.add("Z");
+    public void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
+        path.cubicTo((float) x1, (float) y1, (float) x2, (float) y2, (float) x3, (float) y3);
+        updateCurrentPoint(x3, y3);
     }
 
-    public List<String> getPathCommands()
-    {
-        return pathCommands;
+    public void transform(AffineTransform at) {
+        if (at != null && !at.isIdentity()) {
+            path.transform(at.getMatrix());
+
+        }
     }
+
+    public void closePath() {
+        if (!path.isEmpty()) {
+            path.close();
+        }
+    }
+
+
     public String toSVG() {
-        StringBuilder svgPath = new StringBuilder("<path");
-        if (!svgTransform.isEmpty()) {
-            svgPath.append(String.format(" transform=\"%s\"", svgTransform));
+        if (pathCommands.isEmpty()) {
+            return "";
         }
 
-        svgPath.append(" d=\"");
+        StringBuilder svgPath = new StringBuilder("d=\"");
         for (String command : pathCommands) {
             svgPath.append(command).append(" ");
         }
-        svgPath.append("\"/>");
 
-        return svgPath.toString();
+        String pathData = svgPath.toString().trim();
+
+        if (!svgTransform.isEmpty()) {
+            pathData += "\" transform=\"" + svgTransform;
+        }
+
+        return pathData;
     }
 
-    public void close()
-    {
-        closePath();
+    public void reset() {
+        path.reset();
+        currentPoint.setLocation(0, 0);
+
     }
+
     @Override
     public void acceptFill(Graphics2D graph) {
-        graph.fill(this);
+        if (graph != null) {
+            graph.fill(this);
+        }
     }
 
+    private void updateCurrentPoint(double x, double y) {
+        currentPoint.setLocation(x, y);
+    }
 
+    private void addPathCommand(String command, Object... coords) {
+
+    }
 }

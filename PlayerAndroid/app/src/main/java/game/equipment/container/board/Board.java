@@ -114,6 +114,7 @@ public class Board extends Container {
         defaultSite = (use == null) ? SiteType.Cell : use;
         graphFunction = graphFn;
 
+
         if (valuesNonNull == 1) // If values are used that's a deduction puzzle.
         {
             final Values[] valuesLocal = (valuesArray != null) ? valuesArray : new Values[]{values};
@@ -208,6 +209,8 @@ public class Board extends Container {
             final double x = graphVertex.pt().x();
             final double y = graphVertex.pt().y();
             final double z = graphVertex.pt().z();
+
+
             final Vertex vertex = new Vertex(i, x, y, z);
 
             vertex.setProperties(graphVertex.properties());
@@ -215,6 +218,7 @@ public class Board extends Container {
             vertex.setColumn(graphVertex.situation().rcl().column());
             vertex.setLayer(graphVertex.situation().rcl().layer());
             vertex.setLabel(graphVertex.situation().label());
+
 
             topology.vertices().add(vertex);
         }
@@ -253,6 +257,7 @@ public class Board extends Container {
             vB.edges().add(edge);
         }
 
+
         // Add the cells to the topology.
         for (final Face face : graph.faces()) {
             final Cell cell = new Cell(face.id(), face.pt().x(), face.pt().y(), face.pt().z());
@@ -281,6 +286,7 @@ public class Board extends Container {
         }
 
         numSites = topology.cells().size();
+
 
         // We compute the number of edges of each tiling if the graph uses a regular
         // tiling.

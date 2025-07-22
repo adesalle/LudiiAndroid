@@ -2,8 +2,6 @@ package app.views.tools.buttons;
 
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
-//import androidUtils.awt.geom.GeneralPath;
-
 import app.PlayerApp;
 import app.views.tools.ToolButton;
 import main.Constants;

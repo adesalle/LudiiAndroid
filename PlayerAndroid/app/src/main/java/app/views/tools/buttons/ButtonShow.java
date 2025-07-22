@@ -4,7 +4,6 @@ import androidUtils.awt.Color;
 import androidUtils.awt.Font;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.Rectangle2D;
-
 import app.PlayerApp;
 import app.views.tools.ToolButton;
 

@@ -10,7 +10,6 @@ import androidUtils.awt.geom.AffineTransform;
 import androidUtils.awt.image.BufferedImage;
 import androidUtils.awt.image.ColorModel;
 import androidUtils.awt.image.WritableRaster;
-
 import app.PlayerApp;
 
 /**

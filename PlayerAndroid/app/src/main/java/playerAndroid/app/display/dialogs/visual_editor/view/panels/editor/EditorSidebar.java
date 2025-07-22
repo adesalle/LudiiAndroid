@@ -1,0 +1,59 @@
+package playerAndroid.app.display.dialogs.visual_editor.view.panels.editor;
+
+import androidUtils.swing.JTabbedPane;
+import playerAndroid.app.display.dialogs.visual_editor.handler.Handler;
+import playerAndroid.app.display.dialogs.visual_editor.view.panels.editor.tabPanels.LayoutSettingsPanel;
+
+/**
+ * Sidebar panel of visual editor
+ * @author nic0gin
+ */
+public class EditorSidebar extends JTabbedPane
+{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7035094102486105836L;
+	private static EditorSidebar editorSidebar;
+
+    /**
+     * Constructor
+     */
+    private EditorSidebar()
+    {
+        setVisible(Handler.sidebarVisible);
+
+        // adding layout settings tab
+        LayoutSettingsPanel layoutPanel = LayoutSettingsPanel.getLayoutSettingsPanel();
+        Handler.lsPanel = layoutPanel;
+        addTab("Layout settings", layoutPanel);
+        setSelectedComponent(layoutPanel);
+
+        // add other tabs here...
+
+        // invisible by default
+        setVisible(false);
+    }
+
+    /**
+     * Get a single instance of the editor sidebar
+     */
+    public static EditorSidebar getEditorSidebar()
+    {
+        if (editorSidebar == null) editorSidebar = new EditorSidebar();
+        return editorSidebar;
+    }
+
+	@SuppressWarnings("static-method")
+    public void setSidebarVisible(boolean visible)
+    {
+        editorSidebar.setVisible(visible);
+        editorSidebar.repaint();
+    }
+
+	@SuppressWarnings("static-method")
+    public void setLayoutTabSelected() {
+        int LAYOUT_TAB_INDEX = 0;
+        editorSidebar.setSelectedIndex(LAYOUT_TAB_INDEX);}
+
+}

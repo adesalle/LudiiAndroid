@@ -1,7 +1,6 @@
 package app.move;
 
 import androidUtils.awt.Point;
-
 import app.PlayerApp;
 import app.utils.GUIUtil;
 import app.utils.sandbox.SandboxUtil;
@@ -39,6 +38,7 @@ public class MouseHandler {
             return;
 
         // Get the nearest valid from location to the pressed point.
+
         if (app.settingsPlayer().sandboxMode())
             app.bridge().settingsVC().setSelectedFromLocation(LocationUtil.calculateNearestLocation(context, app.bridge(), pressedPoint, LocationUtil.getAllLocations(context, app.bridge())));
         else if (!app.settingsPlayer().componentIsSelected())
@@ -54,6 +54,7 @@ public class MouseHandler {
         if (!mouseChecks(app))
             return;
 
+
         final Context context = app.contextSnapshot().getContext(app);
         final Location selectedFromLocation = app.bridge().settingsVC().selectedFromLocation();
         Location selectedToLocation;
@@ -62,6 +63,7 @@ public class MouseHandler {
             selectedToLocation = LocationUtil.calculateNearestLocation(context, app.bridge(), releasedPoint, LocationUtil.getAllLocations(context, app.bridge()));
         else
             selectedToLocation = LocationUtil.calculateNearestLocation(context, app.bridge(), releasedPoint, LocationUtil.getLegalToLocations(app.bridge(), context));
+
 
         // Account for any large component offsets
         if
@@ -75,8 +77,11 @@ public class MouseHandler {
             final Point newPoint = releasedPoint;
             newPoint.x = (int) (newPoint.x - app.bridge().getComponentStyle(app.settingsPlayer().dragComponent().index()).getLargeOffsets().get(app.settingsPlayer().dragComponentState()).getX());
             newPoint.y = (int) (newPoint.y + app.bridge().getComponentStyle(app.settingsPlayer().dragComponent().index()).getLargeOffsets().get(app.settingsPlayer().dragComponentState()).getY());
+
             selectedToLocation = LocationUtil.calculateNearestLocation(context, app.bridge(), newPoint, LocationUtil.getLegalToLocations(app.bridge(), context));
         }
+
+        selectedToLocation = app.bridge().settingsVC().lastClickedSite();
 
         if (context.game().isDeductionPuzzle()) {
             MoveHandler.tryPuzzleMove(app, selectedFromLocation, selectedToLocation);
@@ -84,6 +89,7 @@ public class MouseHandler {
             if (app.settingsPlayer().sandboxMode()) {
                 SandboxUtil.makeSandboxDragMove(app, selectedFromLocation, selectedToLocation);
             } else if (!MoveHandler.tryGameMove(app, selectedFromLocation, selectedToLocation, false, -1)) {
+
                 // Remember the selected From location for next time.
                 if
                 (
@@ -106,6 +112,7 @@ public class MouseHandler {
                                     }
                                 }
                             }
+
                         } else {
                             for (final Move m : context.game().moves(context).moves()) {
                                 if (m.from() == selectedFromLocation.site() && m.actions().get(0) instanceof ActionSelect && m.from() != m.to()) {
@@ -152,7 +159,7 @@ public class MouseHandler {
         // If not valid legal location was found, just use the closest site to what they clicked.
         if (clickedLocation.equals(new FullLocation(Constants.UNDEFINED)))
             clickedLocation = LocationUtil.calculateNearestLocation(context, app.bridge(), point, LocationUtil.getAllLocations(context, app.bridge()));
-
+        System.out.println("clickedLocation " + clickedLocation);
         app.bridge().settingsVC().setLastClickedSite(clickedLocation);
         app.repaint();
     }

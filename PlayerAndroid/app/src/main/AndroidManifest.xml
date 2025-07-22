@@ -13,14 +13,16 @@
         android:theme="@style/Theme.PlayerAndroid"
         tools:targetApi="31">
         <activity
-            android:name="playerAndroid.app.AndroidApp"
-            android:exported="true">
+            android:name="playerAndroid.app.StartAndroidApp"
+            android:exported="true"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

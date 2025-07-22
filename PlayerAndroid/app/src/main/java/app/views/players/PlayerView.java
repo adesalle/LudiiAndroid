@@ -1,13 +1,13 @@
 package app.views.players;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidUtils.awt.Color;
 import androidUtils.awt.Font;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
 import androidUtils.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
-
 import app.PlayerApp;
 import app.utils.SettingsExhibition;
 import app.views.View;
@@ -33,6 +33,8 @@ public class PlayerView extends View {
      */
     public Font playerNameFont = new Font("Arial", Font.PLAIN, 16);
 
+
+
     //-------------------------------------------------------------------------
 
     /**
@@ -49,11 +51,12 @@ public class PlayerView extends View {
 
         int boardSize = app.height();
         if (SettingsExhibition.exhibitionVersion)
-            boardSize = app.getPanels().get(0).placement().width;        // Allows for custom board sizes.
+                boardSize = app.getPanels().get(0).placement().width;        // Allows for custom board sizes.
+
         int startX = boardSize + 8;
         int startY = 8;
         int width = app.width() - boardSize;
-        int height = Math.min(maxHandHeight, (int) (app.height() * maxPanelPercentageHeight / numPlayers));
+        int height = (int) (app.height() * maxPanelPercentageHeight / numPlayers);
 
         if (SettingsExhibition.exhibitionVersion) {
             startY += 40;
@@ -80,17 +83,19 @@ public class PlayerView extends View {
                 height = 150;
                 final Rectangle place = new Rectangle(x0, y0, width, (int) (height * 0.7));
                 final PlayerViewUser playerPage = new PlayerViewUser(app, place, pid, this);
-                app.getPanels().add(playerPage);
+                //app.getPanels().add(playerPage);
                 playerSections.add(playerPage);
             }
         } else {
             // create a specific user page for each player.
+
             for (int pid = 1; pid <= numPlayers; pid++) {
                 final int x0 = startX;
                 final int y0 = startY + (pid - 1) * height;
                 final Rectangle place = new Rectangle(x0, y0, width, height);
                 final PlayerViewUser playerPage = new PlayerViewUser(app, place, pid, this);
-                app.getPanels().add(playerPage);
+                //app.getPanels().add(playerPage);
+
                 playerSections.add(playerPage);
             }
         }
@@ -131,8 +136,9 @@ public class PlayerView extends View {
      */
     @Override
     public void paint(final Graphics2D g2d) {
-        for (final PlayerViewUser p : playerSections)
+        for (final PlayerViewUser p : playerSections) {
             p.paint(g2d);
+        }
 
         paintDebug(g2d, Color.PINK);
     }

@@ -3,6 +3,8 @@ package java.awt;
 
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
+import androidUtils.awt.geom.Point2D;
+import androidUtils.awt.geom.Rectangle2D;
 
 public interface Shape {
 
@@ -11,4 +13,8 @@ public interface Shape {
     Rectangle getBounds();
 
     Shape copy();
+
+    Shape createIntersection(Rectangle2D newBounds);
+
+    Point2D getLocation();
 }

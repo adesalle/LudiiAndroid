@@ -1,10 +1,11 @@
 package game.util.graph;
 
-import androidUtils.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
+
+import androidUtils.awt.geom.Point2D;
 
 //-----------------------------------------------------------------------------
 

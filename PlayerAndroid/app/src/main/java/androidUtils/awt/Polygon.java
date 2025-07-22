@@ -39,7 +39,7 @@ public class Polygon extends GeneralPath {
     public Shape copy() {
        Polygon path = new Polygon();
         path.path = new Path(this.path);
-        point2D = new Point2D.Double(point2D);
+        path.currentPoint = new Point2D.Double(currentPoint);
         return path;
     }
 

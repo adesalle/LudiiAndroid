@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 public class ColorModel {
 
-    Bitmap.Config config;
+    public Bitmap.Config config;
 
     boolean isPremultiplied;
 

@@ -30,7 +30,7 @@ import androidUtils.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import androidUtils.ImageIO;
+import androidUtils.imageio.ImageIO;
 
 //-----------------------------------------------------------------------------
 

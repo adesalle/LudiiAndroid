@@ -3,6 +3,8 @@ package view.container;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Color;
 import android.graphics.Typeface;
+import android.util.Log;
+
 import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;
 import androidUtils.awt.Font;
@@ -29,6 +31,7 @@ import other.topology.Edge;
 import other.topology.Topology;
 import other.topology.TopologyElement;
 import other.topology.Vertex;
+import playerAndroid.app.StartAndroidApp;
 import util.ContainerUtil;
 import util.DeveloperGUI;
 import util.GraphUtil;
@@ -115,6 +118,7 @@ public abstract class BaseContainerStyle implements ContainerStyle
             switch (plane)
             {
                 case BOARD:
+
                     bridge.graphicsRenderer().drawBoard(context, g2d, containerPlacement.unscaledPlacement());
                     break;
                 case TRACK:

@@ -1,5 +1,6 @@
 package manager;
 
+
 import androidUtils.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -102,7 +103,9 @@ public class Referee
      */
     public synchronized void applyHumanMoveToGame(final Manager manager, final Move move)
     {
+
         final Model model = context.model();
+
 
         if (model.isReady())
             if (!nextMove(manager, true))
@@ -171,7 +174,6 @@ public class Referee
         final Model model = context.model();
         if (model.isReady() && !nextMove(manager, true))
         {
-            System.out.println("Waiting on the model: " + move);
             return false;
         }
 
@@ -651,10 +653,12 @@ public class Referee
 
         if (!savedMove)
         {
+
             manager.undoneMoves().clear();
 
             if (manager.settingsNetwork().getActiveGameId() != 0)
             {
+
                 String scoreString = "";
                 if (context.game().requiresScore())
                     for (int i = 1; i <= context.game().players().count(); i++)

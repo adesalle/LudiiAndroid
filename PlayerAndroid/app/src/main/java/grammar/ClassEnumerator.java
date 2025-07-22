@@ -3,6 +3,8 @@ package grammar;
 // From: https://github.com/ddopson/java-class-enumerator
 // Reference: https://stackoverflow.com/questions/10119956/getting-class-by-its-name
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -14,6 +16,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import dalvik.system.DexFile;
+import playerAndroid.app.StartAndroidApp;
 
 //-----------------------------------------------------------------------------
 
@@ -137,42 +142,33 @@ public class ClassEnumerator {
      * @return The list of the classes.
      */
     public static List<Class<?>> getClassesForPackage(final Package pkg) {
-        final ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+        String packageName = pkg.getName();
+        List<Class<?>> classes = new ArrayList<>();
+        try {
+            Context context = StartAndroidApp.getAppContext();
+            // Get the source path of the APK
+            String apkPath = context.getPackageCodePath();
 
-        //Get name of package and turn it to a relative path
-        final String pkgname = pkg.getName();
-        final String relPath = pkgname.replace('.', '/');
+            // Load the APK as a DexFile
+            DexFile dexFile = new DexFile(apkPath);
+            Enumeration<String> classNames = dexFile.entries();
 
-        // **
-        // ** The following code fails when looking for path in web archive.
-        // **
-        //final URL url = ClassLoader.getSystemClassLoader().getResource(relPath);
+            while (classNames.hasMoreElements()) {
+                String className = classNames.nextElement();
 
-        final URL url = ClassEnumerator.class.getClassLoader().getResource(relPath);
-
-        //System.out.println("pkg=" + pkg + ", relPath=" + relPath + ", url=" + url);
-
-        // If the resource is a jar get all classes from jar
-        if (url.getPath().contains(".jar")) {
-            try
-                    (
-                            final JarFile jarFile = new JarFile
-                                    (
-                                            new File(ClassEnumerator.class.getProtectionDomain().getCodeSource().getLocation().toURI()))
-                    ) {
-                classes.addAll(processJarfile(jarFile, pkgname));
-            } catch (final IOException | URISyntaxException e) {
-                throw new RuntimeException("Unexpected problem with JAR file for: " + relPath);
+                // Check if the class is inside the requested package
+                if (className.startsWith(packageName)) {
+                    try {
+                        classes.add(Class.forName(className));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        } else {
-            try {
-                classes.addAll(processDirectory(new File(URLDecoder.decode(url.getPath(), "UTF-8")), pkgname));
-            } catch (final UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return classes;
     }
-
 }
+

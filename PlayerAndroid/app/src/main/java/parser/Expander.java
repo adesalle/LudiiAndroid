@@ -69,14 +69,12 @@ public class Expander {
             //System.out.println("+++++++++++++++++++++\nExpanding:\n" + description.raw());
             report.addLogLine("+++++++++++++++++++++\nExpanding:\n" + description.raw());
         }
-
         String str = new String(description.raw());
 
         // Remove comments before any expansions
         str = removeComments(str);
 
         checkDefineCase(str, report);
-
         // Must realise options before expanding defines -- not sure why
         str = realiseOptions(str, description, userSelections, report);
         if (report.isError())
@@ -85,7 +83,6 @@ public class Expander {
         str = realiseRulesets(str, description, report);
         if (report.isError())
             return;
-
 //		// Store interim result as the "options expanded" description
 //		String strOptions = cleanUp(str, report); 
 //		if (report.isError())
@@ -112,7 +109,6 @@ public class Expander {
 
         // Do again after expanding defines, as external defines could have comments
         str = removeComments(str);
-
         // Do after expanding defines, as external defines could have ranges
         str = expandRanges(str, report);
         if (report.isError())
@@ -121,7 +117,6 @@ public class Expander {
         str = expandSiteRanges(str, report);
         if (report.isError())
             return;
-
         // Do metadata string extraction here rather than in compiler,
         // as the metadata text needs defines and options expanded.
         // Result is stored in expandedMetadataString.
@@ -147,7 +142,6 @@ public class Expander {
 //		System.out.println("Token errors = " + report.isError());
 
         description.setExpanded(new String(description.tokenForest().toString()));  // format tokens nicely
-
 //		System.out.println(description.tokenTree().dump(""));
     }
 
@@ -596,7 +590,9 @@ public class Expander {
             final Map<String, DefineInstances> defineInstances
     ) {
         // Load game AI metadata define (if any)
+
         final Define knownAIDefine = loadKnownAIDefine(strIn, report);
+
         if (report.isError())
             return null;
 
@@ -1079,7 +1075,6 @@ public class Expander {
     ) {
         if (!strIn.contains("(ai") || !strIn.contains("_ai"))
             return null;
-
         Define knownAIDefine = null;
 
         final String gameName = StringRoutines.gameName(strIn);
@@ -1101,11 +1096,14 @@ public class Expander {
         }
 
         final String[] defs = FileHandling.getResourceListingSingle(Expander.class, "def_ai/", aiName + "_ai.def");
+
+
         if (defs == null) {
             // Not a JAR
             try {
                 // Start with known _ai.def file
                 final URL url = Expander.class.getResource("/def_ai/Chess_ai.def");
+
                 String path = new File(url.toURI()).getPath();
                 path = path.substring(0, path.length() - "Chess_ai.def".length());
 

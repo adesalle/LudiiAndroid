@@ -20,6 +20,8 @@ public class ImageUtil {
      * Determines the full file path of a specified image name.
      */
     public static String getImageFullPath(final String imageName) {
+
+        System.out.println("ImageUtil l 24: " + imageName);
         final String imageNameLower = imageName.toLowerCase();
         final String[] svgNames = SVGLoader.listSVGs();
 
@@ -27,11 +29,8 @@ public class ImageUtil {
         for (final String svgName : svgNames) {
             final String sReplaced = svgName.replaceAll(Pattern.quote("\\"), "/");
             final String[] subs = sReplaced.split("/");
-
             if (subs[subs.length - 1].toLowerCase().equals(imageNameLower + ".svg")) {
-                String fullPath = svgName.replaceAll(Pattern.quote("\\"), "/");
-                fullPath = fullPath.substring(fullPath.indexOf("/svg/"));
-                return fullPath;
+                return svgName.replaceAll(Pattern.quote("\\"), "/");
             }
         }
 

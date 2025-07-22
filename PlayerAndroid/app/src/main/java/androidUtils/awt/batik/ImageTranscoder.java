@@ -10,12 +10,8 @@ import com.caverock.androidsvg.SVG;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import androidUtils.awt.Point;
-import androidUtils.awt.RenderingHints;
 import androidUtils.awt.image.BufferedImage;
 
 public abstract class ImageTranscoder {

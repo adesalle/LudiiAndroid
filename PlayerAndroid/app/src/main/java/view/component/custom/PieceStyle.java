@@ -1,5 +1,7 @@
 package view.component.custom;
 
+import android.util.Log;
+
 import androidUtils.awt.Font;
 import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;
@@ -36,7 +38,7 @@ public class PieceStyle extends BaseComponentStyle {
     //----------------------------------------------------------------------------
 
     @Override
-    protected SVGGraphics2D getSVGImageFromFilePath(final SVGGraphics2D g2dOriginal, final Context context, final int imageSize, final String filePath,
+    protected SVGGraphics2D getSVGImageFromFilePath(final SVGGraphics2D g2dOriginal, final Context context, final int imageSize, String filePath,
                                                     final int containerIndex, final int localState, final int value, final int hiddenValue, final int rotation, final boolean secondary) {
         SVGGraphics2D g2d = g2dOriginal;
 
@@ -44,10 +46,12 @@ public class PieceStyle extends BaseComponentStyle {
         final int scaledImageSizeY = (int) (imageSize * scaleY);
         final int scaledGraphicsSize = (int) (imageSize * scale(context, containerIndex, localState, value));
 
-        g2d = getBackground(g2d, context, containerIndex, localState, value, imageSize);
 
+        g2d = getBackground(g2d, context, containerIndex, localState, value, imageSize);
+        Log.i("PieceStyle l 51", "file path = " + filePath);
         if (filePath != null) {
             if (Arrays.asList(ImageConstants.customImageKeywords).contains(filePath)) {
+
                 int posnX = (imageSize - scaledImageSizeX) / 2;
                 int posnY = (imageSize - scaledImageSizeX) / 2;
 
@@ -58,24 +62,31 @@ public class PieceStyle extends BaseComponentStyle {
                     posnY = 0;
 
                 if (filePath.equalsIgnoreCase("ball") || filePath.equalsIgnoreCase("seed")) {
+
                     if (scaledImageSizeX > 1)
                         ImageProcessing.ballImage(g2d, posnX, posnY, scaledImageSizeX / 2, fillColour);
                 } else if (filePath.equalsIgnoreCase("marker")) {
+
                     if (scaledImageSizeX > 1)
                         ImageProcessing.markerImage(g2d, posnX, posnY, scaledImageSizeX / 2, fillColour);
                 } else if (filePath.equalsIgnoreCase("ring")) {
+
                     if (scaledImageSizeX > 1)
                         ImageProcessing.ringImage(g2d, posnX, posnY, scaledImageSizeX, fillColour);
                 } else if (filePath.equalsIgnoreCase("chocolate")) {
+
                     if (scaledImageSizeX > 1)
                         ImageProcessing.chocolateImage(g2d, scaledImageSizeX, 4, fillColour);
                 }
             } else {
+                Log.d("PieceStyle l 82", "here");
+
                 int offsetDistance = 0;
                 if (scaledImageSizeX < imageSize)
                     offsetDistance = (imageSize - scaledImageSizeX) / 2;
 
                 if (showValue.isOffsetImage() || showLocalState.isOffsetImage()) {
+
                     SVGtoImage.loadFromFilePath
                             (
                                     g2d, filePath,
@@ -83,6 +94,7 @@ public class PieceStyle extends BaseComponentStyle {
                                     edgeColour, fillColour, rotation
                             );
                 } else {
+
                     SVGtoImage.loadFromFilePath
                             (
                                     g2d, filePath, new Rectangle(offsetDistance, offsetDistance, scaledImageSizeX, scaledImageSizeY),

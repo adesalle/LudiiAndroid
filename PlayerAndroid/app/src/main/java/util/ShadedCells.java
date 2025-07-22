@@ -1,5 +1,7 @@
 package util;
 
+import android.util.Log;
+
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.GeneralPath;
@@ -66,7 +68,7 @@ public class ShadedCells {
                 case PathIterator.SEG_LINETO:
                     if (highlights.get(side)) {
                         pathLight.moveTo(centre.getX(), centre.getY());
-                        pathLight.lineTo(currX, currY);
+                        //pathLight.lineTo(currX, currY);
                         pathLight.lineTo(coords[0], coords[1]);
                         pathLight.closePath();
                     }

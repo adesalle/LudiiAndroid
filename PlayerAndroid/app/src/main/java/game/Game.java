@@ -3156,7 +3156,7 @@ public class Game extends BaseLudeme implements API, Serializable {
         if (!(context instanceof TempContext) && !trial.over() && context.game().isStochasticGame())
             context.game().moves(context);
 
-        // System.out.println("RETURN MOVE IS " + returnMove);
+        System.out.println("RETURN MOVE IS " + returnMove);
 
         return returnMove;
     }

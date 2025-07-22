@@ -5,8 +5,8 @@ import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;
-
 import app.PlayerApp;
+import playerAndroid.app.StartAndroidApp;
 
 //-----------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ import app.PlayerApp;
  *
  * @author Matthew.Stephenson and cambolbro
  */
-public abstract class View {
+public abstract class View extends android.view.View {
     protected final PlayerApp app;
     private final boolean debug = false;
     /**
@@ -29,6 +29,7 @@ public abstract class View {
      * Constructor.
      */
     public View(final PlayerApp app) {
+        super(StartAndroidApp.getAppContext());
         placement = new Rectangle(0, 0, app.width(), app.height());
         this.app = app;
     }

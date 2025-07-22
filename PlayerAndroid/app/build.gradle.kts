@@ -8,11 +8,10 @@ android {
 
     defaultConfig {
         applicationId = "app.playerandroid"
-        minSdk = 28
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -24,6 +23,8 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+
     }
     packaging {
         resources.pickFirsts.add("org/apache/xmlgraphics/fonts/glyphlist.txt")
@@ -38,6 +39,9 @@ android {
         resources.pickFirsts.add("javax/xml/bind/Messages.properties")
         resources.pickFirsts.add("org/apache/xmlgraphics/image/writer/default-preferred-order.properties")
     }
+    sourceSets {
+        getByName("main").assets.srcDirs("src/main/assets")
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -48,7 +52,6 @@ android {
 
 dependencies {
 
-    implementation(libs.androidsvg.aar)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -66,6 +69,7 @@ dependencies {
     implementation(files("src/main/libs/libPlayer/svgSalamander-1.1.2.jar"))
     implementation(files("src/main/libs/libPlayer/xml-apis-ext-1.3.04.jar"))
     implementation(files("src/main/libs/libPlayer/xmlgraphics-commons-2.3.jar"))
+    implementation(libs.androidsvg)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

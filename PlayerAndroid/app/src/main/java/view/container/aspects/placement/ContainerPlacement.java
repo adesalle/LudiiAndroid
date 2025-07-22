@@ -121,7 +121,7 @@ public class ContainerPlacement {
         try {
             final Point screenPosn = new Point();
             screenPosn.x = (int) (placement.x + posn.getX() * placement.width);
-            screenPosn.y = (int) ((placement.getY() * 2 + placement.height) - (placement.y + posn.getY() * placement.height));
+            screenPosn.y = (int) ((placement.y * 2 + placement.height) - (placement.y + posn.getY() * placement.height));
             return screenPosn;
         } catch (final Exception e) {
             return new Point((int) posn.getX(), (int) posn.getY());

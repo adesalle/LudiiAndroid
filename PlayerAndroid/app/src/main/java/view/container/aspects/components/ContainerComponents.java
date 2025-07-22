@@ -80,7 +80,6 @@ public class ContainerComponents {
         final Container container = containerStyle.container();
         final int cellRadiusPixels = containerStyle.cellRadiusPixels();
         final Moves legal = context.moves(context);
-
         if (container != null && state.containerStates().length > container.index()) {
             if (context.metadata().graphics().replaceComponentsWithFilledCells()) {
                 fillCellsBasedOnOwner(g2d, context);

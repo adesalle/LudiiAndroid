@@ -1,7 +1,6 @@
 package app.utils;
 
 import androidUtils.awt.EventQueue;
-
 import app.PlayerApp;
 import main.grammar.Report.ReportMessenger;
 

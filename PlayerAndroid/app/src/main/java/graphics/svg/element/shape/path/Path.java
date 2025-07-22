@@ -152,6 +152,8 @@ public class Path extends Shape {
         bounds.setRect(x0, y0, x1 - x0, y1 - y0);
     }
 
+
+
     //-------------------------------------------------------------------------
 
     @Override

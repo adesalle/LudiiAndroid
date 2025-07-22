@@ -11,6 +11,7 @@ public class BoardlessStyle extends BoardStyle {
         super(bridge, container);
         final BoardlessPlacement boardlessPlacement = new BoardlessPlacement(bridge, this);
         containerPlacement = boardlessPlacement;
+
         containerDesign = new BoardlessDesign(this, boardlessPlacement);
     }
 

@@ -1,6 +1,9 @@
 package other.action.move;
 
+import android.util.Log;
+
 import java.util.BitSet;
+import java.util.Locale;
 
 import game.Game;
 import game.equipment.component.Component;
@@ -314,6 +317,7 @@ public final class ActionAdd extends BaseAction {
 
         if (currentWhat == 0) {
             cs.setSite(context.state(), to, who, what, count, state, rotation, (game.hasDominoes() ? 1 : value), type);
+
             Component piece = null;
             // to keep the site of the item in cache for each player
             if (what != 0) {

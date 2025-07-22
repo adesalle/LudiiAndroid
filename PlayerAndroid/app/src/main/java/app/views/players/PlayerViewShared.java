@@ -3,7 +3,6 @@ package app.views.players;
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
-
 import app.PlayerApp;
 import other.context.Context;
 

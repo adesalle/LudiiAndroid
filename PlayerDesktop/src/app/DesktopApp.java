@@ -179,9 +179,9 @@ public class DesktopApp extends PlayerApp
 				{
 					final JSONObject json = new JSONObject()
 							.put("AI", new JSONObject()
-							.put("algorithm", "Human")
+									.put("algorithm", "Human")
 							);
-					
+
 					manager().aiSelected()[i] = new AIDetails(manager(), json, i, "Human");
 				}
 				try

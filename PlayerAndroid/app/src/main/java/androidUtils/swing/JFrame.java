@@ -2,122 +2,367 @@ package androidUtils.swing;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.view.Gravity;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
+import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
+
+import androidUtils.awt.BoxLayout;
+import androidUtils.awt.Color;
+import androidUtils.awt.Container;
+import androidUtils.awt.Dimension;
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Layout;
+import androidUtils.awt.image.BufferedImage;
 import androidUtils.awt.event.WindowAdapter;
 import androidUtils.awt.event.WindowEvent;
-import androidUtils.awt.image.BufferedImage;
+import playerAndroid.app.StartAndroidApp;
+import playerAndroid.app.menu.MainMenu;
+import playerAndroid.app.util.SettingsDesktop;
 
-public class JFrame extends Activity {
+public class JFrame extends LinearLayout implements RootPanel{
 
-    private LinearLayout contentPanel;
-
+    protected String title;
     private int closeOperation = WindowConstants.DO_NOTHING_ON_CLOSE;
-
     private WindowAdapter windowListener;
 
-    public JFrame(String name)
-    {
-        setTitle(name);
+    private JPanel contentPane;
+    private JMenuBar menubar;
+    protected JButton defaultButton;
+    private boolean focusTraversalKeysEnabled = true;
+
+    private Layout layout;
+
+    protected JFrame frame = this;
+
+    public JFrame(String title) {
+        super(StartAndroidApp.getAppContext());
+        this.title = title;
+        setOrientation(LinearLayout.VERTICAL);
+
+        // Initialize with proper layout params
+        setLayoutParams(new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
+        ));
+
+        contentPane = new JPanel();
+        contentPane.setLayoutParams(new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
+        ));
+
+        super.addView(contentPane);
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        contentPanel = new LinearLayout(this);
-        contentPanel.setOrientation(LinearLayout.VERTICAL);
 
-        setContentView(contentPanel);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                    OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvokedCallback() {
-                        @Override
-                        public void onBackInvoked() {
-                            if (closeOperation == WindowConstants.DO_NOTHING_ON_CLOSE) {
-
-                            } else {
-                                finish();
-                            }
-                        }
-                    });
-        }
-
+    public JFrame() {
+        this("");
     }
 
-    public void add(Component component) {
-        contentPanel.addView(component);
+    private void init() {
+        // Setup basic frame properties
+        setBackgroundColor(android.graphics.Color.WHITE);
+        // Default layout
+        layout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);
+        setLayout(layout);
     }
 
 
     public void setTitle(String title) {
-        super.setTitle(title);
+        this.title = title;
     }
 
-    public void setContentPane(LinearLayout contentPanel) {
-        this.contentPanel = contentPanel;
-        setContentView(contentPanel);
+    public void setView(Activity activity)
+    {
+        activity.setContentView(this);
     }
 
-    public void setVisible(boolean visible) {
-        if (visible) {
-            super.onStart();
-        } else {
-            super.onStop();
+    public void add(View view, Object constraints)
+    {
+        add(view);
+    }
+
+    public void add(View view)
+    {
+        if(contentPane != null)
+            contentPane.addView(view);
+    }
+
+    public void remove(View view)
+    {
+        if(contentPane != null) contentPane.removeView(view);
+    }
+
+    public void setContentPane(JPanel panel)
+    {
+
+
+        contentPane = panel;
+        if(menubar != null)
+        {
+            removeViewAt(1);
+            addView(contentPane, 1);
+        }
+        else {
+            removeViewAt(0);
+            contentPane.setLayoutParams(new LinearLayoutCompat.LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT
+            ));
+            addView(contentPane, 0);
+        }
+
+        contentPane.setVisibility(View.VISIBLE);
+    }
+
+    public void setJMenuBar(JMenuBar mainMenu) {
+        // Remove any existing menu bar if present
+        if (getChildCount() > 0 && getChildAt(0) instanceof ViewGroup) {
+            View firstChild = getChildAt(0);
+            if (firstChild.getTag() != null && firstChild.getTag().equals("menuBar")) {
+                removeViewAt(0);
+            }
+        }
+
+        if (mainMenu != null) {
+            // Tag the menu view so we can identify it later
+            mainMenu.setTag("menuBar");
+
+            // Add the menu as the first child (top of the frame)
+            addView(mainMenu, 0);
+
+
+            // Set layout params for the menu
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT
+            );
+            mainMenu.setLayoutParams(params);
+            updateContentPaneLayout();
+
         }
     }
 
-    public void setLocationRelativeTo(Object object)
-    {
-        Window window = getWindow();
-        WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.gravity = Gravity.CENTER;
-        window.setAttributes(layoutParams);
+    private void updateContentPaneLayout() {
+        if (contentPane != null) {
+            LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(
+                    LinearLayoutCompat.LayoutParams.MATCH_PARENT,
+                    0,
+                    1f
+            );
+            contentPane.setLayoutParams(params);
+        }
     }
+
+    public void setDefaultButton(JButton button) {
+
+        this.defaultButton = button;
+        if (defaultButton != null) {
+            removeViewAt(2);
+            addView(defaultButton,2);
+        }
+    }
+
+
+
+    public void setVisible(boolean visible) {
+        // Handle visibility via setVisibility
+        setVisibility(visible ? View.VISIBLE : View.GONE);
+
+    }
+
+    public void setLocationRelativeTo(Object object) {
+        // Get the parent of this view
+        ViewGroup parent = (ViewGroup) getParent();
+
+        if (parent != null) {
+            // Create LayoutParams for the parent container
+            ViewGroup.LayoutParams layoutParams = getLayoutParams();
+
+            if (layoutParams instanceof FrameLayout.LayoutParams) {
+                // If the parent is a FrameLayout, use FrameLayout.LayoutParams
+                FrameLayout.LayoutParams frameParams = (FrameLayout.LayoutParams) layoutParams;
+                frameParams.gravity = Gravity.CENTER;
+                setLayoutParams(frameParams);
+            } else if (layoutParams instanceof LinearLayout.LayoutParams) {
+                // If the parent is a LinearLayout, use LinearLayout.LayoutParams
+                LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) layoutParams;
+                linearParams.gravity = Gravity.CENTER;
+                setLayoutParams(linearParams);
+            } else {
+                // Fallback to generic ViewGroup.LayoutParams
+                layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                setLayoutParams(layoutParams);
+            }
+        }
+    }
+
     public void setIconImage(BufferedImage bufferedImage) {
         Bitmap bitmap = bufferedImage.getBitmap();
         setIcon(bitmap);
     }
 
     public void setIcon(Bitmap bitmap) {
-
+        // No direct equivalent, could set an ImageView in the layout
     }
 
     public void setSize(int width, int height) {
-        contentPanel.setLayoutParams(new FrameLayout.LayoutParams(width, height));
+        setRight(getLeft() + width);
+        setBottom(getTop() + height);
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if(params != null)
+        {
+            params.width = width;
+            params.height = height;
+            setLayoutParams(params);
+            return;
+        }
+        setLayoutParams(new LinearLayout.LayoutParams(width, height));
     }
 
-    public void close() {
-        finish();
+    public void setSize(Dimension dimension) {
+
+        setSize(dimension.width, dimension.height);
     }
 
-    private void cleanupResources() {
-    }
-
-    public void dispose() {
-        cleanupResources();
-        finish();
-    }
     public void setDefaultCloseOperation(int operation) {
         this.closeOperation = operation;
     }
-
+    public void setFocusTraversalKeysEnabled(boolean enabled) {
+        this.focusTraversalKeysEnabled = enabled;
+    }
     public void addWindowListener(WindowAdapter windowAdapter) {
         this.windowListener = windowAdapter;
     }
 
     public void triggerWindowClosingEvent() {
         if (windowListener != null) {
-            WindowEvent event = new WindowEvent(WindowEvent.WINDOW_CLOSING);
+            WindowEvent event = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
             windowListener.windowClosing(event);
         }
+    }
+
+    public void setOrientation(int orientation) {
+        super.setOrientation(orientation);
+    }
+
+    public void setGravity(int gravity) {
+        super.setGravity(gravity);
+    }
+
+    public void setBackgroundColor(Color color) {
+        setBackgroundColor(color.toArgb());
+    }
+
+    public void setPadding(int left, int top, int right, int bottom) {
+        setPadding(left, top, right, bottom);
+    }
+
+    public void close() {
+        // Could remove this view from its parent if needed
+    }
+
+    public void dispose() {
+        cleanupResources();
+        close();
+    }
+
+    private void cleanupResources() {
+        // Clean up any resources if needed
+    }
+
+    public void setMinimumSize(Dimension dimension) {
+        setMinimumWidth(dimension.width);
+        setMinimumHeight(dimension.height);
+
+    }
+
+
+    public JMenuBar getJMenuBar() {
+        return menubar;
+    }
+
+    public JPanel getContentPane() {
+        return contentPane;
+    }
+
+    public JButton getDefaultButton() {
+        return defaultButton;
+    }
+
+    public void setResizable(boolean b) {
+
+    }
+
+    public void setLocation(int i, int i1) {
+    }
+
+    public RootPanel getRootPane() {
+        return this;
+    }
+
+    public void dispatchEvent(WindowEvent windowEvent) {
+    }
+
+    public void revalidate() {
+        requestLayout();
+    }
+
+    public void repaint() {
+        invalidate();
+        requestLayout();
+    }
+
+    public void setLayout(Layout borderLayout) {
+        layout = borderLayout;
+        borderLayout.applyLayout(this);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        // Standard layout - don't modify the coordinates
+        super.onLayout(changed, l, t, r, b);
+
+        // Additional layout if needed
+        if (menubar != null) {
+            menubar.measure(
+                    MeasureSpec.makeMeasureSpec(r - l, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            );
+            int menuHeight = menubar.getMeasuredHeight();
+            menubar.layout(l, t, r, t + menuHeight);
+
+            if (contentPane != null) {
+                contentPane.measure(
+                        MeasureSpec.makeMeasureSpec(r - l, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(b - t - menuHeight, MeasureSpec.EXACTLY)
+                );
+                contentPane.layout(l, t + menuHeight, r, b);
+            }
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // Let parent measure first
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        // Now enforce minimum dimensions if needed
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
+
+        width = Math.max(width, SettingsDesktop.defaultWidth);
+        height = Math.max(height, SettingsDesktop.defaultHeight);
+
+
+        setMeasuredDimension(width, height);
     }
 
 }

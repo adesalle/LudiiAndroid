@@ -1,9 +1,10 @@
 package app.move.animation;
 
-import androidUtils.awt.Point;
-import androidUtils.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidUtils.awt.Point;
+import androidUtils.awt.image.BufferedImage;
 
 /**
  * Parameters needed for animating a move.

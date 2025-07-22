@@ -18,7 +18,7 @@ public class BoardPlacement extends ContainerPlacement {
     /**
      * Scale of the board relative to the original placement size (10% margins either side).
      */
-    protected double defaultBoardScale = 0.8;
+    protected double defaultBoardScale = 0.7;
 
     //-------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ public class BoardPlacement extends ContainerPlacement {
 
     @Override
     public void setPlacement(final Context context, final Rectangle placement) {
-        final Point2D.Double boardCenter = new Point2D.Double(0.5, 0.5);
+        final Point2D.Double boardCenter = new Point2D.Double(0.1, 0.1);
 
         if (context.board().defaultSite() == SiteType.Vertex)
             containerScale = defaultBoardScale - cellRadius();

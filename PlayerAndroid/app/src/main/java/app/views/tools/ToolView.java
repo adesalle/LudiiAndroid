@@ -1,11 +1,11 @@
 package app.views.tools;
 
-import androidUtils.awt.Color;
-import androidUtils.awt.Graphics2D;
-import androidUtils.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidUtils.awt.Color;
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Point;
 import app.PlayerApp;
 import app.utils.GameUtil;
 import app.utils.SettingsExhibition;
@@ -53,6 +53,8 @@ public class ToolView extends View {
      * List of buttons.
      */
     public List<ToolButton> buttons = new ArrayList<>();
+
+
 
     // WebApp only
     // public static final int CYCLE_AI_INDEX	 			= 8;
@@ -206,7 +208,12 @@ public class ToolView extends View {
     public void paint(final Graphics2D g2d) {
         for (final ToolButton button : buttons)
             if (button != null)
+            {
                 button.draw(g2d);
+            }
+
+
+
 
         paintDebug(g2d, Color.BLUE);
     }
@@ -246,6 +253,7 @@ public class ToolView extends View {
             }
         }
     }
+
 
     //-------------------------------------------------------------------------
 

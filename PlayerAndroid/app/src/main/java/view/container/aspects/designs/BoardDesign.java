@@ -1,5 +1,7 @@
 package view.container.aspects.designs;
 
+import android.util.Log;
+
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
 import androidUtils.awt.Font;
@@ -36,6 +38,7 @@ import other.topology.Edge;
 import other.topology.Topology;
 import other.topology.TopologyElement;
 import other.topology.Vertex;
+import playerAndroid.app.StartAndroidApp;
 import util.ContainerUtil;
 import util.GraphUtil;
 import util.ShadedCells;
@@ -99,6 +102,7 @@ public class BoardDesign extends ContainerDesign {
     @Override
     public String createSVGImage(final Bridge bridge, final Context context) {
         // Set all values
+
         final SVGGraphics2D g2d = boardStyle.setSVGRenderingValues();
         final double boardLineThickness = boardStyle.cellRadiusPixels() / 15.0;
 
@@ -145,7 +149,7 @@ public class BoardDesign extends ContainerDesign {
 
         // Foreground
         drawGround(g2d, context, false);
-
+        System.out.println(g2d.getSVGDocument());
         return g2d.getSVGDocument();
     }
 
@@ -363,6 +367,7 @@ public class BoardDesign extends ContainerDesign {
                     }
                 }
                 addEdgeToPath(context.game(), path, edge, edge.vA().index() == vertexA.index(), 0);
+
             }
 
             g2d.setColor(colorFillPhase0);
@@ -388,9 +393,13 @@ public class BoardDesign extends ContainerDesign {
             }
 
             if (bridge.settingsVC().flatBoard() || context.game().metadata().graphics().noSunken())
+            {
                 g2d.fill(path);
-            else
+            }
+
+            else {
                 ShadedCells.drawShadedCell(g2d, cell, path, colours, checkeredBoard, topology());
+            }
         }
     }
 
@@ -853,9 +862,13 @@ public class BoardDesign extends ContainerDesign {
             // Draw curve for this edge
             curvePath(game, path, vertexA.centroid(), vertexB.centroid(), tangentA, tangentB, offsetY, curveType);
         } else {
+
             // Draw straight line
+
             final Point ptB = boardStyle.screenPosn(vertexB.centroid());
+
             ptB.setLocation(ptB.x, ptB.y + offsetY);
+
             path.lineTo(ptB.x, ptB.y);
         }
     }
@@ -883,10 +896,10 @@ public class BoardDesign extends ContainerDesign {
         double bby = vBCentroid.getY() + off * dist * tangentB.y();
 
         if (curveType == CurveType.Bezier) {
-            aax = tangentA.x();
-            aay = tangentA.y();
-            bbx = tangentB.x();
-            bby = tangentB.y();
+            aax = vACentroid.getX() + tangentA.x() * dist * off;
+            aay = vACentroid.getY() + tangentA.y() * dist * off;
+            bbx = vBCentroid.getX() + tangentB.x() * dist * off;
+            bby = vBCentroid.getY() + tangentB.y() * dist * off;
         }
 
         final Point ptAA = boardStyle.screenPosn(new Point2D.Double(aax, aay));

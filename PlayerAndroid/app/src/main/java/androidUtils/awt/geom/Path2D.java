@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import  android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
+import android.graphics.RegionIterator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,6 @@ public abstract class Path2D implements Shape {
     {
         protected  Path path;
 
-        protected List<String> pathCommands = new ArrayList<>();
 
         public Float()
         {
@@ -39,8 +40,41 @@ public abstract class Path2D implements Shape {
             path.path = new Path(this.path);
             return path;
         }
-        public void append(Shape shape, boolean b) {
 
+        @Override
+        public Shape createIntersection(Rectangle2D newBounds) {
+            // Crée une nouvelle région pour le path actuel
+            Region currentRegion = new Region();
+            RectF bounds = new RectF();
+            path.computeBounds(bounds, true);
+            currentRegion.setPath(path, new Region((int)bounds.left, (int)bounds.top,
+                    (int)bounds.right, (int)bounds.bottom));
+
+            // Crée une région pour le rectangle de découpage
+            Region clipRegion = new Region();
+            clipRegion.set((int)newBounds.getX(), (int)newBounds.getY(),
+                    (int)(newBounds.getX() + newBounds.getWidth()),
+                    (int)(newBounds.getY() + newBounds.getHeight()));
+
+            // Effectue l'intersection
+            currentRegion.op(clipRegion, Region.Op.INTERSECT);
+
+            // Convertit le résultat en Path
+            Path resultPath = new Path();
+            RegionIterator iter = new RegionIterator(currentRegion);
+            Rect rect = new Rect();
+            while (iter.next(rect)) {
+                resultPath.addRect(rect.left, rect.top, rect.right, rect.bottom, Path.Direction.CW);
+            }
+
+            return new Path2D.Float(resultPath);
+        }
+
+        @Override
+        public Point2D getLocation() {
+            RectF bounds = new RectF();
+            path.computeBounds(bounds, true);
+            return new Point2D.Float(bounds.left, bounds.top);
         }
 
         @SuppressLint("DefaultLocale")
@@ -55,24 +89,10 @@ public abstract class Path2D implements Shape {
                 float x = rect.centerY() + rect.width() / 2;
                 float y = rect.centerY() + rect.height() / 2;
                 path.moveTo(x, y) ;
-                pathCommands.add(String.format("M %f %f", x, y));
 
                 path.addOval(aDouble.getBounds().rectangleBounds, Path.Direction.CW);
             }
-            RectF bounds = aDouble.getBounds().rectangleBounds;
-            float cx = bounds.centerX();
-            float cy = bounds.centerY();
-            float rx = bounds.width() / 2.0f;
-            float ry = bounds.height() / 2.0f;
 
-            float startX = cx + rx;
-            float startY = cy;
-
-            pathCommands.add(String.format("M %f %f", startX, startY));
-            pathCommands.add(String.format("C %f %f %f %f %f %f", cx + rx, cy - ry, cx + rx, cy + ry, cx, cy + ry));
-            pathCommands.add(String.format("C %f %f %f %f %f %f", cx - rx, cy + ry, cx - rx, cy - ry, cx, cy - ry));
-            pathCommands.add(String.format("C %f %f %f %f %f %f", cx - rx, cy - ry, cx - rx, cy + ry, cx, cy + ry));
-            pathCommands.add(String.format("C %f %f %f %f %f %f", cx + rx, cy + ry, cx + rx, cy - ry, startX, startY));
 
 
         }
@@ -89,34 +109,14 @@ public abstract class Path2D implements Shape {
                 float x = rect.centerY() + rect.width() / 2;
                 float y = rect.centerY() + rect.height() / 2;
                 path.moveTo(x, y);
-                pathCommands.add(String.format("M %f %f", x, y));
                 path.arcTo(arc.arc, arc.getStartAngle(),  arc.getEndAngle(), arc.isNotOpen());
             }
-            RectF arcR = arc.getArc();
 
-            float cx = arcR.centerX();
-            float cy = arcR.centerY();
-            float rx = arcR.width() / 2.0f;
-            float ry = arcR.height() / 2.0f;
+        }
 
-            float startAngleRad = (float) Math.toRadians(arc.startAngle);
-            float endAngleRad = (float) Math.toRadians(arc.endAngle);
-
-            float startX = cx + rx * (float) Math.cos(startAngleRad);
-            float startY = cy + ry * (float) Math.sin(startAngleRad);
-
-            float endX = cx + rx * (float) Math.cos(startAngleRad + endAngleRad);
-            float endY = cy + ry * (float) Math.sin(startAngleRad + endAngleRad);
-
-            int endFlag = arc.endAngle > 0 ? 1 : 0;
-
-
-            int largeArcFlag = Math.abs(arc.endAngle) > 180 ? 1 : 0;
-
-            pathCommands.add(String.format(
-                    "M %f %f A %f %f 0 %d %d %f %f",
-                    startX, startY, rx, ry, largeArcFlag, endFlag, endX, endY
-            ));
+        public void append(Shape shape, boolean b) {
+            if(shape instanceof Arc2D.Double) append((Arc2D.Double) shape, b);
+            else if (shape instanceof  Ellipse2D.Double)append((Ellipse2D.Double) shape, b);
 
         }
 
@@ -160,4 +160,7 @@ public abstract class Path2D implements Shape {
     public static Path.FillType WIND_EVEN_ODD = Path.FillType.WINDING;
 
     public static  Path.FillType WIND_NON_ZERO = Path.FillType.EVEN_ODD;
+
+    public static class Double extends Float {
+    }
 }

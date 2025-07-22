@@ -1,5 +1,7 @@
 package view.component;
 
+import android.util.Log;
+
 import androidUtils.awt.Color;
 import androidUtils.awt.Font;
 import androidUtils.awt.Point;
@@ -129,6 +131,8 @@ public abstract class BaseComponentStyle implements ComponentStyle {
 
         String SVGNameLocal = component.getNameWithoutNumber();
         SVGNameLocal = genericMetadataChecks(context, containerIndex, imageState, imageValue);
+        System.out.println(SVGNameLocal);
+
         String SVGPath = ImageUtil.getImageFullPath(SVGNameLocal);
 
         if (drawStringVisuals)

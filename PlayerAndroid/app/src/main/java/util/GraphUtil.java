@@ -1,5 +1,7 @@
 package util;
 
+import android.util.Log;
+
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
 import androidUtils.awt.Point;
@@ -21,6 +23,7 @@ import other.topology.Edge;
 import other.topology.Topology;
 import other.topology.TopologyElement;
 import other.topology.Vertex;
+import playerAndroid.app.StartAndroidApp;
 import view.container.BaseContainerStyle;
 
 /**
@@ -161,6 +164,7 @@ public class GraphUtil {
      * Creates an SVG graph image for a given container style.
      */
     public static String createSVGGraphImage(final BaseContainerStyle boardStyle) {
+
         final SVGGraphics2D g2d = boardStyle.setSVGRenderingValues();
 
         g2d.setBackground(new Color(0, 0, 0, 0));
@@ -211,6 +215,7 @@ public class GraphUtil {
             g2d.fillArc(drawPosn.x - r, drawPosn.y - r, 2 * r + 1, 2 * r + 1, 0, 360);
         }
 
+        StartAndroidApp.setSvgGraphics(g2d);
         return g2d.getSVGDocument();
     }
 
@@ -220,6 +225,7 @@ public class GraphUtil {
      * Creates an SVG connections image for a given container style.
      */
     public static String createSVGConnectionsImage(final BaseContainerStyle boardStyle) {
+
         final SVGGraphics2D g2d = boardStyle.setSVGRenderingValues();
 
         g2d.setBackground(new Color(0, 0, 0, 0));

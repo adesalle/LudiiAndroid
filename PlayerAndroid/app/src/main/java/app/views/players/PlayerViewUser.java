@@ -1,21 +1,20 @@
 package app.views.players;
 
-import androidUtils.awt.BasicStroke;
-import androidUtils.awt.Color;
-import androidUtils.awt.Font;
-import androidUtils.awt.Graphics2D;
-import androidUtils.awt.Point;
-import androidUtils.awt.Rectangle;
-import androidUtils.awt.geom.Point2D;
-import androidUtils.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import androidUtils.awt.BasicStroke;
+import androidUtils.awt.Color;
+import androidUtils.awt.Font;
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Point;
+import androidUtils.awt.Rectangle;
 import androidUtils.awt.SVGGraphics2D;
-
+import androidUtils.awt.geom.Point2D;
+import androidUtils.awt.geom.Rectangle2D;
 import app.PlayerApp;
 import app.utils.GUIUtil;
 import app.utils.SVGUtil;
@@ -62,6 +61,7 @@ public class PlayerViewUser extends View {
      * Container associated with this view.
      */
     Container hand = null;
+
 
     //-------------------------------------------------------------------------
 
@@ -117,6 +117,7 @@ public class PlayerViewUser extends View {
         int componentPushBufferX = 0;
 
         if (!app.settingsPlayer().usingMYOGApp()) {
+
             drawColourSwatch(g2d, mover, winnerNumbers, context);
             drawPlayerName(g2d, mover, winnerNumbers, context);
 
@@ -157,7 +158,7 @@ public class PlayerViewUser extends View {
     private void drawColourSwatch(final Graphics2D g2d, final int mover, final ArrayList<Integer> winnerNumbers, final Context context) {
         g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
 
-        final int discR = (int) (0.275 * placement.height);
+        final int discR = (int) (0.1375 * placement.height);
         final int cx = placement.x + discR;
         final int cy = placement.y + placement.height / 2;
 
@@ -420,6 +421,7 @@ public class PlayerViewUser extends View {
             }
         }
     }
+
 
     //-------------------------------------------------------------------------
 

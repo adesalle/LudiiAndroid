@@ -1,8 +1,8 @@
 package game.util.graph;
 
-import androidUtils.awt.geom.Point2D;
 import java.util.List;
 
+import androidUtils.awt.geom.Point2D;
 import game.types.board.BasisType;
 import game.types.board.ShapeType;
 import game.types.board.SiteType;

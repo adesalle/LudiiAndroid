@@ -1,12 +1,12 @@
 package game.util.graph;
 
-import androidUtils.awt.geom.Point2D;
-import androidUtils.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
+import androidUtils.awt.geom.Point2D;
+import androidUtils.awt.geom.Rectangle2D;
 import annotations.Hide;
 import annotations.Name;
 import annotations.Opt;

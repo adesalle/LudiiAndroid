@@ -1,5 +1,8 @@
 package main;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -22,10 +24,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+
+import androidUtils.ZipManager;
+import playerAndroid.app.StartAndroidApp;
 
 /**
  * Common file handling routines.
@@ -266,20 +272,19 @@ public class FileHandling {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public static String loadTextContentsFromFile(final String filePath) throws FileNotFoundException, IOException {
-        // Load the string from file
-        final StringBuilder sb = new StringBuilder();
-        String line = null;
-        try
-                (
-                        final InputStreamReader isr = new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8);
-                        final BufferedReader bufferedReader = new BufferedReader(isr)
-                ) {
-            while ((line = bufferedReader.readLine()) != null)
-                sb.append(line + "\n");
+    public static String loadTextContentsFromFile(String filePath) throws IOException {
+        Context context = StartAndroidApp.getAppContext();
+        StringBuilder sb = new StringBuilder();
+        try (InputStream is = context.getAssets().open(filePath);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
         }
         return sb.toString();
     }
+
 
     //-------------------------------------------------------------------------
 
@@ -297,66 +302,97 @@ public class FileHandling {
      * @return Just the name of each member item, not the full paths (or actually maybe full paths).
      * @author Greg Briggs
      */
-    public static String[] getResourceListing
-    (
-            final Class<?> cls, final String path, final String filter
-    ) {
+    public static String[] getResourceListing(final Class<?> cls, final String path, final String filter) {
+        Context context = StartAndroidApp.getAppContext();
+        List<String> result = new ArrayList<>();
+        System.out.println("path " +path + " " + filter);
+        try {
+            if (filter.contains(".svg")) {
+                // Recherche dans les SVG décompressés
+
+                File svgDir = ZipManager.getFile(path, filter);
+                if (svgDir.exists()) {
+                    listFilesInDirectory(svgDir, filter, result, path);
+                }
+            } else {
+                // Recherche dans les assets normaux
+                listAssetFiles(context.getAssets(), path, filter, result);
+            }
+
+            if (!result.isEmpty()) {
+                Collections.sort(result);
+                System.out.println(Arrays.toString(result.toArray(new String[0])));
+                return result.toArray(new String[0]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Fallback pour le cas JAR
+        return getJarResourceListing(cls, path, filter);
+    }
+
+    private static void listFilesInDirectory(File dir, String filter, List<String> result, String basePath) {
+        File[] files = dir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+
+            if (file.isDirectory()) {
+                listFilesInDirectory(file, filter, result, basePath);
+            } else if (filter == null || file.getName().endsWith(filter)) {
+                String relativePath = file.getPath();
+                result.add(StartAndroidApp.getRelativePath(relativePath));
+            }
+        }
+    }
+
+    private static void listAssetFiles(AssetManager assetManager, String path, String filter,
+                                       List<String> result) throws IOException {
+        String[] list = assetManager.list(path);
+        if (list == null || list.length == 0) return;
+
+        for (String file : list) {
+            String fullPath = path.isEmpty() ? file : path + "/" + file;
+
+            // Vérifier si c'est un dossier
+            String[] subList = assetManager.list(fullPath);
+            if (subList != null && subList.length > 0) {
+                listAssetFiles(assetManager, fullPath, filter, result);
+            } else if (filter == null || file.endsWith(filter)) {
+                result.add(fullPath);
+            }
+        }
+    }
+    private static String[] getJarResourceListing(final Class<?> cls, final String path, final String filter) {
+        // Implémentation similaire à l'originale pour la compatibilité
         URL dirURL = cls.getClassLoader().getResource(path);
         if (dirURL == null) {
-            // If a jar file, can't find directory, assume the same jar as cls
             final String me = cls.getName().replace(".", "/") + ".class";
             dirURL = cls.getClassLoader().getResource(me);
         }
 
-        if (dirURL != null && dirURL.getProtocol().equals("file")) {
-            // File path: return its contents
+        if (dirURL != null && dirURL.getProtocol().equals("jar")) {
             try {
-                final String dirPath = dirURL.toURI().toString().substring("file:/".length()).replaceAll(Pattern.quote("%20"), " ");
-                final String[] toReturn = listFilesOfType(dirPath, filter).toArray(new String[0]);
+                String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
+                JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+                Enumeration<JarEntry> entries = jar.entries();
+                List<String> result = new ArrayList<>();
 
-                for (int i = 0; i < toReturn.length; ++i) {
-                    toReturn[i] = toReturn[i].replaceAll(Pattern.quote("\\"), "/");
-                    toReturn[i] = "/" + toReturn[i].substring(toReturn[i].indexOf(path));
+                while (entries.hasMoreElements()) {
+                    String filePath = entries.nextElement().getName();
+                    if (filePath.endsWith(filter) && filePath.startsWith(path)) {
+                        result.add(File.separator + filePath);
+                    }
                 }
-
-                return toReturn;
-            } catch (final URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (dirURL.getProtocol().equals("jar")) {
-            // JAR path
-            final String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
-            JarFile jar = null;
-            try {
-                jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-            } catch (final UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-
-            final Enumeration<JarEntry> entries = jar.entries();  //gives all entries in jar
-            final List<String> result = new ArrayList<>();
-
-            while (entries.hasMoreElements()) {
-                final String filePath = entries.nextElement().getName();
-
-                if (filePath.endsWith(filter) && filePath.startsWith(path)) {
-                    result.add(File.separator + filePath);
-                }
-            }
-            try {
                 jar.close();
-            } catch (final IOException e) {
+                Collections.sort(result);
+                return result.toArray(new String[0]);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            Collections.sort(result);
-            return result.toArray(new String[result.size()]);
         }
-        return null;
+        return new String[0];
     }
 
     /**
@@ -370,74 +406,66 @@ public class FileHandling {
      * @return Listing of resources (containing just a single element if we could find it immediately)
      */
     public static String[] getResourceListingSingle(final Class<?> cls, final String path, final String filter) {
+        Context context = StartAndroidApp.getAppContext();
+
+        // 1. Vérifier dans les SVG décompressés
+        if (Objects.equals(filter, ".svg")) {
+
+            File svgFile = ZipManager.getFile(path + filter, filter);
+            if (svgFile.exists()) {
+                return new String[]{path + filter};
+            }
+        }
+
+        // 2. Vérifier dans les assets
+        try {
+            InputStream is = context.getAssets().open(path + filter);
+            is.close();
+            return new String[]{path + filter};
+        } catch (IOException e) {
+            // Fichier non trouvé, continuer
+        }
+
+        // 3. Fallback JAR
+        return getJarResourceListingSingle(cls, path, filter);
+    }
+
+
+    private static String[] getJarResourceListingSingle(final Class<?> cls, final String path, final String filter) {
+        // Implémentation identique à l'originale pour la compatibilité
         URL dirURL = cls.getClassLoader().getResource(path);
         if (dirURL == null) {
-            // If a jar file, can't find directory, assume the same jar as cls
             final String me = cls.getName().replace(".", "/") + ".class";
             dirURL = cls.getClassLoader().getResource(me);
         }
 
-        if (dirURL != null && dirURL.getProtocol().equals("file")) {
-            // File path: return its contents
-            try {
-                final String dirPath = dirURL.toURI().toString().substring("file:/".length()).replaceAll(Pattern.quote("%20"), " ");
+        if (dirURL != null && dirURL.getProtocol().equals("jar")) {
+            final String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
+            try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
 
-                if (new File(dirPath + filter).exists()) {
-                    // We can just return this one file immediately
-                    return new String[]{"/" + path + filter};
+                // Vérifier d'abord le fichier spécifique
+                ZipEntry entry = jar.getEntry(path + filter);
+                if (entry != null) {
+                    return new String[]{File.separator + path + filter};
                 }
 
-                final String[] toReturn = listFilesOfType(dirPath, filter).toArray(new String[0]);
+                // Recherche dans tout le JAR
+                final Enumeration<JarEntry> entries = jar.entries();
+                final List<String> result = new ArrayList<>();
 
-                for (int i = 0; i < toReturn.length; ++i) {
-                    toReturn[i] = toReturn[i].replaceAll(Pattern.quote("\\"), "/");
-                    toReturn[i] = "/" + toReturn[i].substring(toReturn[i].indexOf(path));
+                while (entries.hasMoreElements()) {
+                    final String filePath = entries.nextElement().getName();
+                    if (filePath.endsWith(filter) && filePath.startsWith(path)) {
+                        result.add(File.separator + filePath);
+                    }
                 }
 
-                return toReturn;
-            } catch (final URISyntaxException e) {
+                Collections.sort(result);
+                return result.toArray(new String[0]);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-
-        if (dirURL.getProtocol().equals("jar")) {
-            // JAR path
-            final String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
-            JarFile jar = null;
-            try {
-                jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-            } catch (final UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-
-            final ZipEntry entry = jar.getEntry(path + filter);
-            if (entry != null) {
-                // We'll just immediately return this one
-                return new String[]{File.separator + path + filter};
-            }
-
-            // Search through JAR
-            final Enumeration<JarEntry> entries = jar.entries();  //gives all entries in jar
-            final List<String> result = new ArrayList<>();
-
-            while (entries.hasMoreElements()) {
-                final String filePath = entries.nextElement().getName();
-
-                if (filePath.endsWith(filter) && filePath.startsWith(path)) {
-                    System.out.println("filePath = " + filePath);
-                    result.add(File.separator + filePath);
-                }
-            }
-            try {
-                jar.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-
-            Collections.sort(result);
-            return result.toArray(new String[result.size()]);
         }
 
         return null;
@@ -519,7 +547,6 @@ public class FileHandling {
 
     public static void findEmptyRulesets() {
         final List<String> files = listFilesOfType("/Users/cambolbro/Ludii/dev/Common/res/lud", ".lud");
-        System.out.println(files.size() + " .lud files found.");
 
         for (final String path : files) {
             int c = path.length() - 1;

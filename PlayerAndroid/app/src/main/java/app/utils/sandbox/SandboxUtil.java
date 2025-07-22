@@ -1,7 +1,6 @@
 package app.utils.sandbox;
 
 import androidUtils.awt.EventQueue;
-
 import app.PlayerApp;
 import game.equipment.component.Component;
 import game.rules.play.moves.BaseMoves;

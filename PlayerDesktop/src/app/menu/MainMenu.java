@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
-//import javax.swing.ButtonGroup;
-//import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;

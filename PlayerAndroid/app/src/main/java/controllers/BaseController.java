@@ -79,6 +79,9 @@ public abstract class BaseController implements Controller {
             }
         }
 
+
+
+
         return translateClicktoSite(pt, context, allLocations);
     }
 
@@ -110,9 +113,9 @@ public abstract class BaseController implements Controller {
      */
     protected Location translateClicktoSite(final Point pt, final Context context, final ArrayList<WorldLocation> validLocations) {
         Location location = bridge.graphicsRenderer().locationOfClickedImage(pt);
+
         for (final WorldLocation w : validLocations)
-            if (w.location().equals(location))
-                return location;
+            if (w.location().equals(location)) return location;
 
         location = new FullLocation(Constants.UNDEFINED);
         final ContainerStyle containerStyle = bridge.getContainerStyle(container.index());
@@ -163,10 +166,10 @@ public abstract class BaseController implements Controller {
 
             if (dist < minDist && dist < furthestPossibleDistance) {
                 location = new FullLocation(site, validLocations.get(i).location().level(), validLocations.get(i).location().siteType());
+
                 minDist = dist;
             }
         }
-
         return location;
     }
 

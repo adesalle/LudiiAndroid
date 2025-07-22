@@ -9,6 +9,7 @@ import androidUtils.awt.geom.Ellipse2D;
 import androidUtils.awt.RadialGradientPaint;
 import java.awt.Shape;
 import androidUtils.awt.geom.GeneralPath;
+import playerAndroid.app.StartAndroidApp;
 
 /**
  * Image processing routines.
@@ -189,6 +190,7 @@ public class ImageProcessing
                     final Color baseColour
             )
     {
+
         //	Create general ball
         final float[] dist = { 0f, 0.25f, 0.4f, 1f};
         final Color[] colors = {Color.WHITE, baseColour, baseColour, Color.BLACK};

@@ -1,21 +1,22 @@
 package app;
 
-import androidUtils.awt.Font;
-import androidUtils.awt.Graphics2D;
-import androidUtils.awt.Color;
-import androidUtils.awt.Point;
-import androidUtils.awt.Rectangle;
-import androidUtils.awt.geom.Point2D;
-import androidUtils.awt.geom.Rectangle2D;
-import androidUtils.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidUtils.awt.Color;
+import androidUtils.awt.Font;
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Point;
+import androidUtils.awt.Rectangle;
 import androidUtils.awt.SVGGraphics2D;
-
+import androidUtils.awt.event.ActionListener;
+import androidUtils.awt.event.ItemListener;
+import androidUtils.awt.geom.Point2D;
+import androidUtils.awt.geom.Rectangle2D;
+import androidUtils.awt.image.BufferedImage;
 import app.move.MoveHandler;
 import app.move.animation.AnimationType;
 import app.move.animation.MoveAnimation;
@@ -58,7 +59,7 @@ import util.StringUtil;
         *
         * @author Matthew.Stephenson
  */
-public abstract class PlayerApp implements PlayerInterface, PlatformGraphics
+public abstract class PlayerApp extends ActionListener implements PlayerInterface, ItemListener, PlatformGraphics
 {
     private final Manager manager = new Manager(this);
     private final Bridge bridge = new Bridge();
@@ -133,6 +134,7 @@ public abstract class PlayerApp implements PlayerInterface, PlatformGraphics
     @Override
     public Location locationOfClickedImage(final Point pt)
     {
+
         final ArrayList<Location> overlappedLocations = new ArrayList<>();
         for (int imageIndex = 0; imageIndex < graphicsCache().allDrawnComponents().size(); imageIndex++)
         {
@@ -167,7 +169,6 @@ public abstract class PlayerApp implements PlayerInterface, PlatformGraphics
             }
             return highestLocation;
         }
-
         return new FullLocation(-1, 0, SiteType.Cell);
     }
 
@@ -185,6 +186,7 @@ public abstract class PlayerApp implements PlayerInterface, PlatformGraphics
     @Override
     public void drawComponent(final Graphics2D g2d, final Context context, final ImageInfo imageInfo)
     {
+
         final State state = context.state();
         final ContainerState cs = state.containerStates()[imageInfo.containerIndex()];
         final int hiddenValue = HiddenUtil.siteHiddenBitsetInteger(context, cs, imageInfo.site(), imageInfo.level(), context.state().mover(), imageInfo.graphElementType());

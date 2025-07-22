@@ -3,7 +3,6 @@ package app.views.tools.buttons;
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.GeneralPath;
-
 import app.PlayerApp;
 import app.utils.TrialUtil;
 import app.views.tools.ToolButton;

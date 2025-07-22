@@ -2,9 +2,9 @@ package androidUtils.awt.image;
 
 public class WritableRaster {
 
-    int width;
-    int height;
-    int[] pixels;
+    public int width;
+    public int height;
+    public int[] pixels;
 
     public WritableRaster(){}
 

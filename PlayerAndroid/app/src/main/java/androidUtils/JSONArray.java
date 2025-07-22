@@ -18,9 +18,21 @@ public class JSONArray implements Iterable<Object>{
         this.array = array;
     }
 
-    public JSONArray (List<Object> list){
+    public <T> JSONArray (List<T> list){
         try {
+
             array = new org.json.JSONArray(list.toArray());
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public String getString(int i){
+        try {
+            return array.getString(i);
         }
         catch (Exception e)
         {
@@ -40,6 +52,7 @@ public class JSONArray implements Iterable<Object>{
         }
         return list;
     }
+
 
     @NonNull
     @Override

@@ -1,8 +1,7 @@
 package utils.experiments;
 
-import androidUtils.awt.GridLayout;
-import androidUtils.swing.action.ActionEvent;
-import androidUtils.swing.action.ActionListener;
+import androidUtils.awt.event.ActionEvent;
+import androidUtils.awt.event.ActionListener;
 import androidUtils.awt.event.WindowAdapter;
 import androidUtils.awt.event.WindowEvent;
 import androidUtils.awt.image.BufferedImage;
@@ -11,7 +10,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.time.LocalDateTime;
 
-import androidUtils.ImageIO;
+import androidUtils.imageio.ImageIO;
 import androidUtils.swing.JButton;
 import androidUtils.swing.JFrame;
 import androidUtils.swing.JPanel;
@@ -99,7 +98,7 @@ public abstract class InterruptableExperiment {
                 e.printStackTrace();
             }
 
-            final JPanel panel = new JPanel(new GridLayout());
+            final JPanel panel = new JPanel();
 
             final JButton interruptButton = new JButton("Interrupt Experiment");
             interruptButton.addActionListener(new ActionListener() {

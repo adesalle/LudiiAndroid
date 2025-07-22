@@ -65,6 +65,16 @@ public abstract class Line2D implements Shape {
         public Shape copy() {
             return new Double(x1, y1, x2, y2);
         }
+
+        @Override
+        public Shape createIntersection(Rectangle2D newBounds) {
+            return null;
+        }
+
+        @Override
+        public Point2D getLocation() {
+            return null;
+        }
     }
     public abstract int getX1();
 

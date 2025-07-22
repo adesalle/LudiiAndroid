@@ -11,9 +11,19 @@ public class Point extends Point2D {
         this.x = x;
         this.y = y;
     }
+
+    public Point(float x, float y) {
+        this.x = (int) x;
+        this.y = (int) y;
+    }
     public Point() {
         this.x = 0;
         this.y = 0;
+    }
+
+    public Point(Point point) {
+        this.x = point.x;
+        this.y = point.y;
     }
 
     @Override
@@ -47,5 +57,13 @@ public class Point extends Point2D {
         double dx = this.x - pt.getX();
         double dy = this.y - pt.getY();
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

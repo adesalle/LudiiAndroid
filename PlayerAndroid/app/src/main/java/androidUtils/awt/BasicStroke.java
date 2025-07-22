@@ -16,7 +16,7 @@ public class BasicStroke implements Stroke{
     float width;
 
     float mitterLimit = 1;
-    float[] dash = new float[0];
+    float[] dash = new float[1];
     float dash_phase = 0;
 
     public BasicStroke(float width, Paint.Cap cap, Paint.Join join)
@@ -24,6 +24,8 @@ public class BasicStroke implements Stroke{
         this.width = width;
         this.cap = cap;
         this.join = join;
+        dash =null;
+        dash_phase = 0;
     }
 
     public BasicStroke(float width)
@@ -31,6 +33,8 @@ public class BasicStroke implements Stroke{
         this.width = width;
         this.cap = CAP_SQUARE;
         this.join = JOIN_MITER;
+        dash = null;
+        dash_phase = 0;
     }
 
     public BasicStroke(float width, Paint.Cap cap, Paint.Join join, float mitterL, float[] dash,float dash_phase) {
@@ -38,6 +42,8 @@ public class BasicStroke implements Stroke{
         this.cap = cap;
         this.join = join;
         mitterLimit = mitterL;
+        this.dash = dash;
+        this.dash_phase = dash_phase;
 
     }
 

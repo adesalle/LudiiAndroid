@@ -1,7 +1,5 @@
 package game.util.graph;
 
-import androidUtils.awt.geom.Point2D;
-import androidUtils.awt.geom.Rectangle2D;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -11,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidUtils.awt.geom.Point2D;
+import androidUtils.awt.geom.Rectangle2D;
 import game.types.board.SiteType;
 import main.Constants;
 import main.math.MathRoutines;

@@ -6,12 +6,18 @@ import androidUtils.awt.geom.Dimension2D;
 
 public class Dimension extends Dimension2D {
 
-    private int width;
-    private int height;
+    public int width;
+    public int height;
     public Dimension(float width, float height) {
         super(width, height);
         this.width = (int) width;
         this.height = (int) height;
+    }
+
+    public Dimension(Dimension dimension) {
+        super(dimension.width, dimension.height);
+        this.width = dimension.width;
+        this.height = dimension.height;
     }
     public float getWidth() {
         return width;

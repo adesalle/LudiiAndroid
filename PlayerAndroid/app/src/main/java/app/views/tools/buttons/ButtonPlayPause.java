@@ -2,7 +2,6 @@ package app.views.tools.buttons;
 
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.GeneralPath;
-
 import app.PlayerApp;
 import app.views.tools.ToolButton;
 import game.types.play.ModeType;

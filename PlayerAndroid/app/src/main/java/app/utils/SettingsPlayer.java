@@ -1,11 +1,11 @@
 package app.utils;
 
-import androidUtils.awt.Point;
-import androidUtils.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
+import androidUtils.awt.Point;
+import androidUtils.awt.Rectangle;
 import app.move.MoveFormat;
 import app.move.animation.AnimationParameters;
 import app.move.animation.MoveAnimation;
