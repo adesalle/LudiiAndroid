@@ -23,22 +23,7 @@ public class JRadioButtonMenuItem extends JMenuItem
         this.isSelected = selected;
     }
 
-    @Override
-    public void setAndroidMenuItem(MenuItem menuItem)
-    {
-        super.setAndroidMenuItem(menuItem);
-        menuItem.setCheckable(true);
-        menuItem.setChecked(isSelected);
 
-        menuItem.setOnMenuItemClickListener(item -> {
-            setSelected(true); // Les radio buttons se sélectionnent mais ne se désélectionnent pas
-            ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText());
-            for (ActionListener listener : actionListeners) {
-                listener.actionPerformed(e);
-            }
-            return true;
-        });
-    }
 
     public void setSelected(boolean selected)
     {
@@ -46,9 +31,6 @@ public class JRadioButtonMenuItem extends JMenuItem
         {
             this.isSelected = selected;
 
-            if (getAndroidMenuItem() != null) {
-                getAndroidMenuItem().setChecked(selected);
-            }
 
             if (selected && buttonGroup != null) {
                 buttonGroup.setSelected(this, true);

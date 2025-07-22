@@ -745,11 +745,11 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        //MainMenuFunctions.checkActionsPerformed(this, e);
+        MainMenuFunctions.checkActionsPerformed(this, e);
     }
 
     @Override
     public void itemStateChanged(final ItemEvent e) {
-        //MainMenuFunctions.checkItemStateChanges(this, e);
+        MainMenuFunctions.checkItemStateChanges(this, e);
     }
 }

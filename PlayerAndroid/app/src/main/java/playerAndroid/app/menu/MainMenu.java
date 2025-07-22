@@ -1219,6 +1219,8 @@ public class MainMenu extends JMenuBar
 		menuItem.setAccelerator(KeyStroke.getKeyStroke('H', CTRL_DOWN_MASK));
 		menuItem.addActionListener(al);
 		menu.add(menuItem);
+
+		setProportionalWeights(true);
 	}
 
 	public void setTag(String menuBar) {

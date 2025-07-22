@@ -95,7 +95,6 @@ public class JMenu extends AppCompatButton implements ViewComponent {
             MenuItem item = menu.subMenu.getItem(i);
             MenuItem newItem = childSubMenu.add(item.getTitle());
             JMenuItem jMenuItem = new JMenuItem(item.getTitle().toString());
-            jMenuItem.setAndroidMenuItem(item);
             newItem.setOnMenuItemClickListener(jMenuItem.getOnMenuItemClickListener());
         }
 
@@ -161,7 +160,6 @@ public class JMenu extends AppCompatButton implements ViewComponent {
 
                 // Gestion des écouteurs
                 JMenuItem tmpItem = new JMenuItem(item.getTitle().toString());
-                tmpItem.setAndroidMenuItem(item);
                 newItem.setOnMenuItemClickListener(tmpItem.getOnMenuItemClickListener());
             }
         }
@@ -209,7 +207,6 @@ public class JMenu extends AppCompatButton implements ViewComponent {
                     MenuItem item = subMenu.getItem(i);
                     MenuItem popupItem = popupMenu.getMenu().add(item.getTitle());
                     JMenuItem itemTmp = new JMenuItem();
-                    itemTmp.setAndroidMenuItem(item);
                     popupItem.setOnMenuItemClickListener(itemTmp.getOnMenuItemClickListener());
                 }
             }

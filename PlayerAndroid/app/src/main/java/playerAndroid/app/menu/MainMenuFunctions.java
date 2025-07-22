@@ -146,10 +146,15 @@ public class MainMenuFunctions extends JMenuBar
 
     public static void checkActionsPerformed(final AndroidApp app, final ActionEvent e)
     {
+
         app.bridge().settingsVC().setSelectedFromLocation(new FullLocation(Constants.UNDEFINED));
         final JMenuItem source = (JMenuItem) (e.getSource());
         final Context context = app.manager().ref().context();
         final Game game = context.game();
+
+        System.out.println("action performed: ");
+        System.out.println(e.getSource());
+        System.out.println(source.getText());
 
         if (source.getText().equals("About"))
         {
@@ -474,6 +479,7 @@ public class MainMenuFunctions extends JMenuBar
         }
         else if (source.getText().equals("Restart"))
         {
+            System.out.println("restart called");
             app.addTextToStatusPanel("-------------------------------------------------\n");
             app.addTextToStatusPanel("Game Restarted.\n");
 
@@ -1872,7 +1878,7 @@ public class MainMenuFunctions extends JMenuBar
         if (depth <= 0)
             return source.getText();
 
-        View currentContainer = source.getView();
+        View currentContainer = source;
         for (int i = 0; i < depth; i++)
             currentContainer = ((JMenu)((JPopupMenu) currentContainer.getParent()).getInvoker());
 

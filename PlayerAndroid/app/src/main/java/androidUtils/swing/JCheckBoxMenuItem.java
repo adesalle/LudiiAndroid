@@ -24,9 +24,7 @@ public class JCheckBoxMenuItem extends JMenuItem {
         this.isSelected = selected;
     }
 
-    @Override
     public void setAndroidMenuItem(MenuItem menuItem) {
-        super.setAndroidMenuItem(menuItem);
         menuItem.setCheckable(true);
         menuItem.setChecked(isSelected);
 
@@ -43,9 +41,6 @@ public class JCheckBoxMenuItem extends JMenuItem {
 
     public void setSelected(boolean selected) {
         this.isSelected = selected;
-        if (getAndroidMenuItem() != null) {
-            getAndroidMenuItem().setChecked(selected);
-        }
         if (checkBoxView != null) {
             checkBoxView.setChecked(selected);
         }

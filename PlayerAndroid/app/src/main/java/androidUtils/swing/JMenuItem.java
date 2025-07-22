@@ -7,11 +7,13 @@ import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatButton;
 
 import androidUtils.awt.Component;
 import androidUtils.awt.Container;
@@ -27,11 +29,10 @@ import playerAndroid.app.StartAndroidApp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JMenuItem extends JComponent implements ViewComponent {
+public class JMenuItem extends AppCompatButton implements ViewComponent{
     private String text;
     private KeyStroke accelerator;
     List<ActionListener> actionListeners = new ArrayList<>();
-    private MenuItem androidMenuItem;
     private Icon icon;
     private Icon disabledIcon;
     private boolean armed = false;
@@ -39,41 +40,47 @@ public class JMenuItem extends JComponent implements ViewComponent {
     private Font currentFont = new Font(Typeface.DEFAULT, 14); // Default font
 
     public JMenuItem(String text) {
-        super();
+        super(StartAndroidApp.getAppContext());
         this.text = text;
+
+        setOnClickListener(v -> fireActionEvent());
+
     }
 
     public JMenuItem() {
-        super();
-        this.text = "";
+        this("");
+    }
+
+
+    // Gestion des événements
+    private void fireActionEvent() {
+        System.out.println("click performed");
+        ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, text);
+        for (ActionListener listener : actionListeners) {
+            listener.actionPerformed(e);
+        }
+    }
+
+    protected void fireStateChanged() {
+        ChangeEvent event = new ChangeEvent(this);
+        for (ChangeListener listener : changeListeners) {
+            listener.stateChanged(event);
+        }
     }
 
     public void setAccelerator(KeyStroke keyStroke) {
         this.accelerator = keyStroke;
-        if (androidMenuItem != null) {
-            updateAndroidMenuItem();
-        }
+
     }
 
     public void setIcon(Icon icon) {
         this.icon = icon;
-        updateAndroidIcon();
     }
 
     public void setDisabledIcon(Icon icon) {
         this.disabledIcon = icon;
-        updateAndroidIcon();
     }
 
-    private void updateAndroidIcon() {
-        if (androidMenuItem != null) {
-            if (!isEnabled() && disabledIcon != null) {
-                androidMenuItem.setIcon(IconToDrawable.convertIconToDrawable(disabledIcon, this));
-            } else {
-                androidMenuItem.setIcon(IconToDrawable.convertIconToDrawable(icon, this));
-            }
-        }
-    }
 
     public void addChangeListener(ChangeListener listener) {
         changeListeners.add(listener);
@@ -83,12 +90,6 @@ public class JMenuItem extends JComponent implements ViewComponent {
         changeListeners.remove(listener);
     }
 
-    protected void fireStateChanged() {
-        ChangeEvent event = new ChangeEvent(this);
-        for (ChangeListener listener : changeListeners) {
-            listener.stateChanged(event);
-        }
-    }
 
     public boolean isArmed() {
         return armed;
@@ -109,42 +110,6 @@ public class JMenuItem extends JComponent implements ViewComponent {
         actionListeners.remove(listener);
     }
 
-    public void setAndroidMenuItem(MenuItem menuItem) {
-        this.androidMenuItem = menuItem;
-        updateAndroidMenuItem();
-        updateAndroidFont();
-
-        menuItem.setOnMenuItemClickListener(item -> {
-            ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, text);
-            for (ActionListener listener : actionListeners) {
-                listener.actionPerformed(e);
-            }
-            return true;
-        });
-    }
-
-    private void updateAndroidMenuItem() {
-        if (androidMenuItem == null) return;
-
-        androidMenuItem.setTitle(text);
-
-        if (accelerator != null) {
-            try {
-                char keyChar = (char) accelerator.getKeyCode();
-                int androidModifiers = convertSwingModifiers(accelerator.getModifiers());
-                    androidMenuItem.setShortcut(
-                            keyChar,  // Caractère numérique
-                            keyChar,  // Caractère alphabétique
-                            androidModifiers, // Modificateurs numériques
-                            androidModifiers  // Modificateurs alphabétiques
-                    );
-
-            } catch (Exception e) {
-                Log.e("JMenuItem", "Error setting shortcut", e);
-                androidMenuItem.setTitle(androidMenuItem.getTitle() + " (" + getShortcutString() + ")");
-            }
-        }
-    }
 
     private int convertSwingModifiers(int swingModifiers) {
         int androidModifiers = 0;
@@ -185,9 +150,7 @@ public class JMenuItem extends JComponent implements ViewComponent {
 
     public void setText(String text) {
         this.text = text;
-        if (androidMenuItem != null) {
-            androidMenuItem.setTitle(text);
-        }
+        super.setText(text);
     }
 
     public MenuItem.OnMenuItemClickListener getMenuItemClickListener() {
@@ -200,17 +163,14 @@ public class JMenuItem extends JComponent implements ViewComponent {
         };
     }
 
-    public MenuItem getAndroidMenuItem() {
-        return androidMenuItem;
-    }
+
 
     public KeyStroke getAccelerator() {
         return accelerator;
     }
 
     public void setToolTipText(String s) {
-        if(androidMenuItem != null)
-            androidMenuItem.setTooltipText(s);
+        super.setTooltipText(s);
 
     }
 
@@ -219,10 +179,8 @@ public class JMenuItem extends JComponent implements ViewComponent {
     }
 
     public void setEnabled(boolean b) {
-        if (androidMenuItem != null) {
-            androidMenuItem.setEnabled(b);
-        }
-        updateAndroidIcon();
+        super.setEnabled(b);
+
     }
 
     @Override
@@ -234,9 +192,8 @@ public class JMenuItem extends JComponent implements ViewComponent {
     }
 
     private void updateAndroidFont() {
-        if (androidMenuItem != null) {
             // Find the TextView in the menu item
-            View actionView = androidMenuItem.getActionView();
+            View actionView = this;
             if (actionView instanceof ViewGroup) {
                 TextView textView = findTextView((ViewGroup) actionView);
                 if (textView != null) {
@@ -244,7 +201,7 @@ public class JMenuItem extends JComponent implements ViewComponent {
                     textView.setTextSize(currentFont.getSize());
                 }
             }
-        }
+
     }
 
     private TextView findTextView(ViewGroup viewGroup) {
@@ -298,11 +255,10 @@ public class JMenuItem extends JComponent implements ViewComponent {
 
     @Override
     public void setPreferredSize(Dimension dimension) {
-        if (androidMenuItem != null && androidMenuItem.getActionView() != null) {
-            View actionView = androidMenuItem.getActionView();
+            View actionView = this;
             actionView.setMinimumWidth(dimension.width);
             actionView.setMinimumHeight(dimension.height);
-        }
+
     }
 
     @Override
@@ -313,10 +269,14 @@ public class JMenuItem extends JComponent implements ViewComponent {
 
     @Override
     public Dimension getSize() {
-        if (androidMenuItem != null && androidMenuItem.getActionView() != null) {
-            View actionView = androidMenuItem.getActionView();
-            return new Dimension(actionView.getWidth(), actionView.getHeight());
-        }
-        return new Dimension(0, 0);
+        View actionView = this;
+        return new Dimension(actionView.getWidth(), actionView.getHeight());
+
     }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
+    }
+
 }

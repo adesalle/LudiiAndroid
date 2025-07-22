@@ -7,22 +7,30 @@ import androidUtils.awt.Color;
 
 public class LeftLineDrawable extends Drawable {
     private final Paint paint;
-    private final int width;
+    private final int borderWidth;
+    private final int textPadding;
 
-    public LeftLineDrawable(Color color, int width) {
-        this.width = width;
+    public LeftLineDrawable(Color color, int borderWidth) {
+        this(color, borderWidth, 0);
+    }
+
+    public LeftLineDrawable(Color color, int borderWidth, int textPadding) {
+        this.borderWidth = borderWidth;
+        this.textPadding = textPadding;
         this.paint = new Paint();
         paint.setColor(color.toArgb());
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(width);
+        paint.setStrokeWidth(borderWidth);
         paint.setAntiAlias(true);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawLine(getBounds().right, 0, getBounds().right, getBounds().bottom, paint);
-        //canvas.drawRect(0, 0, getBounds().width(), getBounds().height(), paint);
+        // Dessine la ligne en tenant compte du padding texte
+        float x = textPadding + (borderWidth / 2f);
+        canvas.drawLine(x, 0, x, getBounds().bottom, paint);
     }
+
 
     @Override
     public void setAlpha(int alpha) {
