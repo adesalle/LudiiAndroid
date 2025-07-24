@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class FileHandling {
     public static String[] listGames() {
         if (gamesList == null) {
             // Try loading from JAR file
-            String[] choices = FileHandling.getResourceListing(FileHandling.class, "lud/", ".lud");
+            String[] choices = FileHandling.getResourceListing(FileHandling.class, "lud", ".lud");
 
             final List<String> names = new ArrayList<>();
             if (choices == null) {
@@ -275,14 +276,34 @@ public class FileHandling {
     public static String loadTextContentsFromFile(String filePath) throws IOException {
         Context context = StartAndroidApp.getAppContext();
         StringBuilder sb = new StringBuilder();
-        try (InputStream is = context.getAssets().open(filePath);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
+
+        // Cas 1: Fichier dans le dossier assets (débutant par "assets/")
+        if (filePath.startsWith("assets/")) {
+            try (InputStream is = context.getAssets().open(filePath.replace("assets/", ""));
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
             }
+            return sb.toString();
         }
-        return sb.toString();
+
+        // Cas 2: Fichier dans le stockage externe (chemin absolu)
+        File file = new File(filePath);
+        if (file.exists()) {
+            try (InputStream is = Files.newInputStream(file.toPath());
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+            }
+            return sb.toString();
+        }
+
+        // Cas 3: Fichier non trouvé
+        throw new FileNotFoundException("Fichier non trouvé: " + filePath);
     }
 
 

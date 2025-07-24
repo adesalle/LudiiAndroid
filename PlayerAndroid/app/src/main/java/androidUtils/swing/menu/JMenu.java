@@ -7,21 +7,47 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import playerAndroid.app.StartAndroidApp;
 
 public class JMenu implements Menu {
     private final Context context;
     private final List<JMenuItem> items = new ArrayList<>();
     private boolean qwertyMode = true;
+    private JPopupMenu popupMenu;
+    private String title;
+    private Object parent = null;
+
+    public JMenu(String title) {
+        this(StartAndroidApp.getAppContext());
+        this.title = title;
+    }
+
+    public JMenu() {
+        this(StartAndroidApp.getAppContext());
+    }
 
     public JMenu(Context context) {
         this.context = context;
+        this.popupMenu = new JPopupMenu(context, this);
     }
 
-    public JMenuItem add(JMenuItem menuItem)
-    {
+
+    public JMenu add(JMenu subMenu) {
+        JMenuItem item = new JMenuItem(subMenu.getTitle());
+        if(!(subMenu instanceof JSubMenu)) subMenu = new JSubMenu(subMenu, item);
+        item.setSubMenu((JSubMenu) subMenu);
+        items.add(item);
+        return subMenu;
+    }
+
+    public JMenuItem add(JMenuItem menuItem) {
         items.add(menuItem);
+        menuItem.setParent(this);
         return menuItem;
     }
 
@@ -42,6 +68,7 @@ public class JMenu implements Menu {
         item.setItemId(itemId);
         item.setOrder(order);
         item.setTitle(title);
+        item.setParent(this);
         return add(item);
     }
 
@@ -65,6 +92,8 @@ public class JMenu implements Menu {
         JMenuItem item = (JMenuItem) add(groupId, itemId, order, title);
         JSubMenu subMenu = new JSubMenu(context, item);
         item.setSubMenu(subMenu);
+        subMenu.setParent(item);
+        item.setParent(this);
         return subMenu;
     }
 
@@ -183,7 +212,6 @@ public class JMenu implements Menu {
 
     @Override
     public void close() {
-        // Fermer les sous-menus ouverts
         for (JMenuItem item : items) {
             if (item.hasSubMenu()) {
                 item.getSubMenu().close();
@@ -217,10 +245,7 @@ public class JMenu implements Menu {
 
     @Override
     public boolean performIdentifierAction(int id, int flags) {
-        JMenuItem item = (JMenuItem) findItem(id);
-        if (item != null && item.isEnabled()) {
-            return item.performClick();
-        }
+
         return false;
     }
 
@@ -229,9 +254,57 @@ public class JMenu implements Menu {
         this.qwertyMode = isQwerty;
     }
 
-    // Méthodes utilitaires supplémentaires
     public List<JMenuItem> getItems() {
         return new ArrayList<>(items);
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void addSeparator() {
+        // Méthode laissée vide intentionnellement selon les spécifications
+    }
+
+    public void add(JSeparator separator)
+    {
+
+    }
+
+    public void showMenuPopup(View anchor) {
+        popupMenu.showAsDropDown(anchor);
+    }
+
+    public void dismissPopupMenu()
+    {
+        popupMenu.dismiss();
+    }
+
+    public JPopupMenu getPopupMenu() {
+        return popupMenu;
+    }
+
+    public void removeAll() {
+        items.clear();
+    }
+
+    public void setToolTipText(String description) {
+    }
+
+    public void setParent(Object parent)
+    {
+        this.parent = parent;
+    }
+
+    public Object getParent() {
+        return parent;
+    }
+
+    public String getText() {
+        return getTitle();
+    }
 }

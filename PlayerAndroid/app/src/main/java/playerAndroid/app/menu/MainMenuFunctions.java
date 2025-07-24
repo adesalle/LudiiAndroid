@@ -4,7 +4,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
-import android.view.ViewGroup;
 
 
 import java.io.BufferedReader;
@@ -39,12 +38,13 @@ import agentPrediction.internal.models.LinearRegression;
 import androidUtils.awt.EventQueue;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.image.BufferedImage;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JMenuBar;
-import androidUtils.swing.JMenuItem;
 import androidUtils.swing.JOptionPane;
 
-import androidUtils.swing.JPopupMenu;
+import androidUtils.swing.menu.JMenu;
+import androidUtils.swing.menu.JMenuBar;
+import androidUtils.swing.menu.JMenuItem;
+import androidUtils.swing.menu.JPopupMenu;
+import androidUtils.swing.menu.JSubMenu;
 import compiler.Compiler;
 import playerAndroid.app.AndroidApp;
 import app.PlayerApp;
@@ -206,6 +206,7 @@ public class MainMenuFunctions extends JMenuBar
             {
                 app.manager().settingsManager().setAgentsPaused(app.manager(), true);
             }
+            System.out.println("loading begin");
             GameLoading.loadGameFromFile(app);
         }
         else if (source.getText().equals("Load Random Game"))
@@ -1469,7 +1470,7 @@ public class MainMenuFunctions extends JMenuBar
         {
             ReconstructionDialog.createAndShowGUI(app);
         }
-        else if (((JMenu)((JPopupMenu) source.getParent()).getInvoker()).getText().equals("Load Recent"))
+        else if (((JMenu)((JSubMenu) source.getParent()).getInvoker()).getText().equals("Load Recent"))
         {
             // Check if a recent game has been selected
             try
@@ -1878,11 +1879,17 @@ public class MainMenuFunctions extends JMenuBar
         if (depth <= 0)
             return source.getText();
 
-        View currentContainer = source;
-        for (int i = 0; i < depth; i++)
-            currentContainer = ((JMenu)((JPopupMenu) currentContainer.getParent()).getInvoker());
+        JMenuItem currentContainer = source;
+        if(currentContainer.getParent() != null)
+        {
+            JMenu nextContainer = ((JMenu)((JPopupMenu) currentContainer.getParent()).getInvoker());
+            for (int i = 0; i < depth; i++)
+                nextContainer = ((JMenu)((JPopupMenu) currentContainer.getParent()).getInvoker());
 
-        return ((JMenu)currentContainer).getText();
+            return ((JMenu)nextContainer).getText();
+        }
+        return currentContainer.getText();
+
     }
 
     public static StartVisualEditor getStartVisualEditor()

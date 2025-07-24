@@ -20,7 +20,7 @@ import util.PlaneType;
 public final class BoardView extends View {
 
     // maximum percentage of application display width that board can take up
-    private final double boardToSizeRatio = 1.0;
+    private final double boardToSizeRatio = 0.8;
 
     /**
      * Size of the board.

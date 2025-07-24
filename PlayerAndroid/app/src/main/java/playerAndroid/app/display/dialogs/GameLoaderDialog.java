@@ -1,9 +1,13 @@
 package playerAndroid.app.display.dialogs;
 
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Window;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -54,6 +58,7 @@ import androidUtils.swing.tree.TreeSelectionModel;
 import main.AliasesData;
 import main.FileHandling;
 import playerAndroid.app.AndroidApp;
+import playerAndroid.app.StartAndroidApp;
 
 /**
  * Class for showing a dialog to choose a game to load.
@@ -349,17 +354,16 @@ public class GameLoaderDialog
 			}
 		);
 
-		// finally we can create our dialog
-		final URL iconURL = AndroidApp.class.getResource("/ludii-logo-100x100.png");
-		BufferedImage image = null;
-		try
-		{
-			image = ImageIO.read(iconURL);
-		}
-		catch (final IOException e)
-		{
-			e.printStackTrace();
-		}
+		AssetManager manager = StartAndroidApp.getAppContext().getAssets();
+        final InputStream resource;
+        try {
+            resource = manager.open("img/ludii-logo-100x100.png");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        final Bitmap btp = BitmapFactory.decodeStream(resource);
+		final BufferedImage image = new BufferedImage(btp);
+
 		final JOptionPane pane =
 				new JOptionPane
 				(

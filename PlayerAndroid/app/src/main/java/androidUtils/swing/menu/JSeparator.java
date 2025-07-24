@@ -1,12 +1,12 @@
-package androidUtils.swing;
+package androidUtils.swing.menu;
 
 import android.graphics.Canvas;
 
 import android.graphics.Paint;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidUtils.awt.Color;
+import androidUtils.swing.SwingConstants;
 import playerAndroid.app.StartAndroidApp;
 
 public class JSeparator extends View {

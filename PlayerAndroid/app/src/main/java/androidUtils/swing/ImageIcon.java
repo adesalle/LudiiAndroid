@@ -18,6 +18,7 @@ import androidUtils.awt.image.BufferedImage;
 import playerAndroid.app.StartAndroidApp;
 
 import java.io.InputStream;
+import java.net.URL;
 
 public class ImageIcon implements Icon {
     private Bitmap bitmap;
@@ -29,6 +30,7 @@ public class ImageIcon implements Icon {
     // Constructeurs
     public ImageIcon() {
     }
+
 
     public ImageIcon(String filename) {
         this(StartAndroidApp.getAppContext(), filename);

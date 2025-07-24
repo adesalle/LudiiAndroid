@@ -159,7 +159,7 @@ public class MouseHandler {
         // If not valid legal location was found, just use the closest site to what they clicked.
         if (clickedLocation.equals(new FullLocation(Constants.UNDEFINED)))
             clickedLocation = LocationUtil.calculateNearestLocation(context, app.bridge(), point, LocationUtil.getAllLocations(context, app.bridge()));
-        System.out.println("clickedLocation " + clickedLocation);
+
         app.bridge().settingsVC().setLastClickedSite(clickedLocation);
         app.repaint();
     }

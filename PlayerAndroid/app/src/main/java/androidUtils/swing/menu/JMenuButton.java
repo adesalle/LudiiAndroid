@@ -1,12 +1,27 @@
 package androidUtils.swing.menu;
 
 import android.content.Context;
-import android.widget.Button;
 
-public class JMenuButton extends androidx.appcompat.widget.AppCompatButton {
-    public JMenuButton(Context context) {
+import androidx.appcompat.widget.AppCompatButton;
+
+public class JMenuButton extends AppCompatButton {
+    private JMenu menu;
+
+    public JMenuButton(Context context, JMenu menu) {
         super(context);
-        setAllCaps(false);
-        setTextSize(16);
+        this.menu = menu;
+        setMinWidth(0);
+        setMinHeight(0);
+        setPadding(4, 4, 4, 4);
+        init();
+    }
+
+    private void init() {
+        setOnClickListener(v -> {
+            // Affiche le menu contextuel attaché
+            if (menu != null && menu.getPopupMenu() != null) {
+                menu.getPopupMenu().showAsDropDown(this);
+            }
+        });
     }
 }

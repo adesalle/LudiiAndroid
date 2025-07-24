@@ -1,8 +1,6 @@
 package playerAndroid.app.display.dialogs.visual_editor.view.components.ludemenodecomponent;
 
 
-import static androidx.core.view.ViewKt.isVisible;
-
 import androidUtils.awt.BorderLayout;
 import androidUtils.awt.Color;
 import androidUtils.awt.Dimension;
@@ -14,7 +12,7 @@ import androidUtils.awt.event.MouseListener;
 import androidUtils.awt.event.MouseMotionListener;
 import androidUtils.swing.JPanel;
 
-import androidUtils.swing.JPopupMenu;
+import androidUtils.swing.menu.JPopupMenu;
 import main.grammar.Symbol;
 import playerAndroid.app.display.dialogs.visual_editor.handler.Handler;
 import playerAndroid.app.display.dialogs.visual_editor.model.LudemeNode;

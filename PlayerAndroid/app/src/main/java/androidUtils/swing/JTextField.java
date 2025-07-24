@@ -24,7 +24,6 @@ import androidUtils.swing.event.EventType;
 import androidUtils.swing.text.Document;
 import androidUtils.swing.text.HTMLDocument;
 import playerAndroid.app.StartAndroidApp;
-import playerAndroid.app.display.dialogs.util.MaxLengthTextDocument;
 
 public class JTextField extends androidx.appcompat.widget.AppCompatEditText implements ViewComponent {
     private static final float DEFAULT_CHAR_WIDTH = 10f;
@@ -211,7 +210,8 @@ public class JTextField extends androidx.appcompat.widget.AppCompatEditText impl
         });
     }
 
-    public void setDocument(MaxLengthTextDocument maxLength1) {
+    public void setDocument(Document maxLength1) {
+
 
     }
 

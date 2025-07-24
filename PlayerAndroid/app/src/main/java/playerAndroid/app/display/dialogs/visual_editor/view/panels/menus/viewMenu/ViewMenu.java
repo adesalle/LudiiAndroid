@@ -4,7 +4,7 @@ import java.util.List;
 
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
-import androidUtils.swing.JMenu;
+import androidUtils.swing.menu.JMenu;
 import playerAndroid.app.display.dialogs.visual_editor.handler.Handler;
 import playerAndroid.app.display.dialogs.visual_editor.view.panels.menus.EditorMenuBar;
 

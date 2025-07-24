@@ -22,7 +22,7 @@ import androidUtils.swing.JDialog;
 import androidUtils.swing.JFileChooser;
 import androidUtils.swing.JLabel;
 import androidUtils.swing.JPanel;
-import androidUtils.swing.JSeparator;
+import androidUtils.swing.menu.JSeparator;
 import androidUtils.swing.JSlider;
 import androidUtils.swing.JTextField;
 import androidUtils.swing.SwingConstants;
@@ -88,6 +88,7 @@ public class EvaluationDialog extends JDialog
 	@SuppressWarnings("serial")
 	public EvaluationDialog(final PlayerApp app)
 	{
+		super();
 		final List<Metric> metrics = new Evaluation().dialogMetrics();
 		final ArrayList<Double> weights = new ArrayList<>();
 

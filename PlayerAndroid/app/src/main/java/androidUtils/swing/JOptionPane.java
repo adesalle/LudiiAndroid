@@ -1,349 +1,521 @@
 package androidUtils.swing;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.widget.EditText;
-
+import androidUtils.awt.BorderLayout;
+import androidUtils.awt.event.WindowAdapter;
+import androidUtils.awt.event.WindowEvent;
 import playerAndroid.app.JFrameListener;
 import playerAndroid.app.StartAndroidApp;
 
-public class JOptionPane {
-    // Message type constants
+import android.content.Context;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+
+public class JOptionPane extends  JPanel {
+    // Constantes pour les types de message
     public static final int PLAIN_MESSAGE = -1;
     public static final int ERROR_MESSAGE = 0;
     public static final int INFORMATION_MESSAGE = 1;
     public static final int WARNING_MESSAGE = 2;
     public static final int QUESTION_MESSAGE = 3;
 
-    // Option constants
+    // Constantes pour les types d'options
     public static final int DEFAULT_OPTION = -1;
     public static final int YES_NO_OPTION = 0;
     public static final int YES_NO_CANCEL_OPTION = 1;
     public static final int OK_CANCEL_OPTION = 2;
 
-    // Result constants
+    // Constantes pour les valeurs de retour
     public static final int YES_OPTION = 0;
     public static final int NO_OPTION = 1;
     public static final int CANCEL_OPTION = 2;
     public static final int OK_OPTION = 0;
     public static final int CLOSED_OPTION = -1;
 
-    private Integer value;
-    private JDialog dialog;
 
-    public JOptionPane(Object contentPane, int messageType, int optionType, Object message, Object title, Object icon) {
-        // Constructor implementation if needed
+    // Propriétés
+    private Object message;
+    private int messageType = INFORMATION_MESSAGE;
+    private int optionType = DEFAULT_OPTION;
+    private Object[] options;
+    private Object initialValue;
+    private Object value;
+    private Icon icon;
+    private Object[] selectionValues;
+    private Object inputValue;
+    private Object initialSelectionValue;
+    private boolean wantsInput = false;
+
+    // Constructeurs
+    public JOptionPane() {
+        this("Message");
     }
 
-    public static void showMessageDialog(Object parentComponent, String message) {
-        showMessageDialog(parentComponent, message, "Message", PLAIN_MESSAGE);
+    public JOptionPane(Object message) {
+        this(message, PLAIN_MESSAGE);
     }
 
-    public static void showMessageDialog(Object parentComponent, String message,
-                                         String title, int messageType) {
-        Context context = StartAndroidApp.getAppContext();
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("OK", null);
-
-        setMessageTypeIcon(builder, messageType);
-        builder.show();
-    }
-    public static void showMessageDialog(JFrame frame, String message, String title, int messageType, ImageIcon icon) {
-        Context context = StartAndroidApp.getAppContext();
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("OK", null)
-                .setIcon(icon.getDrawable());
-
-        setMessageTypeIcon(builder, messageType);
-        builder.show();
+    public JOptionPane(Object message, int messageType) {
+        this(message, messageType, DEFAULT_OPTION);
     }
 
-    public static int showConfirmDialog(Object parentComponent, Object message,String title, int option) {
-        return showConfirmDialog(parentComponent, message, title,
-                option, QUESTION_MESSAGE, null);
+    public JOptionPane(Object message, int messageType, int optionType) {
+        this(message, messageType, optionType, null);
     }
 
+    public JOptionPane(Object message, int messageType, int optionType, Icon icon) {
+        this(message, messageType, optionType, icon, null);
+    }
 
-    public static int showConfirmDialog(Object parentComponent, String message,
-                                        String title, int optionType,
-                                        int messageType, Object icon) {
-        Context context = StartAndroidApp.getAppContext();
-        final int[] result = {CLOSED_OPTION};
-        final Object lock = new Object();
+    public JOptionPane(Object message, int messageType, int optionType, Icon icon, Object[] options) {
+        this(message, messageType, optionType, icon, options, null);
+    }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message.toString());
+    public JOptionPane(Object message, int messageType, int optionType, Icon icon, Object[] options, Object initialValue) {
+        super();
+        this.message = message;
+        this.messageType = messageType;
+        this.optionType = optionType;
+        this.icon = icon;
+        this.options = options;
+        this.initialValue = initialValue;
+        this.value = UNINITIALIZED_VALUE;
+    }
 
-        setMessageTypeIcon(builder, messageType);
+    // Méthodes statiques pour afficher des dialogues
+    public static void showMessageDialog(View parentComponent, Object message){
+        showMessageDialog(parentComponent, message, "Message", INFORMATION_MESSAGE);
+    }
 
-        switch (optionType) {
-            case YES_NO_OPTION:
-                builder.setPositiveButton("Yes", (d, w) -> {
-                            result[0] = YES_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNegativeButton("No", (d, w) -> {
-                            result[0] = NO_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        });
-                break;
-            case YES_NO_CANCEL_OPTION:
-                builder.setPositiveButton("Yes", (d, w) -> {
-                            result[0] = YES_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNegativeButton("No", (d, w) -> {
-                            result[0] = NO_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNeutralButton("Cancel", (d, w) -> {
-                            result[0] = CANCEL_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        });
-                break;
-            case OK_CANCEL_OPTION:
-                builder.setPositiveButton("OK", (d, w) -> {
-                            result[0] = OK_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNegativeButton("Cancel", (d, w) -> {
-                            result[0] = CANCEL_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        });
-                break;
-            default:
-                builder.setPositiveButton("OK", (d, w) -> {
-                    result[0] = OK_OPTION;
-                    synchronized (lock) { lock.notifyAll(); }
-                });
+    public static void showMessageDialog(View parentComponent, Object message, String title, int messageType){
+        showMessageDialog(parentComponent, message, title, messageType, null);
+    }
+
+    public static void showMessageDialog(View parentComponent, Object message, String title, int messageType, Icon icon){
+        JOptionPane pane = new JOptionPane(message, messageType, DEFAULT_OPTION, icon);
+        pane.createDialog(parentComponent, title).show();
+    }
+
+    public static int showConfirmDialog(View parentComponent, Object message){
+        return showConfirmDialog(parentComponent, message, "Select an Option", YES_NO_CANCEL_OPTION);
+    }
+
+    public static int showConfirmDialog(View parentComponent, Object message, String title, int optionType){
+        return showConfirmDialog(parentComponent, message, title, optionType, QUESTION_MESSAGE);
+    }
+
+    public static int showConfirmDialog(View parentComponent, Object message, String title, int optionType, int messageType){
+        return showConfirmDialog(parentComponent, message, title, optionType, messageType, null);
+    }
+
+    public static int showConfirmDialog(View parentComponent, Object message, String title, int optionType, int messageType, Icon icon){
+        JOptionPane pane = new JOptionPane(message, messageType, optionType, icon);
+        JDialog dialog = pane.createDialog(parentComponent, title);
+        dialog.show();
+        Object value = pane.getValue();
+
+        if (value == null) {
+            return CLOSED_OPTION;
         }
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnDismissListener(d -> {
-            synchronized (lock) { lock.notifyAll(); }
-        });
-
-        // Pour les dialogues modaux
-        if (parentComponent instanceof JFrame) {
-            dialog.setOwnerActivity(StartAndroidApp.startAndroidApp());
+        if (value instanceof Integer) {
+            return (Integer) value;
         }
+        return CLOSED_OPTION;
+    }
 
+    public static String showInputDialog(View parentComponent, Object message) {
+        return showInputDialog(parentComponent, message, "Input", QUESTION_MESSAGE);
+    }
+
+    public static String showInputDialog(Object message) {
+        return showInputDialog(null, message, "Input", QUESTION_MESSAGE);
+    }
+
+
+    public static String showInputDialog(View parentComponent, Object message, String title, int messageType) {
+        JOptionPane pane = new JOptionPane(message, messageType, OK_CANCEL_OPTION);
+        pane.setWantsInput(true);
+        JDialog dialog = pane.createDialog(parentComponent, title);
+        dialog.show();
+        Object value = pane.getInputValue();
+        return (value != null) ? value.toString() : null;
+    }
+
+    public static Object showInputDialog(View frame, String aiClasses, String s, int questionMessage, ImageIcon icon, String[] choices, String choice) {
+        JOptionPane pane = new JOptionPane(aiClasses, questionMessage, OK_CANCEL_OPTION, icon, choices, choice);
+        pane.setWantsInput(true);
+        JDialog dialog = pane.createDialog(frame, s);
+        dialog.setVisible(true);
+
+        Object value = pane.getInputValue();
+        if (value == JOptionPane.UNINITIALIZED_VALUE) {
+            return null;
+        }
+        return value;
+    }
+
+    public static int showOptionDialog(View parentComponent,
+                                       Object message, String title, int optionType, int messageType,
+                                       Icon icon, Object[] options, Object initialValue) {
+
+        // Création du JOptionPane avec les paramètres fournis
+        JOptionPane pane = new JOptionPane(message, messageType, optionType, icon, options, initialValue);
+
+        // Création de la boîte de dialogue
+        JDialog dialog = pane.createDialog(parentComponent, title);
+
+        // Affichage de la boîte de dialogue
         dialog.show();
 
-        // Bloque le thread courant jusqu'à ce que l'utilisateur fasse un choix
-        synchronized (lock) {
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return CLOSED_OPTION;
+        // Récupération de la valeur sélectionnée
+        Object selectedValue = pane.getValue();
+
+        // Traitement de la valeur de retour
+        if (selectedValue == null) {
+            return CLOSED_OPTION;
+        }
+
+        // Si pas d'options personnalisées, retourne directement la valeur
+        if (options == null) {
+            if (selectedValue instanceof Integer) {
+                return (Integer) selectedValue;
+            }
+            return CLOSED_OPTION;
+        }
+
+        // Recherche l'index de l'option sélectionnée
+        for (int i = 0; i < options.length; i++) {
+            if (options[i].equals(selectedValue)) {
+                return i;
             }
         }
 
-        return result[0];
-    }
-
-
-    public static int showConfirmDialog(Object parentComponent, Object message,
-                                        String title, int optionType,
-                                        int messageType, Object icon) {
-        Context context = StartAndroidApp.getAppContext();
-        final int[] result = {CLOSED_OPTION};
-        final Object lock = new Object();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message.toString());
-
-        setMessageTypeIcon(builder, messageType);
-
-        switch (optionType) {
-            case YES_NO_OPTION:
-                builder.setPositiveButton("Yes", (d, w) -> {
-                            result[0] = YES_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNegativeButton("No", (d, w) -> {
-                            result[0] = NO_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        });
-                break;
-            case YES_NO_CANCEL_OPTION:
-                builder.setPositiveButton("Yes", (d, w) -> {
-                            result[0] = YES_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNegativeButton("No", (d, w) -> {
-                            result[0] = NO_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNeutralButton("Cancel", (d, w) -> {
-                            result[0] = CANCEL_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        });
-                break;
-            case OK_CANCEL_OPTION:
-                builder.setPositiveButton("OK", (d, w) -> {
-                            result[0] = OK_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        })
-                        .setNegativeButton("Cancel", (d, w) -> {
-                            result[0] = CANCEL_OPTION;
-                            synchronized (lock) { lock.notifyAll(); }
-                        });
-                break;
-            default:
-                builder.setPositiveButton("OK", (d, w) -> {
-                    result[0] = OK_OPTION;
-                    synchronized (lock) { lock.notifyAll(); }
-                });
-        }
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnDismissListener(d -> {
-            synchronized (lock) { lock.notifyAll(); }
-        });
-
-        dialog.show();
-
-        // Blocking wait to simulate Swing's modal behavior
-        synchronized (lock) {
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return CLOSED_OPTION;
-            }
-        }
-
-        return result[0];
-    }
-
-    public static String showInputDialog(String message) {
-        return showInputDialog(null, message);
-    }
-
-    public static String showInputDialog(Object parentComponent, String message) {
-        Context context = StartAndroidApp.getAppContext();
-        final EditText input = new EditText(context);
-        final String[] result = {null};
-        final Object lock = new Object();
-
-        AlertDialog dialog = new AlertDialog.Builder(context)
-                .setTitle("Input")
-                .setMessage(message)
-                .setView(input)
-                .setPositiveButton("OK", (d, w) -> {
-                    result[0] = input.getText().toString();
-                    synchronized (lock) { lock.notifyAll(); }
-                })
-                .setNegativeButton("Cancel", (d, w) -> {
-                    synchronized (lock) { lock.notifyAll(); }
-                })
-                .create();
-
-        dialog.setOnDismissListener(d -> {
-            synchronized (lock) { lock.notifyAll(); }
-        });
-
-        dialog.show();
-
-        synchronized (lock) {
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return null;
-            }
-        }
-
-        return result[0];
-    }
-
-    private static void setMessageTypeIcon(AlertDialog.Builder builder, int messageType) {
-        // You should replace these with your actual icon resources
-        switch (messageType) {
-            case ERROR_MESSAGE:
-                // builder.setIcon(android.R.drawable.ic_dialog_alert);
-                break;
-            case INFORMATION_MESSAGE:
-                // builder.setIcon(android.R.drawable.ic_dialog_info);
-                break;
-            case WARNING_MESSAGE:
-                // builder.setIcon(android.R.drawable.ic_dialog_warning);
-                break;
-            case QUESTION_MESSAGE:
-                // builder.setIcon(android.R.drawable.ic_dialog_question);
-                break;
-        }
-    }
-
-    public static int showOptionDialog(Object parentComponent, Object message,
-                                       String title, int optionType, int messageType,
-                                       Object icon, Object[] options, Object initialValue) {
-        Context context = StartAndroidApp.getAppContext();
-        final int[] selectedOption = {initialValue instanceof Integer ? (Integer) initialValue : -1};
-        final Object lock = new Object();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message.toString());
-
-        if (options != null && options.length > 0) {
-            CharSequence[] items = new CharSequence[options.length];
-            for (int i = 0; i < options.length; i++) {
-                items[i] = options[i].toString();
-            }
-
-            builder.setSingleChoiceItems(items, selectedOption[0], (dialog, which) -> {
-                selectedOption[0] = which;
-            });
-
-            builder.setPositiveButton("OK", (d, w) -> {
-                synchronized (lock) { lock.notifyAll(); }
-            });
-        }
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnDismissListener(d -> {
-            synchronized (lock) { lock.notifyAll(); }
-        });
-
-        dialog.show();
-
-        synchronized (lock) {
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return CLOSED_OPTION;
-            }
-        }
-
-        return selectedOption[0];
+        return CLOSED_OPTION;
     }
 
 
 
-    public JDialog createDialog(String title) {
-        Context context = StartAndroidApp.getAppContext();
-        this.dialog = new JDialog();
+    // Méthodes d'instance
+    public JDialog createDialog(View parentComponent, String title){
+        JDialog dialog = new JDialog((ViewGroup) parentComponent);
+
+
         dialog.setTitle(title);
-        return this.dialog;
+        
+        setupButtons(dialog);
+
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        initDialog(dialog, -1, parentComponent);
+        return dialog;
+    }
+    public JDialog createDialog(String title){
+        JDialog dialog = new JDialog();
+
+
+        dialog.setTitle(title);
+
+        setupButtons(dialog);
+
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        initDialog(dialog, -1, null);
+        return dialog;
     }
 
-    public void setValue(Integer value) {
+
+    private void initDialog(final JDialog dialog, int style, View parentComponent) {
+        // Android n'a pas de concept de ComponentOrientation comme Swing
+        // On utilise simplement la disposition par défaut
+
+        // Configuration du contenu
+        
+        JPanel contentPane = new JPanel();
+
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(this, BorderLayout.CENTER);
+
+        View messageView = createMessageView();
+        contentPane.addView(messageView);
+
+        // Configuration des boutons
+        setupButtons(dialog, contentPane);
+
+        JScrollPane scrollView = new JScrollPane();
+        scrollView.addView(contentPane);
+        dialog.setContentPane(scrollView);
+        dialog.setResizable(false);
+
+        dialog.pack();
+
+        if (parentComponent != null) {
+            dialog.setLocationRelativeTo(parentComponent);
+        }
+
+        // Gestion des événements
+        final PropertyChangeListener listener = event -> {
+            if (dialog.isShowing() && event.getSource() == this &&
+                    event.getPropertyName().equals("VALUE_PROPERTY") &&
+                    event.getNewValue() != null &&
+                    event.getNewValue() != UNINITIALIZED_VALUE) {
+                dialog.dismiss();
+            }
+        };
+
+        WindowAdapter adapter = new WindowAdapter() {
+            private boolean gotFocus = false;
+
+            @Override
+            public void windowClosing(WindowEvent we) {
+                setValue(null);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                removePropertyChangeListener(listener);
+                contentPane.removeAllViews();
+            }
+            
+        };
+
+        dialog.addWindowListener(adapter);
+        dialog.addWindowFocusListener(adapter);
+
+        // Pas d'équivalent exact pour ComponentListener sur Android
+        // On utilise un callback de visibilité
+        dialog.setOnShowListener(d -> {
+            setValue(UNINITIALIZED_VALUE);
+        });
+
+        addPropertyChangeListener(listener);
+    }
+
+    private void addPropertyChangeListener(PropertyChangeListener listener) {
+    }
+
+    private void removePropertyChangeListener(PropertyChangeListener listener) {
+    }
+
+    // Méthode utilitaire pour configurer les boutons
+    private void setupButtons(JDialog dialog, LinearLayout contentPane) {
+        LinearLayout buttonPanel = new LinearLayout(getContext());
+        buttonPanel.setOrientation(LinearLayout.HORIZONTAL);
+
+        Object[] buttons = getButtonsToShow();
+        for (int i = 0; i < buttons.length; i++) {
+            Button button = new Button(getContext());
+            button.setText(buttons[i].toString());
+            final int returnValue = getReturnValueForButton(i);
+
+            button.setOnClickListener(v -> {
+                setValue(returnValue);
+                dialog.dismiss();
+            });
+
+            buttonPanel.addView(button);
+        }
+
+        contentPane.addView(buttonPanel);
+    }
+    // Crée la vue du message selon son type
+    private View createMessageView() {
+        if (message == null) {
+            return new View(getContext()); // Vue vide
+        }
+
+        // Si le message est déjà une View
+        if (message instanceof View) {
+            return (View) message;
+        }
+
+        // Si le message est un tableau d'objets
+        if (message instanceof Object[]) {
+            return createMessageViewFromArray(getContext(), (Object[]) message);
+        }
+
+        // Par défaut, traitement comme texte
+        TextView textView = new TextView(getContext());
+        textView.setText(message.toString());
+        textView.setGravity(Gravity.CENTER);
+        textView.setPadding(0, 0, 0, 16);
+        return textView;
+    }
+
+    // Crée une vue à partir d'un tableau de messages
+    private View createMessageViewFromArray(Context context, Object[] messages) {
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        for (Object item : messages) {
+            if (item instanceof View) {
+                layout.addView((View) item);
+            } else {
+                TextView textView = new TextView(context);
+                textView.setText(item.toString());
+                textView.setGravity(Gravity.CENTER);
+                layout.addView(textView);
+            }
+        }
+
+        return layout;
+    }
+    private void setupButtons(JDialog dialog) {
+        LinearLayout buttonPanel = new LinearLayout(getContext());
+        buttonPanel.setOrientation(LinearLayout.HORIZONTAL);
+
+        Object[] buttons = getButtonsToShow();
+        for (int i = 0; i < buttons.length; i++) {
+            Button button = new Button(getContext());
+            button.setText(buttons[i].toString());
+            final int returnValue = getReturnValueForButton(i);
+
+            button.setOnClickListener(v -> {
+                setValue(returnValue);
+                dialog.dismiss();
+            });
+
+            buttonPanel.addView(button);
+        }
+
+        dialog.getContentPane().addView(buttonPanel);
+    }
+
+    private Object[] getButtonsToShow() {
+        if (options != null) {
+            return options;
+        }
+
+        switch (optionType) {
+            case YES_NO_OPTION:
+                return new Object[]{"Yes", "No"};
+            case YES_NO_CANCEL_OPTION:
+                return new Object[]{"Yes", "No", "Cancel"};
+            case OK_CANCEL_OPTION:
+                return new Object[]{"OK", "Cancel"};
+            default:
+                return new Object[]{"OK"};
+        }
+    }
+
+    private int getReturnValueForButton(int index) {
+        if (options != null) {
+            return index;
+        }
+
+        switch (optionType) {
+            case YES_NO_OPTION:
+            case YES_NO_CANCEL_OPTION:
+                return (index == 0) ? YES_OPTION : (index == 1) ? NO_OPTION : CANCEL_OPTION;
+            case OK_CANCEL_OPTION:
+                return (index == 0) ? OK_OPTION : CANCEL_OPTION;
+            default:
+                return OK_OPTION;
+        }
+    }
+
+    // Getters et Setters
+    public Object getMessage() {
+        return message;
+    }
+
+    public void setMessage(Object message) {
+        this.message = message;
+    }
+
+    public int getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(int messageType) {
+        this.messageType = messageType;
+    }
+
+    public int getOptionType() {
+        return optionType;
+    }
+
+    public void setOptionType(int optionType) {
+        this.optionType = optionType;
+    }
+
+    public Object[] getOptions() {
+        return options;
+    }
+
+    public void setOptions(Object[] options) {
+        this.options = options;
+    }
+
+    public Object getInitialValue() {
+        return initialValue;
+    }
+
+    public void setInitialValue(Object initialValue) {
+        this.initialValue = initialValue;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
         this.value = value;
     }
 
-    public Integer getValue() {
-        return this.value;
+    public Icon getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+    }
+
+    public Object[] getSelectionValues() {
+        return selectionValues;
+    }
+
+    public void setSelectionValues(Object[] selectionValues) {
+        this.selectionValues = selectionValues;
+    }
+
+    public Object getInputValue() {
+        return inputValue;
+    }
+
+    public void setInputValue(Object inputValue) {
+        this.inputValue = inputValue;
+    }
+
+    public Object getInitialSelectionValue() {
+        return initialSelectionValue;
+    }
+
+    public void setInitialSelectionValue(Object initialSelectionValue) {
+        this.initialSelectionValue = initialSelectionValue;
+    }
+
+    public boolean getWantsInput() {
+        return wantsInput;
+    }
+
+    public void setWantsInput(boolean wantsInput) {
+        this.wantsInput = wantsInput;
+    }
+
+
+
+
+    // Valeur spéciale pour indiquer qu'aucune sélection n'a été faite
+    private static final Object UNINITIALIZED_VALUE = "uninitializedValue";
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
     }
 }

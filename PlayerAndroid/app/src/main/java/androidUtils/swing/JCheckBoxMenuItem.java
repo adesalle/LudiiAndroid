@@ -8,6 +8,7 @@ import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.awt.event.ItemEvent;
 import androidUtils.awt.event.ItemListener;
+import androidUtils.swing.menu.JMenuItem;
 import playerAndroid.app.StartAndroidApp;
 
 public class JCheckBoxMenuItem extends JMenuItem {
@@ -28,15 +29,6 @@ public class JCheckBoxMenuItem extends JMenuItem {
         menuItem.setCheckable(true);
         menuItem.setChecked(isSelected);
 
-        // Utilisation d'un OnMenuItemClickListener personnalisé
-        menuItem.setOnMenuItemClickListener(item -> {
-            setSelected(!isSelected);
-            ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getText());
-            for (ActionListener listener : actionListeners) {
-                listener.actionPerformed(e);
-            }
-            return true;
-        });
     }
 
     public void setSelected(boolean selected) {
@@ -71,7 +63,7 @@ public class JCheckBoxMenuItem extends JMenuItem {
     public CheckBox getCheckBoxView() {
         if (checkBoxView == null) {
             checkBoxView = new CheckBox(StartAndroidApp.getAppContext());
-            checkBoxView.setText(getText());
+            checkBoxView.setText(getTitle());
             checkBoxView.setChecked(isSelected);
             checkBoxView.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 setSelected(isChecked);

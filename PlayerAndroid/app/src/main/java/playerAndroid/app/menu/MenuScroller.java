@@ -1,27 +1,27 @@
 package playerAndroid.app.menu;
 
+import android.view.MenuItem;
 import android.view.View;
 
 import java.io.Serializable;
 
 
 import androidUtils.awt.Color;
-import androidUtils.awt.Component;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Graphics;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.swing.Icon;
 import androidUtils.swing.JComponent;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JMenuItem;
-import androidUtils.swing.JPopupMenu;
 import androidUtils.swing.MenuSelectionManager;
 import androidUtils.swing.Timer;
 import androidUtils.swing.event.ChangeEvent;
 import androidUtils.swing.event.ChangeListener;
 import androidUtils.swing.event.PopupMenuEvent;
 import androidUtils.swing.event.PopupMenuListener;
+import androidUtils.swing.menu.JMenu;
+import androidUtils.swing.menu.JMenuItem;
+import androidUtils.swing.menu.JPopupMenu;
 
 
 /**
@@ -40,7 +40,7 @@ public class MenuScroller
 {
   //private JMenu menu;
   JPopupMenu menu;
-  View[] menuItems;
+  JMenuItem[] menuItems;
   private final MenuScrollItem upItem;
   private final MenuScrollItem downItem;
   private final MenuScrollListener menuListener = new MenuScrollListener();
@@ -511,7 +511,7 @@ public class MenuScroller
 
     private void restoreMenuItems() {
       menu.removeAll();
-      for (final View component : menuItems) {
+      for (final JMenuItem component : menuItems) {
         menu.add(component);
       }
     }
@@ -560,7 +560,12 @@ public class MenuScroller
         timer.stop();
       }
     }
+
+
   }
+
+
+
 
   private static enum MenuIcon implements Icon {
 

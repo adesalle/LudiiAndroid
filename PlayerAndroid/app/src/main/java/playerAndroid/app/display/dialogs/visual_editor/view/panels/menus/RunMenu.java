@@ -3,8 +3,8 @@ package playerAndroid.app.display.dialogs.visual_editor.view.panels.menus;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.swing.JCheckBoxMenuItem;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JSeparator;
+import androidUtils.swing.menu.JMenu;
+import androidUtils.swing.menu.JSeparator;
 import androidUtils.swing.KeyStroke;
 import playerAndroid.app.display.dialogs.visual_editor.handler.Handler;
 

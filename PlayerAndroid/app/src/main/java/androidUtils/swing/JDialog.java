@@ -1,113 +1,77 @@
 package androidUtils.swing;
 
-
+import androidUtils.awt.Color;
+import androidUtils.awt.Dialog;
 import androidUtils.awt.Dimension;
-import androidUtils.awt.FlowLayout;
 import androidUtils.awt.Font;
 import androidUtils.awt.Layout;
-import androidUtils.awt.event.KeyEvent;
+import androidUtils.awt.event.KeyListener;
+import androidUtils.awt.event.WindowAdapter;
+import androidUtils.awt.geom.Point2D;
 
-import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidUtils.awt.Dialog;
-import androidUtils.awt.event.KeyListener;
-import androidUtils.awt.event.WindowAdapter;
-import androidUtils.awt.event.WindowEvent;
-import androidUtils.awt.geom.Point2D;
-
-public class JDialog extends Dialog implements ViewComponent{
-    private WindowAdapter windowAdapter;
-    private Point2D lastPosition;
-    private int closeOperation = WindowConstants.DISPOSE_ON_CLOSE;
-
-    private Layout layout;
+public class JDialog extends Dialog {
+    protected Point2D lastPosition;
+    protected int closeOperation = WindowConstants.DISPOSE_ON_CLOSE;
+    protected Layout layout;
+    protected List<KeyListener> keyListeners = new ArrayList<>();
+    protected Font font;
 
     public JDialog() {
         super();
+        setContentPane(new JPanel());
     }
 
     public JDialog(ViewGroup owner) {
         super(owner, ModalityType.MODELESS);
+        setContentPane(new JPanel());
     }
+
     public JDialog(JDialog owner) {
         super(owner, ModalityType.MODELESS);
+        setContentPane(new JPanel());
     }
 
     public JDialog(ViewGroup owner, ModalityType modalityType) {
         super(owner, modalityType);
+        setContentPane(new JPanel());
     }
 
-    @Override
-    protected void initDialog() {
-        super.initDialog();
-        lastPosition = new Point2D.Float(0, 0);
-        setLayout(new FlowLayout(FlowLayout.LEFT));
-
-    }
-
-    public void setLayout(Layout layout)
-    {
+    public void setLayout(Layout layout) {
         this.layout = layout;
-        this.layout.applyLayout(this.getContentPane());
+        if (contentPane != null) {
+            contentPane.setLayout(layout);
+        }
     }
-
-
-
 
     public void setDefaultCloseOperation(int operation) {
         this.closeOperation = operation;
-        switch (operation) {
-            case WindowConstants.DO_NOTHING_ON_CLOSE:
-                setCancelable(false);
-                break;
-            case WindowConstants.DISPOSE_ON_CLOSE:
-            case WindowConstants.HIDE_ON_CLOSE:
-                setCancelable(true);
-                break;
-        }
     }
 
-    @Override
     public void setLocationRelativeTo(View view) {
-        super.setLocationRelativeTo(view);
+        if (view != null) {
+            int[] location = new int[2];
+            view.getLocationOnScreen(location);
+            setLocation(location[0] + view.getWidth()/2 - getWidth()/2,
+                    location[1] + view.getHeight()/2 - getHeight()/2);
+        }
     }
 
     public void setLocation(double x, double y) {
-        Window window = getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.x = (int) x;
-            params.y = (int) y;
-            window.setAttributes(params);
-            lastPosition = new Point2D.Float(x, y);
-        }
+        super.setLocation((int)x, (int)y);
     }
 
     public void setLocation(Point2D point2D) {
-        setLocation(point2D.getX(), point2D.getY());
-    }
-
-    @Override
-    public void setSize(int width, int height) {
-        super.setSize(width, height);
-    }
-
-    public int getWidth() {
-        Window window = getWindow();
-        return window != null ? window.getAttributes().width : 0;
-    }
-
-    public int getHeight() {
-        Window window = getWindow();
-        return window != null ? window.getAttributes().height : 0;
+        if (point2D != null) {
+            setLocation(point2D.getX(), point2D.getY());
+        }
     }
 
     public void setBounds(int x, int y, int width, int height) {
@@ -116,178 +80,79 @@ public class JDialog extends Dialog implements ViewComponent{
     }
 
     public void addWindowListener(WindowAdapter windowAdapter) {
-        this.windowAdapter = windowAdapter;
+        addWindowFocusListener(windowAdapter);
     }
 
-    private void fireWindowEvent(int eventType) {
-        if (windowAdapter != null) {
-            WindowEvent e = new WindowEvent(this, eventType);
-            switch (eventType) {
-                case WindowEvent.WINDOW_OPENED:
-                    windowAdapter.windowOpened(e);
-                    break;
-                case WindowEvent.WINDOW_CLOSING:
-                    windowAdapter.windowClosing(e);
-                    break;
-                case WindowEvent.WINDOW_CLOSED:
-                    windowAdapter.windowClosed(e);
-                    break;
-            }
-        }
-    }
 
-    @Override
-    public void show() {
-        super.show();
-        fireWindowEvent(WindowEvent.WINDOW_OPENED);
-    }
-
-    @Override
-    public void dismiss() {
-        fireWindowEvent(WindowEvent.WINDOW_CLOSING);
-        super.dismiss();
-        fireWindowEvent(WindowEvent.WINDOW_CLOSED);
-    }
 
     public void requestFocus() {
-        Window window = getWindow();
-        if (window != null) {
-            window.getDecorView().requestFocus();
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow() != null) {
+            dialog.getWindow().getDecorView().requestFocus();
         }
-    }
-
-    public void invalidate() {
-        getContentPane().invalidate();
     }
 
     public void validate() {
-        getContentPane().requestLayout();
-    }
-
-    public void repaint() {
-        invalidate();
-    }
-
-    public void pack() {
-        View contentView = getContentPane();
-        if (contentView != null) {
-            // Mesurer le contenu
-            contentView.measure(
-                    View.MeasureSpec.UNSPECIFIED,
-                    View.MeasureSpec.UNSPECIFIED
-            );
-
-            // Définir la taille de la fenêtre selon le contenu
-            Window window = getWindow();
-            if (window != null) {
-                WindowManager.LayoutParams params = window.getAttributes();
-                params.width = contentView.getMeasuredWidth();
-                params.height = contentView.getMeasuredHeight();
-                window.setAttributes(params);
-            }
+        if (contentPane != null) {
+            contentPane.invalidate();
         }
     }
 
-    private List<KeyListener> keyListeners = new ArrayList<>();
+    @Override
+    protected void configureDialog(android.app.Dialog dialog) {
+        super.configureDialog(dialog);
+
+        if (layout != null && contentPane != null) {
+            setLayout(layout);
+        }
+
+        // Applique le fond transparent pour un meilleur rendu
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT.toArgb()));
+        }
+    }
+
+
 
     public void addKeyListener(KeyListener listener) {
-        if (listener != null && !keyListeners.contains(listener)) {
-            keyListeners.add(listener);
-            setupKeyListener();
-        }
+        keyListeners.add(listener);
     }
 
     public void removeKeyListener(KeyListener listener) {
         keyListeners.remove(listener);
-        if (keyListeners.isEmpty()) {
-            getWindow().getDecorView().setOnKeyListener(null);
-        }
     }
 
-    private void setupKeyListener() {
-        View decorView = getWindow().getDecorView();
-        decorView.setOnKeyListener((v, keyCode, event) -> {
-            for (KeyListener listener : keyListeners) {
-                switch (event.getAction()) {
-                    case KeyEvent.KEY_PRESSED:
-                        listener.keyPressed(new KeyEvent(
-                                event
-                        ));
-                        break;
-
-                    case KeyEvent.KEY_RELEASED:
-                        listener.keyReleased(new KeyEvent(
-                                event
-                        ));
-                        break;
-                }
-            }
-            return false;
-        });
-        decorView.setFocusableInTouchMode(true);
-        decorView.requestFocus();
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        View contentView = getContentPane();
-        if (contentView != null) {
-            contentView.measure(
-                    View.MeasureSpec.UNSPECIFIED,
-                    View.MeasureSpec.UNSPECIFIED
-            );
-            return new Dimension(
-                    contentView.getMeasuredWidth(),
-                    contentView.getMeasuredHeight()
-            );
-        }
-        return new Dimension(0, 0);
-    }
-
-    @Override
-    public void setPreferredSize(Dimension dimension) {
-        Window window = getWindow();
-        if (window != null && dimension != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.width = dimension.width;
-            params.height = dimension.height;
-            window.setAttributes(params);
-        }
-    }
-
-    @Override
-    public void setSize(Dimension dimension) {
-        if (dimension != null) {
-            setSize(dimension.width, dimension.height);
-        }
-    }
-
-    @Override
     public void setFont(Font font) {
-        View contentView = getContentPane();
-        if (contentView != null && font != null) {
-            if (contentView instanceof TextView) {
-                ((TextView) contentView).setTypeface(font.getFont());
-                ((TextView) contentView).setTextSize(font.getSize());
-            }
+        this.font = font;
+        if (contentPane != null) {
+            contentPane.setFont(font);
         }
     }
 
-    @Override
+    public Font getFont() {
+        return font;
+    }
+
+    public Point2D getLastPosition() {
+        return lastPosition != null ? lastPosition : new Point2D.Float(x, y);
+    }
+
+    public int getCloseOperation() {
+        return closeOperation;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
     public Dimension getSize() {
         return new Dimension(getWidth(), getHeight());
     }
 
-    @Override
-    public Font getFont() {
-        View contentView = getContentPane();
-        if (contentView instanceof TextView) {
-            TextView textView = (TextView) contentView;
-            return new Font(
-                    textView.getTypeface(),
-                    (int) textView.getTextSize()
-            );
+    public void setSize(Dimension dimension) {
+        if (dimension != null) {
+            setSize(dimension.width, dimension.height);
         }
-        return new Font(Typeface.DEFAULT, 14); // Valeur par défaut
     }
 }

@@ -5,12 +5,12 @@ import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
-import androidUtils.swing.JMenuItem;
 import androidUtils.swing.JPanel;
-import androidUtils.swing.JPopupMenu;
 import androidUtils.swing.JScrollPane;
 import androidUtils.swing.JTabbedPane;
 import androidUtils.swing.SwingConstants;
+import androidUtils.swing.menu.JMenuItem;
+import androidUtils.swing.menu.JPopupMenu;
 import playerAndroid.app.display.dialogs.visual_editor.handler.Handler;
 import playerAndroid.app.display.dialogs.visual_editor.view.panels.IGraphPanel;
 

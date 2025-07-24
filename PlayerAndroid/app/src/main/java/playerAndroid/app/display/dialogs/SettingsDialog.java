@@ -21,7 +21,7 @@ import androidUtils.swing.JDialog;
 import androidUtils.swing.JLabel;
 import androidUtils.swing.JPanel;
 import androidUtils.swing.JScrollPane;
-import androidUtils.swing.JSeparator;
+import androidUtils.swing.menu.JSeparator;
 import androidUtils.swing.JTabbedPane;
 import androidUtils.swing.JTextField;
 import androidUtils.swing.SwingConstants;

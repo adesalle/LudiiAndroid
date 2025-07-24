@@ -2,7 +2,6 @@ package playerAndroid.app.display.dialogs.visual_editor.view.components.ludemeno
 
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 
 import androidUtils.awt.BorderLayout;
@@ -18,11 +17,11 @@ import androidUtils.swing.ImageIcon;
 import androidUtils.swing.JButton;
 import androidUtils.swing.JComponent;
 import androidUtils.swing.JLabel;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JMenuItem;
 import androidUtils.swing.JPanel;
-import androidUtils.swing.JPopupMenu;
 import androidUtils.swing.border.EmptyBorder;
+import androidUtils.swing.menu.JMenu;
+import androidUtils.swing.menu.JMenuItem;
+import androidUtils.swing.menu.JPopupMenu;
 import main.grammar.Clause;
 import main.grammar.Symbol;
 import playerAndroid.app.display.dialogs.visual_editor.documentation.DocumentationReader;

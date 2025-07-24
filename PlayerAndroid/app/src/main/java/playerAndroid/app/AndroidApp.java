@@ -4,26 +4,36 @@ import android.content.res.AssetManager;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 
+import androidUtils.JSONTokener;
 import androidUtils.ZipManager;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.SVGGraphics2D;
+import androidUtils.awt.Toolkit;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ItemEvent;
 import androidUtils.awt.geom.Rectangle2D;
 import androidUtils.awt.image.BufferedImage;
+import androidUtils.swing.ImageIcon;
 import androidUtils.swing.JFileChooser;
 import androidUtils.JSONObject;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.EventQueue;
 import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;
+import androidUtils.swing.JOptionPane;
 import app.PlayerApp;
 import app.utils.GameSetup;
 import app.utils.SettingsExhibition;
@@ -32,7 +42,12 @@ import androidUtils.swing.WindowConstants;
 import game.equipment.container.board.Board;
 import manager.ai.AIUtil;
 import playerAndroid.app.display.MainWindowDesktop;
+import playerAndroid.app.display.dialogs.AboutDialog;
+import playerAndroid.app.display.dialogs.MoveDialog.PossibleMovesDialog;
+import playerAndroid.app.display.dialogs.MoveDialog.PuzzleDialog;
+import playerAndroid.app.display.dialogs.SettingsDialog;
 import playerAndroid.app.display.util.AndroidGUIUtil;
+import playerAndroid.app.display.views.tabs.TabView;
 import playerAndroid.app.loading.FileLoading;
 import playerAndroid.app.menu.MainMenuFunctions;
 import playerAndroid.app.util.SettingsDesktop;
@@ -49,6 +64,7 @@ import other.location.Location;
 import other.move.Move;
 import tournament.Tournament;
 import util.PlaneType;
+import utils.AIFactory;
 
 public class AndroidApp extends PlayerApp {
 
@@ -60,8 +76,8 @@ public class AndroidApp extends PlayerApp {
     protected static MainWindowDesktop view;
 
     /** Minimum resolution of the application. */
-    private static final int minimumViewWidth = 1280;
-    private static final int minimumViewHeight = 768;
+    private static final int minimumViewWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+    private static final int minimumViewHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
 
     /**
@@ -258,8 +274,7 @@ public class AndroidApp extends PlayerApp {
         try
         {
             frame = new JFrameListener(AppName, this);
-            frame.setMinimumSize(new Dimension(SettingsDesktop.defaultWidth, SettingsDesktop.defaultHeight));
-            frame.setSize(new Dimension(SettingsDesktop.defaultWidth, SettingsDesktop.defaultHeight));
+
 
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -379,7 +394,6 @@ public class AndroidApp extends PlayerApp {
 
                 frame.setJMenuBar(new MainMenu(this));
 
-
             } catch (final Exception e) {
                 e.printStackTrace();
 
@@ -474,6 +488,7 @@ public class AndroidApp extends PlayerApp {
     public static void setGameFileChooser(final JFileChooser gameFileChooser)
     {
         AndroidApp.gameFileChooser = gameFileChooser;
+        AndroidApp.gameFileChooser.setFileSelectedListener(uri -> GameLoading.loadGameFromFileAfterResponse());
     }
 
     public static JFileChooser saveGameFileChooser()
@@ -505,10 +520,8 @@ public class AndroidApp extends PlayerApp {
     @Override
     public void drawBoard(final Context context, final Graphics2D g2d, final Rectangle2D boardDimensions)
     {
-        System.out.println("AndroidApp 508");
         if (graphicsCache().boardImage() == null)
         {
-            System.out.println("boardImage = null");
             final Board board = context.board();
             bridge().getContainerStyle(board.index()).render(PlaneType.BOARD, context);
 
@@ -547,17 +560,30 @@ public class AndroidApp extends PlayerApp {
     }
     @Override
     public Tournament tournament() {
-        return null;
+        return manager().getTournament();
     }
 
     @Override
     public void setTournament(Tournament tournament) {
-
+        manager().setTournament(tournament);
     }
 
     @Override
-    public void reportError(String error) {
+    public void reportError(String text) {
+        if (view != null)
+        {
+            if (frame != null)
+            {
+                frame.setContentPane(view);
+                frame.repaint();
+                frame.revalidate();
+            }
+        }
 
+        EventQueue.invokeLater(() ->
+        {
+            addTextToStatusPanel(text + "\n");
+        });
     }
 
     @Override
@@ -567,17 +593,18 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void showPuzzleDialog(int site) {
-
+        PuzzleDialog.createAndShowGUI(this, manager().ref().context(), site);
     }
 
     @Override
     public void showPossibleMovesDialog(Context context, FastArrayList<Move> possibleMoves) {
-
+        PossibleMovesDialog.createAndShowGUI(this, context, possibleMoves, false);
     }
 
     @Override
     public void saveTrial() {
-
+        final File file = new File("." + File.separator + "ludii.trl");
+        TrialLoading.saveTrial(this, file);
     }
 
     @Override
@@ -587,7 +614,7 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void setVolatileMessage(String text) {
-
+        MainWindowDesktop.setVolatileMessage(this, text);
     }
 
     public static void setLoadTrial(final boolean shouldLoadTrial)
@@ -597,37 +624,40 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void writeTextToFile(String fileName, String log) {
-
+        FileLoading.writeTextToFile(fileName, log);
     }
 
     @Override
     public void resetMenuGUI() {
-
+        AndroidApp.frame().setJMenuBar(new MainMenu(this));
     }
 
     @Override
     public void showSettingsDialog() {
-
+        if (!SettingsExhibition.exhibitionVersion)
+        {
+            SettingsDialog.createAndShowGUI(this);
+        }
     }
 
     @Override
     public void showOtherDialog(FastArrayList<Move> otherPossibleMoves) {
-
+        PossibleMovesDialog.createAndShowGUI(this, contextSnapshot().getContext(this), otherPossibleMoves, true);
     }
 
     @Override
     public void showInfoDialog() {
-
+        AboutDialog.showAboutDialog(this);
     }
 
     @Override
     public int width() {
-        return minimumViewWidth;
+        return view().width();
     }
 
     @Override
     public int height() {
-        return minimumViewHeight;
+        return view().height();
     }
     @Override
     public Rectangle[] playerSwatchList()
@@ -662,16 +692,131 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public JSONObject getNameFromJar() {
-        return null;
+        // we'll have to go through file chooser
+        final JFileChooser fileChooser = AndroidApp.jarFileChooser();
+        fileChooser.setDialogTitle("Select JAR file containing AI.");
+        final int jarReturnVal = fileChooser.showOpenDialog(AndroidApp.frame());
+        final File jarFile;
+
+        if (jarReturnVal == JFileChooser.APPROVE_OPTION)
+            jarFile = fileChooser.getSelectedFile();
+        else
+            jarFile = null;
+
+        if (jarFile != null && jarFile.exists())
+        {
+            final List<Class<?>> classes = AIFactory.loadThirdPartyAIClasses(jarFile);
+
+            if (!classes.isEmpty())
+            {
+                AssetManager manager = StartAndroidApp.getAppContext().getAssets();
+                final InputStream resource;
+                try {
+                    resource = manager.open("img/ludii-logo-64x64.png");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                final Bitmap btp = BitmapFactory.decodeStream(resource);
+                final BufferedImage image = new BufferedImage(btp);
+
+                final ImageIcon icon = new ImageIcon(image);
+
+                final String[] choices = new String[classes.size()];
+                for (int i = 0; i < choices.length; ++i)
+                {
+                    choices[i] = classes.get(i).getName();
+                }
+
+                final String choice = (String) JOptionPane.showInputDialog(AndroidApp.frame(), "AI Classes",
+                        "Choose an AI class to load", JOptionPane.QUESTION_MESSAGE, icon, choices, choices[0]);
+
+                if (choice == null)
+                {
+                    System.err.println("No AI class selected.");
+                    return null;
+                }
+                else
+                {
+                    return new JSONObject().put("AI",
+                            new JSONObject()
+                                    .put("algorithm", "From JAR")
+                                    .put("JAR File", jarFile.getAbsolutePath())
+                                    .put("Class Name", choice)
+                    );
+                }
+            }
+            else
+            {
+                System.err.println("Could not find any AI classes.");
+                return null;
+            }
+        }
+        else
+        {
+            System.err.println("Could not find JAR file.");
+            return null;
+        }
     }
 
     @Override
     public JSONObject getNameFromJson() {
+        final JFileChooser fileChooser = AndroidApp.jsonFileChooser();
+        fileChooser.setDialogTitle("Select JSON file containing AI.");
+        final int jsonReturnVal = fileChooser.showOpenDialog(AndroidApp.frame());
+        final File jsonFile;
+
+        if (jsonReturnVal == JFileChooser.APPROVE_OPTION)
+            jsonFile = fileChooser.getSelectedFile();
+        else
+            jsonFile = null;
+
+        if (jsonFile != null && jsonFile.exists())
+        {
+            try (final InputStream inputStream = Files.newInputStream(jsonFile.toPath()))
+            {
+                return new JSONObject(new JSONTokener(inputStream));
+            }
+            catch (final IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            System.err.println("Could not find JSON file.");
+        }
+
         return null;
     }
 
     @Override
     public JSONObject getNameFromAiDef() {
+        // we'll have to go through file chooser
+        final JFileChooser fileChooser = AndroidApp.aiDefFileChooser();
+        fileChooser.setDialogTitle("Select AI.DEF file containing AI.");
+        final int aiDefReturnVal = fileChooser.showOpenDialog(AndroidApp.frame());
+        final File aiDefFile;
+
+        if (aiDefReturnVal == JFileChooser.APPROVE_OPTION)
+            aiDefFile = fileChooser.getSelectedFile();
+        else
+            aiDefFile = null;
+
+        if (aiDefFile != null && aiDefFile.exists())
+        {
+            return new JSONObject().put
+                    (
+                            "AI",
+                            new JSONObject()
+                                    .put("algorithm", "From AI.DEF")
+                                    .put("AI.DEF File", aiDefFile.getAbsolutePath())
+                    );
+        }
+        else
+        {
+            System.err.println("Could not find AI.DEF file.");
+        }
+
         return null;
     }
 
@@ -682,17 +827,23 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void addTextToStatusPanel(String text) {
-
+        EventQueue.invokeLater(() ->
+        {
+            view.tabPanel().page(TabView.PanelStatus).addText(text);
+        });
     }
 
     @Override
     public void addTextToAnalysisPanel(String text) {
-
+        EventQueue.invokeLater(() ->
+        {
+            view.tabPanel().page(TabView.PanelAnalysis).addText(text);
+        });
     }
 
     @Override
     public void selectAnalysisTab() {
-
+        view.tabPanel().select((TabView.PanelAnalysis));
     }
 
     @Override
@@ -703,43 +854,62 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void reportForfeit(int playerForfeitNumber) {
-
+        final String message = "Player " + playerForfeitNumber + " has resigned Game " + manager().settingsNetwork().getActiveGameId() + ".\nThe Game is Over.\n";
+        if (!view.tabPanel().page(TabView.PanelStatus).text().contains(message))
+            addTextToStatusPanel(message);
     }
 
     @Override
     public void reportTimeout(int playerForfeitNumber) {
-
+        final String message = "Player " + playerForfeitNumber + " has timed out for Game " + manager().settingsNetwork().getActiveGameId() + ".\nThe Game is Over.\n";
+        if (!view.tabPanel().page(TabView.PanelStatus).text().contains(message))
+            addTextToStatusPanel(message);
     }
 
     @Override
     public void reportDrawAgreed() {
-
+        //final String lastLine = view.tabPanel().page(TabView.PanelStatus).text().split("\n")[view.tabPanel().page(TabView.PanelStatus).text().split("\n").length-1];
+        final String message = "All players have agreed to a draw, for Game " + manager().settingsNetwork().getActiveGameId() + ".\nThe Game is Over.\n";
+        if (!view.tabPanel().page(TabView.PanelStatus).text().contains(message))
+            addTextToStatusPanel(message);
     }
 
     @Override
     public void updateFrameTitle(boolean alsoUpdateMenu) {
+        frame().setTitle(frame().getTitle());
 
+        if (alsoUpdateMenu)
+        {
+            frame().setJMenuBar(new MainMenu(this));
+            view().createPanels();
+        }
     }
+
 
     @Override
     public void updateTabs(Context context) {
+        EventQueue.invokeLater(() ->
+        {
+            view.tabPanel().updateTabs(context);
+        });
 
     }
 
     @Override
     public void repaintTimerForPlayer(int playerId)
-        {
-
-        }
+    {
+            if (view.playerNameList[playerId] != null)
+                view.repaint(AndroidApp.view.playerNameList[playerId]);
+    }
 
     @Override
     public void setTemporaryMessage(String text) {
-
+        view.setTemporaryMessage(text);
     }
 
     @Override
     public void refreshNetworkDialog() {
-
+        remoteDialogFunctionsPublic().refreshNetworkDialog();
     }
 
 

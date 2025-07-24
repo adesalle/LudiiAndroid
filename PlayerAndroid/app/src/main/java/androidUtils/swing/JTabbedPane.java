@@ -25,6 +25,7 @@ import androidUtils.awt.Component;
 import androidUtils.awt.Font;
 import androidUtils.swing.event.ChangeEvent;
 import androidUtils.swing.event.ChangeListener;
+import androidUtils.swing.menu.JPopupMenu;
 import playerAndroid.app.StartAndroidApp;
 
 public class JTabbedPane extends LinearLayout {
@@ -239,7 +240,7 @@ public class JTabbedPane extends LinearLayout {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        componentPopupMenu.show(v, 0, 0);
+                        componentPopupMenu.showAsDropDown(JTabbedPane.this);
                         return true;
                     }
                     return false;

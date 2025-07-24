@@ -2,6 +2,7 @@ package androidUtils.awt.event;
 
 import android.view.View;
 
+import androidUtils.awt.Dialog;
 import androidUtils.swing.JDialog;
 
 public class WindowEvent {
@@ -18,8 +19,8 @@ public class WindowEvent {
         this.id = id;
     }
 
-    public WindowEvent(JDialog source, int id) {
-        this.source = source.getRootPane();
+    public WindowEvent(Dialog source, int id) {
+        this.source = source.getContentPane();
         this.id = id;
     }
 

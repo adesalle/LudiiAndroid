@@ -3,6 +3,7 @@ package androidUtils.swing;
 import android.view.View;
 import android.view.ViewGroup;
 import androidUtils.awt.Layout;
+import androidUtils.swing.menu.JMenuBar;
 
 public class RootLayout implements Layout {
 

@@ -39,7 +39,6 @@ public class KnownDefines {
     KnownDefines() {
         final Report report = new Report();
         loadKnownDefines(report);
-        System.out.println("loaded");
         if (report.isError())
             System.out.println(report);
     }
@@ -121,7 +120,6 @@ public class KnownDefines {
 
         if (defs == null)
         {
-            System.out.println("notHere");
             // Not a JAR
             try
             {
@@ -149,7 +147,6 @@ public class KnownDefines {
         }
         else
         {
-            System.out.println("here");
             // JAR file
             for (final String def : defs)
             {

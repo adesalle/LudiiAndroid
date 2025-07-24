@@ -4,10 +4,10 @@ package playerAndroid.app.display.dialogs.visual_editor.view.panels.menus;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.swing.JCheckBoxMenuItem;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JMenuBar;
-import androidUtils.swing.JMenuItem;
 import androidUtils.swing.KeyStroke;
+import androidUtils.swing.menu.JMenu;
+import androidUtils.swing.menu.JMenuBar;
+import androidUtils.swing.menu.JMenuItem;
 import playerAndroid.app.display.dialogs.visual_editor.view.panels.menus.viewMenu.ViewMenu;
 import playerAndroid.app.display.dialogs.visual_editor.view.panels.userGuide.UserGuideFrame;
 

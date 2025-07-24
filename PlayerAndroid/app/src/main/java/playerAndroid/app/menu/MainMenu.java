@@ -9,14 +9,10 @@ import androidUtils.awt.event.InputEvent;
 import androidUtils.awt.event.ItemListener;
 import androidUtils.swing.ButtonGroup;
 import androidUtils.swing.JCheckBoxMenuItem;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JMenuBar;
-import androidUtils.swing.JMenuItem;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,24 +20,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-/*
-import javax.swing.ButtonGroup;
-//import javax.swing.ButtonGroup;
-//import javax.swing.JCheckBoxMenuItem;
-import androidUtils.swing.JCheckBoxMenuItem;
-import androidUtils.swing.JMenu;
-import androidUtils.swing.JMenuBar;
-import androidUtils.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.UIManager;*/
 
-import org.json.JSONException;
 import androidUtils.JSONObject;
 import androidUtils.JSONTokener;
 
 import androidUtils.swing.JRadioButtonMenuItem;
 import androidUtils.swing.KeyStroke;
 import androidUtils.swing.UIManager;
+import androidUtils.swing.menu.JMenu;
+import androidUtils.swing.menu.JMenuBar;
+import androidUtils.swing.menu.JMenuItem;
 import playerAndroid.app.AndroidApp;
 import app.PlayerApp;
 import playerAndroid.app.loading.MiscLoading;
@@ -394,7 +382,7 @@ public class MainMenu extends JMenuBar
 
 		//---------------------------------------------------------------------
 		// Analysis Menu
-
+/*
 		if (app.manager().settingsNetwork().getActiveGameId() == 0)
 		{
 			menu = new JMenu("Analysis");
@@ -657,7 +645,7 @@ public class MainMenu extends JMenuBar
 				
 			}
 		}
-		
+		*/
 //		//---------------------------------------------------------------------
 //		// Generation menu
 //		
@@ -1223,9 +1211,8 @@ public class MainMenu extends JMenuBar
 		setProportionalWeights(true);
 	}
 
-	public void setTag(String menuBar) {
 
-	}
+
 
 	//-------------------------------------------------------------------------
 

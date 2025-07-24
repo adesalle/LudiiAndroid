@@ -8,6 +8,7 @@ import playerAndroid.app.StartAndroidApp;
 
 import static androidUtils.swing.SwingConstants.*;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +21,10 @@ public class JLabel extends androidx.appcompat.widget.AppCompatTextView implemen
 
     List<MouseAdapter> listeners = new ArrayList<>();
 
+    public JLabel(Context context)
+    {
+        super(context);
+    }
     public JLabel(ImageIcon icon)
     {
         this();

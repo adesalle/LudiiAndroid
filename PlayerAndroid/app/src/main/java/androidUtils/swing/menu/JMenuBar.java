@@ -7,10 +7,15 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import playerAndroid.app.StartAndroidApp;
+
 public class JMenuBar extends LinearLayout {
     private final List<JMenu> menus = new ArrayList<>();
     private final Context context;
 
+    public JMenuBar() {
+        this(StartAndroidApp.getAppContext());
+    }
     public JMenuBar(Context context) {
         super(context);
         this.context = context;
@@ -25,24 +30,34 @@ public class JMenuBar extends LinearLayout {
         ));
     }
 
-    public JMenu addMenu(String title) {
-        JMenu menu = new JMenu(context);
+    public JMenu add(JMenu menu)
+    {
         menus.add(menu);
-
-        JMenuButton button = new JMenuButton(context);
-        button.setText(title);
-        button.setOnClickListener(v -> showMenuPopup(menu, button));
+        menu.setParent(this);
+        JMenuButton button = new JMenuButton(context, menu);
+        button.setText(menu.getTitle());
+        button.setOnClickListener(v -> {
+            System.out.println("clicked");
+            menu.showMenuPopup(button);
+        });
 
         addView(button);
         return menu;
     }
 
-    private void showMenuPopup(JMenu menu, View anchor) {
-        JPopupMenu popup = new JPopupMenu(context, menu);
-        popup.showAsDropDown(anchor);
+
+    public JMenu addMenu(String title) {
+        JMenu menu = new JMenu(context);
+        menu.setTitle(title);
+        return add(menu);
     }
+
+
 
     public List<JMenu> getMenus() {
         return new ArrayList<>(menus);
+    }
+
+    public void setProportionalWeights(boolean b) {
     }
 }

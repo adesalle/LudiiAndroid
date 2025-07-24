@@ -25,12 +25,10 @@ import androidUtils.awt.Dimension;
 import androidUtils.awt.Font;
 import androidUtils.awt.event.KeyEvent;
 import androidUtils.awt.event.KeyListener;
-import androidUtils.swing.text.DefaultStyle;
 import androidUtils.swing.text.Document;
 import androidUtils.swing.text.HTMLDocument;
 import androidUtils.swing.text.Style;
 import playerAndroid.app.StartAndroidApp;
-import playerAndroid.app.display.dialogs.editor.SuggestionDialog;
 
 public class JEditorPane extends AppCompatTextView implements ViewComponent {
     public static final Object HONOR_DISPLAY_PROPERTIES = new Object();

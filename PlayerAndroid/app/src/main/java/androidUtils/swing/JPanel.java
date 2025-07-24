@@ -1,26 +1,22 @@
 package androidUtils.swing;
 
 import android.annotation.SuppressLint;
-import android.graphics.Canvas;
+import android.content.Context;
 import android.graphics.Paint;
 
 import androidUtils.awt.FlowLayout;
+import androidUtils.awt.event.HierarchyListener;
 import androidUtils.awt.event.KeyEvent;
 
-import android.view.Gravity;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidUtils.awt.BorderLayout;
-import androidUtils.awt.BoxLayout;
 import androidUtils.awt.Color;
-import androidUtils.awt.Component;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Font;
 import androidUtils.awt.Graphics;
@@ -30,8 +26,7 @@ import androidUtils.awt.Rectangle;
 import androidUtils.awt.event.FocusEvent;
 import androidUtils.awt.event.FocusListener;
 import androidUtils.awt.event.HierarchyEvent;
-import androidUtils.awt.event.HierarchyListener;
-import androidUtils.awt.event.KeyAdapter;
+
 import androidUtils.awt.event.KeyListener;
 import androidUtils.awt.event.MouseEvent;
 import androidUtils.awt.event.MouseListener;
@@ -41,7 +36,7 @@ import androidUtils.swing.border.EmptyBorder;
 import playerAndroid.app.StartAndroidApp;
 import playerAndroid.app.util.SettingsDesktop;
 
-public class JPanel extends FrameLayout implements ViewComponent{
+public class JPanel extends LinearLayout implements ViewComponent{
 
     public static final int LEFT_ALIGNMENT = 0;
     public static final int CENTER_ALIGNMENT = 1;
@@ -81,6 +76,16 @@ public class JPanel extends FrameLayout implements ViewComponent{
         init();
         layoutManager = new FlowLayout(FlowLayout.LEFT);
         //setLayout();
+
+
+    }
+    public JPanel(AttributeSet set) {
+        super(StartAndroidApp.getAppContext(), set);
+        panel = this;
+        init();
+        layoutManager = new FlowLayout(FlowLayout.LEFT);
+        //setLayout();
+
 
     }
 
@@ -453,6 +458,8 @@ public class JPanel extends FrameLayout implements ViewComponent{
             setLayoutParams(params);
         }
     }
+
+
 
 
     @Override

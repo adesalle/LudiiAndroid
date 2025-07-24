@@ -7,8 +7,8 @@ import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.MeasureSpec;
-import android.widget.ExpandableListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import androidUtils.awt.Dimension;
@@ -30,8 +30,8 @@ public class JTree extends ExpandableListView implements ViewComponent {
     private boolean showsRootHandles = true;
     private boolean editable = false;
     private TreeCellEditor cellEditor;
+    private Font currentFont;
 
-    // Constructeurs
     public JTree(TreeNode root) {
         this(new DefaultTreeModel(root, false));
     }
@@ -49,35 +49,153 @@ public class JTree extends ExpandableListView implements ViewComponent {
         this.model = model;
         this.selectionModel = new DefaultTreeSelectionModel();
         this.cellRenderer = new DefaultTreeCellRenderer(context);
-        setAdapter(new TreeAdapter());
+        initAdapter();
     }
 
-    // Getters et setters
+    private void initAdapter() {
+        setAdapter(new BaseExpandableListAdapter() {
+            @Override
+            public int getGroupCount() {
+                if (model == null || model.getRoot() == null) return 0;
+                if (!rootVisible) {
+                    return model.getChildCount(model.getRoot());
+                }
+                return 1;
+            }
+
+            @Override
+            public int getChildrenCount(int groupPosition) {
+                TreeNode group = getGroupNode(groupPosition);
+                return group != null ? group.getChildCount() : 0;
+            }
+
+            @Override
+            public Object getGroup(int groupPosition) {
+                return getGroupNode(groupPosition);
+            }
+
+            @Override
+            public Object getChild(int groupPosition, int childPosition) {
+                TreeNode group = getGroupNode(groupPosition);
+                return group != null ? group.getChildAt(childPosition) : null;
+            }
+
+            @Override
+            public long getGroupId(int groupPosition) {
+                return groupPosition;
+            }
+
+            @Override
+            public long getChildId(int groupPosition, int childPosition) {
+                return childPosition;
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return true;
+            }
+
+            @Override
+            public View getGroupView(int groupPosition, boolean isExpanded,
+                                     View convertView, ViewGroup parent) {
+                TreeNode node = getGroupNode(groupPosition);
+                if (node == null) return new TextView(getContext());
+
+                if (cellRenderer != null) {
+                    return cellRenderer.getTreeCellView(JTree.this, node,
+                            selectionModel.isPathSelected(new TreePath(node)),
+                            isExpanded, node.isLeaf(), 0);
+                }
+
+                return createTextView(node.toString(), 18, Color.BLACK, 50);
+            }
+
+            @Override
+            public View getChildView(int groupPosition, int childPosition,
+                                     boolean isLastChild, View convertView, ViewGroup parent) {
+                TreeNode node = getChildNode(groupPosition, childPosition);
+                if (node == null) return new TextView(getContext());
+
+                TreePath path = buildTreePath(groupPosition, childPosition);
+                if (cellRenderer != null) {
+                    return cellRenderer.getTreeCellView(JTree.this, node,
+                            selectionModel.isPathSelected(path),
+                            isExpanded(path), node.isLeaf(), 1);
+                }
+
+                return createTextView(node.toString(), 16, Color.DKGRAY, 100);
+            }
+
+            @Override
+            public boolean isChildSelectable(int groupPosition, int childPosition) {
+                return true;
+            }
+
+            private TreeNode getGroupNode(int groupPosition) {
+                if (model == null || model.getRoot() == null) return null;
+                if (!rootVisible) {
+                    return model.getChild(model.getRoot(), groupPosition);
+                }
+                return (TreeNode) model.getRoot();
+            }
+
+            private TreeNode getChildNode(int groupPosition, int childPosition) {
+                TreeNode group = getGroupNode(groupPosition);
+                return group != null ? group.getChildAt(childPosition) : null;
+            }
+
+            private TreePath buildTreePath(int groupPosition, int childPosition) {
+                TreeNode group = getGroupNode(groupPosition);
+                TreeNode child = getChildNode(groupPosition, childPosition);
+
+                if (!rootVisible) {
+                    return new TreePath(new TreeNode[]{model.getRoot(), group, child});
+                } else {
+                    return new TreePath(new TreeNode[]{group, child});
+                }
+            }
+        });
+    }
+
+    private TextView createTextView(String text, int textSize, int color, int paddingLeft) {
+        TextView textView = new TextView(getContext());
+        textView.setText(text);
+        textView.setTextSize(textSize);
+        textView.setTextColor(color);
+        textView.setPadding(paddingLeft, 20, 20, 20);
+
+        if (currentFont != null) {
+            textView.setTypeface(currentFont.getFont());
+            textView.setTextSize(currentFont.getSize());
+        }
+
+        return textView;
+    }
+
     public TreePath getSelectionPath() {
         return selectionModel.getSelectionPath();
     }
 
     public void setSelectionPath(TreePath path) {
         selectionModel.setSelectionPath(path);
+        if (path != null) {
+            expandPath(path);
+        }
     }
 
     public void expandPath(TreePath path) {
         if (path != null) {
             Object[] pathArray = path.getPath();
-            int groupPos = -1;
-
-            for (int i = 0; i < pathArray.length - 1; i++) {
-                TreeNode node = (TreeNode) pathArray[i];
-                groupPos = findGroupPosition(node);
-                if (groupPos >= 0) {
-                    expandGroup(groupPos);
-                }
-            }
+            int groupPos = findGroupPosition(pathArray[0]);
 
             if (groupPos >= 0) {
-                int childPos = findChildPosition(groupPos, (TreeNode) pathArray[pathArray.length - 1]);
-                if (childPos >= 0) {
-                    setSelectedChild(groupPos, childPos, true);
+                expandGroup(groupPos);
+
+                if (pathArray.length > 1) {
+                    int childPos = findChildPosition(groupPos, (TreeNode) pathArray[1]);
+                    if (childPos >= 0) {
+                        setSelectedChild(groupPos, childPos, true);
+                    }
                 }
             }
         }
@@ -86,13 +204,29 @@ public class JTree extends ExpandableListView implements ViewComponent {
     public void collapsePath(TreePath path) {
         if (path != null) {
             Object[] pathArray = path.getPath();
-            for (int i = 0; i < pathArray.length - 1; i++) {
-                int groupPos = findGroupPosition(pathArray[i]);
-                if (groupPos >= 0) {
-                    collapseGroup(groupPos);
-                }
+            int groupPos = findGroupPosition(pathArray[0]);
+            if (groupPos >= 0) {
+                collapseGroup(groupPos);
             }
         }
+    }
+
+    private int findGroupPosition(Object node) {
+        for (int i = 0; i < getExpandableListAdapter().getGroupCount(); i++) {
+            if (getExpandableListAdapter().getGroup(i).equals(node)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int findChildPosition(int groupPosition, TreeNode childNode) {
+        for (int i = 0; i < getExpandableListAdapter().getChildrenCount(groupPosition); i++) {
+            if (getExpandableListAdapter().getChild(groupPosition, i).equals(childNode)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public TreeModel getModel() {
@@ -101,7 +235,7 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setModel(TreeModel newModel) {
         this.model = newModel;
-        ((TreeAdapter)getAdapter()).notifyDataSetChanged();
+        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
     }
 
     public TreeSelectionModel getSelectionModel() {
@@ -118,7 +252,7 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setCellRenderer(TreeCellRenderer renderer) {
         this.cellRenderer = renderer;
-        ((TreeAdapter)getAdapter()).notifyDataSetChanged();
+        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
     }
 
     public boolean isRootVisible() {
@@ -127,7 +261,7 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setRootVisible(boolean visible) {
         this.rootVisible = visible;
-        ((TreeAdapter)getAdapter()).notifyDataSetChanged();
+        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
     }
 
     public boolean isEditable() {
@@ -163,22 +297,22 @@ public class JTree extends ExpandableListView implements ViewComponent {
             maxWidth = getWidthGroup(group, paint, maxWidth);
         }
 
-        return maxWidth + 100; // Add padding for icons/indent
+        return maxWidth + 100;
     }
 
-    public int getWidthGroup(TreeNode group, Paint paint, int maxWidth) {
-        if(group.isLeaf()) return Math.max(maxWidth, (int) paint.measureText(group.toString()));
+    private int getWidthGroup(TreeNode group, Paint paint, int maxWidth) {
+        if (group.isLeaf()) return Math.max(maxWidth, (int) paint.measureText(group.toString()));
 
         for (int i = 0; i < model.getChildCount(group); i++) {
-            TreeNode group1 = model.getChild(group, i);
-            maxWidth = getWidthGroup(group1, paint, maxWidth);
+            TreeNode child = model.getChild(group, i);
+            maxWidth = getWidthGroup(child, paint, maxWidth);
         }
         return maxWidth;
     }
 
     private int calculateTotalHeight() {
         int totalHeight = 0;
-        TreeAdapter adapter = (TreeAdapter) getAdapter();
+        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
 
         for (int i = 0; i < adapter.getGroupCount(); i++) {
             View groupView = adapter.getGroupView(i, false, null, this);
@@ -222,18 +356,16 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     @Override
     public Dimension getSize() {
-
         return new Dimension(getWidth(), getHeight());
     }
 
     @Override
     public void setFont(Font font) {
-        if (font != null) {
-            ((TreeAdapter)getAdapter()).setFont(font);
-            if (cellRenderer instanceof DefaultTreeCellRenderer) {
-                ((DefaultTreeCellRenderer)cellRenderer).setFont(font);
-            }
+        this.currentFont = font;
+        if (cellRenderer instanceof DefaultTreeCellRenderer) {
+            ((DefaultTreeCellRenderer)cellRenderer).setFont(font);
         }
+        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
     }
 
     @Override
@@ -248,29 +380,8 @@ public class JTree extends ExpandableListView implements ViewComponent {
         return new Font(Typeface.DEFAULT, 14);
     }
 
-    private int findGroupPosition(Object node) {
-        TreeAdapter adapter = (TreeAdapter) getAdapter();
-        for (int i = 0; i < adapter.getGroupCount(); i++) {
-            if (adapter.getGroup(i).equals(node)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private int findChildPosition(int groupPosition, TreeNode childNode) {
-        TreeAdapter adapter = (TreeAdapter) getAdapter();
-        for (int i = 0; i < adapter.getChildrenCount(groupPosition); i++) {
-            if (adapter.getChild(groupPosition, i).equals(childNode)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-
     public int getRowCount() {
-        TreeAdapter adapter = (TreeAdapter) getAdapter();
+        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
         int count = adapter.getGroupCount();
 
         for (int i = 0; i < adapter.getGroupCount(); i++) {
@@ -283,17 +394,15 @@ public class JTree extends ExpandableListView implements ViewComponent {
     }
 
     public TreePath getPathForRow(int row) {
-        TreeAdapter adapter = (TreeAdapter) getAdapter();
+        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
         int currentRow = 0;
 
-        // Parcourir les groupes
         for (int groupPos = 0; groupPos < adapter.getGroupCount(); groupPos++) {
             if (currentRow == row) {
                 return new TreePath(new TreeNode[]{(TreeNode) adapter.getGroup(groupPos)});
             }
             currentRow++;
 
-            // Si le groupe est développé, parcourir ses enfants
             if (isGroupExpanded(groupPos)) {
                 for (int childPos = 0; childPos < adapter.getChildrenCount(groupPos); childPos++) {
                     if (currentRow == row) {
@@ -313,10 +422,9 @@ public class JTree extends ExpandableListView implements ViewComponent {
     public int getRowForPath(TreePath path) {
         if (path == null) return -1;
 
-        TreeAdapter adapter = (TreeAdapter) getAdapter();
+        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
         int row = 0;
 
-        // Parcourir tous les éléments visibles
         for (int groupPos = 0; groupPos < adapter.getGroupCount(); groupPos++) {
             TreeNode group = (TreeNode) adapter.getGroup(groupPos);
             if (path.getPath().length > 0 && path.getPath()[0].equals(group)) {
@@ -340,8 +448,6 @@ public class JTree extends ExpandableListView implements ViewComponent {
         return -1;
     }
 
-
-
     public int getLeadSelectionRow() {
         TreePath path = getSelectionPath();
         return path != null ? getRowForPath(path) : -1;
@@ -355,9 +461,8 @@ public class JTree extends ExpandableListView implements ViewComponent {
     }
 
     public void addMouseListener(Object mouseListener) {
-        // Implémentation simplifiée - à adapter selon vos besoins
         setOnItemClickListener((parent, view, position, id) -> {
-            // Gérer le clic ici
+            // Implémentation à compléter selon les besoins
         });
     }
 
@@ -366,7 +471,6 @@ public class JTree extends ExpandableListView implements ViewComponent {
     }
 
     public void addKeyListener(KeyListener listener) {
-        // Implémentation basique - à compléter selon vos besoins
         setOnKeyListener((v, keyCode, event) -> {
             listener.keyPressed(new KeyEvent(event, keyCode));
             return false;
@@ -391,8 +495,7 @@ public class JTree extends ExpandableListView implements ViewComponent {
         }
     }
 
-    public void revalidate()
-    {
+    public void revalidate() {
         invalidate();
     }
 
@@ -428,133 +531,8 @@ public class JTree extends ExpandableListView implements ViewComponent {
     }
 
     public TreePath getPathForLocation(int x, int y) {
+
         return null;
-    }
-
-    private class TreeAdapter extends BaseExpandableListAdapter {
-        private Font currentFont;
-
-        public void setFont(Font font) {
-            this.currentFont = font;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getGroupCount() {
-            if (!rootVisible) {
-                return model.getChildCount(model.getRoot());
-            }
-            return 1;
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            TreeNode groupNode;
-            if (!rootVisible) {
-                groupNode = (TreeNode) model.getChild(model.getRoot(), groupPosition);
-            } else {
-                groupNode = (TreeNode) model.getRoot();
-            }
-            return groupNode.getChildCount();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            if (!rootVisible) {
-                return model.getChild(model.getRoot(), groupPosition);
-            }
-            return model.getRoot();
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            TreeNode groupNode = (TreeNode) getGroup(groupPosition);
-            return groupNode.getChildAt(childPosition);
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded,
-                                 View convertView, ViewGroup parent) {
-            TreeNode node = (TreeNode) getGroup(groupPosition);
-
-            if (cellRenderer != null) {
-                return cellRenderer.getTreeCellView(JTree.this, node,
-                        selectionModel.isPathSelected(new TreePath(node)),
-                        isExpanded, node.isLeaf(), 0);
-            }
-
-            TextView textView = new TextView(getContext());
-            textView.setText(node.toString());
-            textView.setTextSize(18);
-            textView.setTextColor(Color.BLACK);
-            textView.setPadding(50, 20, 20, 20);
-
-            if (currentFont != null) {
-                textView.setTypeface(currentFont.getFont());
-                textView.setTextSize(currentFont.getSize());
-            }
-
-            return textView;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition,
-                                 boolean isLastChild, View convertView, ViewGroup parent) {
-            TreeNode node = (TreeNode) getChild(groupPosition, childPosition);
-            TreePath path = buildTreePath(groupPosition, childPosition);
-
-            if (cellRenderer != null) {
-                return cellRenderer.getTreeCellView(JTree.this, node,
-                        selectionModel.isPathSelected(path),
-                        isExpanded(path), node.isLeaf(), 1);
-            }
-
-            TextView textView = new TextView(getContext());
-            textView.setText(node.toString());
-            textView.setTextSize(16);
-            textView.setTextColor(Color.DKGRAY);
-            textView.setPadding(100, 15, 20, 15);
-
-            if (currentFont != null) {
-                textView.setTypeface(currentFont.getFont());
-                textView.setTextSize(currentFont.getSize());
-            }
-
-            return textView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-        private TreePath buildTreePath(int groupPosition, int childPosition) {
-            if (!rootVisible) {
-                TreeNode root = model.getRoot();
-                TreeNode group = (TreeNode) getGroup(groupPosition);
-                TreeNode child = (TreeNode) getChild(groupPosition, childPosition);
-                return new TreePath(new TreeNode[] {root, group, child});
-            } else {
-                TreeNode root = model.getRoot();
-                TreeNode child = (TreeNode) getChild(groupPosition, childPosition);
-                return new TreePath(new TreeNode[] {root, child});
-            }
-        }
     }
 
     private boolean isExpanded(TreePath path) {

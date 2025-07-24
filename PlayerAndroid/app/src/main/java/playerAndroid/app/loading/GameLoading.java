@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 //import javax.swing.JFileChooser;
 
+import androidUtils.UriToFileConverter;
+import androidUtils.swing.JFileChooser;
 import playerAndroid.app.AndroidApp;
 import app.PlayerApp;
 //import app.display.dialogs.GameLoaderDialog;
@@ -26,39 +28,47 @@ import main.FileHandling;
 import main.GameNames;
 import other.GameLoader;
 import playerAndroid.app.StartAndroidApp;
+import playerAndroid.app.display.dialogs.GameLoaderDialog;
 
-public class GameLoading
-{
+public class GameLoading {
+
+    private static int fcReturnVal = JFileChooser.CANCEL_OPTION;
+    private static PlayerApp app = null;
 
     //-------------------------------------------------------------------------
 
     /**
      * Load a game from an external .lud file.
      */
-    public static void loadGameFromFile(final PlayerApp app)
-    {
-        ///final int fcReturnVal = AndroidApp.gameFileChooser().showOpenDialog(AndroidApp.frame());
+    public static void loadGameFromFile(final PlayerApp app) {
+        System.out.println("before return");
+        GameLoading.app = app;
+        fcReturnVal = AndroidApp.gameFileChooser().showOpenDialog(AndroidApp.frame());
+    }
 
-        //if (fcReturnVal == JFileChooser.APPROVE_OPTION)
-/*        {
-            File file = AndroidApp.gameFileChooser().getSelectedFile();
-            String filePath = file.getAbsolutePath();
-            if (!filePath.endsWith(".lud"))
-            {
-                filePath += ".lud";
-                file = new File(filePath);
-            }
+    public static void loadGameFromFileAfterResponse() {
+        System.out.println("-----------------------------------------------------------");
+        if (fcReturnVal == JFileChooser.APPROVE_OPTION && app != null) {
+            System.out.println("ok");
+            fcReturnVal = JFileChooser.CANCEL_OPTION;
+            String extension = UriToFileConverter.getFileExtensionFromUri(StartAndroidApp.getAppContext(), AndroidApp.gameFileChooser().getSelectedFileUri());
 
-            if (file.exists())
-            {
-                final String fileName = file.getAbsolutePath();
+
+            if (!"lud".equals(extension))return;
+
+            String desc = UriToFileConverter.readTextFromUri(StartAndroidApp.getAppContext(), AndroidApp.gameFileChooser().getSelectedFileUri());
+
+            if (desc != null) {
+                System.out.println(desc);
 
                 // TODO if we want to preserve per-game last-selected-options in preferences, load them here
                 app.manager().settingsManager().userSelections().setRuleset(Constants.UNDEFINED);
-                app.manager().settingsManager().userSelections().setSelectOptionStrings(new ArrayList<String>());
-                loadGameFromFilePath(app, fileName);
+                app.manager().settingsManager().userSelections().setSelectOptionStrings(new ArrayList<>());
+
+                loadGameFromFileDesc(app, desc);
             }
-        }*/
+            GameLoading.app = null;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -66,28 +76,28 @@ public class GameLoading
     /**
      * Load a specified external .lud file.
      */
-    public static void loadGameFromFilePath(final PlayerApp app, final String filePath)
-    {
-        if (filePath != null)
-        {
+    public static void loadGameFromFilePath(final PlayerApp app, final String filePath) {
+        System.out.println("loaded in " + filePath);
+        if (filePath != null) {
+
             app.manager().setSavedLudName(filePath);
 
             String desc = "";
-            try
-            {
+            try {
                 app.settingsPlayer().setLoadedFromMemory(false);
                 desc = FileHandling.loadTextContentsFromFile(filePath);
                 GameSetup.compileAndShowGame(app, desc, false);
-            }
-            catch (final FileNotFoundException ex)
-            {
+            } catch (final FileNotFoundException ex) {
                 System.out.println("Unable to open file '" + filePath + "'");
-            }
-            catch (final IOException ex)
-            {
+            } catch (final IOException ex) {
                 System.out.println("Error reading file '" + filePath + "'");
             }
         }
+    }
+
+    public static void loadGameFromFileDesc(final PlayerApp app, final String desc)
+    {
+        GameSetup.compileAndShowGame(app, desc, false);
     }
 
     //-------------------------------------------------------------------------
@@ -108,15 +118,15 @@ public class GameLoading
                 break;
             }
         }
-        //final String choice = GameLoaderDialog.showDialog(AndroidApp.frame(), choices, initialChoice);
+        final String choice = GameLoaderDialog.showDialog(AndroidApp.frame(), choices, initialChoice);
 
-       // if (choice != null)
-       // {
-        //    // TODO if we want to preserve per-game last-selected-options in preferences, load them here
-        //    app.manager().settingsManager().userSelections().setRuleset(Constants.UNDEFINED);
-       //     app.manager().settingsManager().userSelections().setSelectOptionStrings(new ArrayList<String>());
-        //    loadGameFromMemory(app, choice, debug);
-       // }
+       if (choice != null)
+       {
+            // TODO if we want to preserve per-game last-selected-options in preferences, load them here
+            app.manager().settingsManager().userSelections().setRuleset(Constants.UNDEFINED);
+            app.manager().settingsManager().userSelections().setSelectOptionStrings(new ArrayList<String>());
+            loadGameFromMemory(app, choice, debug);
+       }
     }
 
     //-------------------------------------------------------------------------

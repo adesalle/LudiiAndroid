@@ -5,6 +5,7 @@ import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.awt.event.ItemEvent;
 import androidUtils.awt.event.ItemListener;
+import androidUtils.swing.menu.JMenuItem;
 
 public class JRadioButtonMenuItem extends JMenuItem
 {

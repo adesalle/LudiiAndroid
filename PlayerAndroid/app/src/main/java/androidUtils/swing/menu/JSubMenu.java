@@ -6,12 +6,24 @@ import android.view.SubMenu;
 import android.view.MenuItem;
 import android.view.View;
 
+import playerAndroid.app.StartAndroidApp;
+
 public class JSubMenu extends JMenu implements SubMenu {
     private final JMenuItem parentItem;
+    private Context context;
 
     public JSubMenu(Context context, JMenuItem parentItem) {
         super(context);
+        this.context = context;
         this.parentItem = parentItem;
+    }
+
+    public JSubMenu(JMenu menu, JMenuItem parentItem) {
+        super(menu.getTitle());
+        this.parentItem = parentItem;
+        for (JMenuItem item: menu.getItems()) {
+            add(item);
+        }
     }
 
     @Override
@@ -47,7 +59,7 @@ public class JSubMenu extends JMenu implements SubMenu {
     @Override
     public void clearHeader() {
         parentItem.setTitle("");
-        parentItem.setIcon(null);
+        parentItem.setIcon((Drawable) null);
     }
 
     @Override
@@ -62,6 +74,10 @@ public class JSubMenu extends JMenu implements SubMenu {
 
     @Override
     public MenuItem getItem() {
+        return parentItem;
+    }
+
+    public Object getInvoker() {
         return parentItem;
     }
 }

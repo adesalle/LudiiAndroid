@@ -40,7 +40,7 @@ public class JTextComponent extends AppCompatEditText implements ViewComponent{
     protected void init() {
         this.document = new HTMLDocument();
         this.highlighter = new DefaultHighlighter();
-        this.editorKit = new DefaultEditorKit();
+        this.editorKit = new HTMLEditorKit();
 
         // Gestion des événements
         addTextChangedListener(new TextWatcher() {
@@ -223,7 +223,7 @@ public class JTextComponent extends AppCompatEditText implements ViewComponent{
 
     public void putClientProperty(Object key, Object value) {
         // Implémentation simplifiée - stocke les propriétés dans les tags
-        setTag(key.hashCode(), value);
+        //setTag(key.hashCode(), value);
     }
 
     public Object getClientProperty(Object key) {

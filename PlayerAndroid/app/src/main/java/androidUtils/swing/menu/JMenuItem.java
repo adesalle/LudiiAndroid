@@ -2,6 +2,7 @@ package androidUtils.swing.menu;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.view.ActionProvider;
 import android.view.ContextMenu;
@@ -12,9 +13,18 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import androidUtils.awt.Dimension;
+import androidUtils.awt.Graphics2D;
+import androidUtils.awt.event.ActionEvent;
+import androidUtils.awt.event.ActionListener;
+import androidUtils.swing.Icon;
+import androidUtils.swing.KeyStroke;
 import playerAndroid.app.StartAndroidApp;
 
-public class JMenuItem implements MenuItem {
+public class JMenuItem implements MenuItem{
     // États de l'item
     private int itemId;
     private int groupId;
@@ -31,15 +41,29 @@ public class JMenuItem implements MenuItem {
     private boolean enabled = true;
     private boolean expanded = false;
 
+    private KeyStroke accelerator;
+    private String toolTipText;
+    private Object parent;
+    private Icon iconObj;
+    private Icon disabledIcon;
+    private boolean armed;
+    private final List<ActionListener> actionListeners = new ArrayList<>();
+    private final List<Object> changeListeners = new ArrayList<>();
+
     // Listeners et vues
     private OnMenuItemClickListener clickListener;
     private OnActionExpandListener actionExpandListener;
-    private SubMenu subMenu;
+    private JSubMenu subMenu;
     private View actionView;
     private ActionProvider actionProvider;
 
     private Context context;
 
+    public JMenuItem(String title)
+    {
+        this();
+        setTitle(title);
+    }
     public JMenuItem()
     {
         this(StartAndroidApp.getAppContext());
@@ -95,6 +119,10 @@ public class JMenuItem implements MenuItem {
     @Override
     public CharSequence getTitle() {
         return title;
+    }
+
+    public String getText() {
+        return title.toString();
     }
 
     @NonNull
@@ -234,8 +262,9 @@ public class JMenuItem implements MenuItem {
         return subMenu;
     }
 
-    public void setSubMenu(SubMenu subMenu) {
+    public void setSubMenu(JSubMenu subMenu) {
         this.subMenu = subMenu;
+        subMenu.setParent(this);
     }
 
     @NonNull
@@ -245,12 +274,7 @@ public class JMenuItem implements MenuItem {
         return this;
     }
 
-    public boolean performClick() {
-        if (enabled && clickListener != null) {
-            return clickListener.onMenuItemClick(this);
-        }
-        return false;
-    }
+
 
     @Nullable
     @Override
@@ -342,5 +366,170 @@ public class JMenuItem implements MenuItem {
 
     public void toggle() {
         setChecked(!isChecked());
+    }
+
+
+    public void setAccelerator(KeyStroke s) {
+        this.accelerator = s;
+        if (s != null) {
+            setAlphabeticShortcut(s.getKeyChar());
+        }
+    }
+
+    public KeyStroke getAccelerator() {
+        return this.accelerator;
+    }
+
+    public void addActionListener(ActionListener al) {
+        setOnMenuItemClickListener(item -> {
+            al.actionPerformed(new ActionEvent(item));
+            ((JMenu)((JMenuItem)item).getParent()).dismissPopupMenu();
+            return false;
+        });
+        ;
+    }
+
+    public void removeActionListener(ActionListener al) {
+        actionListeners.remove(al);
+    }
+
+    public void setToolTipText(String s) {
+        this.toolTipText = s;
+    }
+
+    public String getToolTipText() {
+        return this.toolTipText;
+    }
+
+    public void setParent(Object parent) {
+        this.parent = parent;
+    }
+
+    public Object getParent() {
+        return this.parent;
+    }
+
+    public void setIcon(Icon icon) {
+        this.iconObj = icon;
+        if (icon != null) {
+            setIcon(icon);
+        }
+    }
+
+
+    public void addChangeListener(Object listener) {
+        if (listener != null && !changeListeners.contains(listener)) {
+            changeListeners.add(listener);
+        }
+    }
+
+    public void removeChangeListener(Object listener) {
+        changeListeners.remove(listener);
+    }
+
+    public void setDisabledIcon(Icon icon) {
+        this.disabledIcon = icon;
+    }
+
+    public Icon getDisabledIcon() {
+        return this.disabledIcon;
+    }
+
+    public void setArmed(boolean armed) {
+        this.armed = armed;
+        // Notifier les changeListeners si nécessaire
+        notifyChangeListeners();
+    }
+
+    public boolean isArmed() {
+        return this.armed;
+    }
+
+    private void notifyChangeListeners() {
+        for (Object listener : changeListeners) {
+            // Implémenter la notification selon votre système d'événements
+        }
+    }
+
+    private void notifyActionListeners() {
+        for (ActionListener al : actionListeners) {
+            al.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, (String)getTitle()));
+        }
+    }
+
+
+    public boolean performClick() {
+        if (enabled) {
+            notifyActionListeners();
+            if (clickListener != null) {
+                return clickListener.onMenuItemClick(this);
+            }
+        }
+        return false;
+    }
+
+    public Dimension getPreferredSize() {
+        // Valeurs par défaut pour les paddings et espacements
+        int iconTextGap = 4; // espace entre l'icône et le texte (en dp)
+        int horizontalPadding = 16; // padding horizontal (en dp)
+        int verticalPadding = 8; // padding vertical (en dp)
+
+        // Convertir les dp en pixels
+        float density = context.getResources().getDisplayMetrics().density;
+        int iconTextGapPx = (int)(iconTextGap * density);
+        int horizontalPaddingPx = (int)(horizontalPadding * density);
+        int verticalPaddingPx = (int)(verticalPadding * density);
+
+        // Mesurer la largeur du texte
+        Paint textPaint = new Paint();
+        textPaint.setTextSize(16 * density);
+        float textWidth = 0;
+
+        if (title != null) {
+            textWidth = textPaint.measureText(title.toString());
+        }
+
+        // Largeur de l'icône
+        int iconWidth = 0;
+        if (icon != null) {
+            iconWidth = icon.getIntrinsicWidth();
+            if (iconWidth == -1) {
+                iconWidth = (int)(24 * density); // Taille par défaut si non spécifiée
+            }
+        }
+
+        // Largeur totale
+        int totalWidth = horizontalPaddingPx * 2;
+        if (iconWidth > 0) {
+            totalWidth += iconWidth + iconTextGapPx;
+        }
+        totalWidth += (int)textWidth;
+
+        // Hauteur totale
+        int totalHeight = verticalPaddingPx * 2;
+        int textHeight = (int)(textPaint.descent() - textPaint.ascent());
+        int iconHeight = 0;
+
+        if (icon != null) {
+            iconHeight = icon.getIntrinsicHeight();
+            if (iconHeight == -1) {
+                iconHeight = (int)(24 * density); // Taille par défaut si non spécifiée
+            }
+        }
+
+        totalHeight += Math.max(textHeight, iconHeight);
+
+        // Ajouter de l'espace pour le raccourci si présent
+        if (accelerator != null) {
+            String accelText = accelerator.toString();
+            float accelWidth = textPaint.measureText(accelText);
+            totalWidth += iconTextGapPx + accelWidth;
+        }
+
+        // S'assurer d'une hauteur minimale
+        int minHeight = (int)(48 * density); // Hauteur minimale Material Design
+        totalHeight = Math.max(totalHeight, minHeight);
+
+        return new Dimension(totalWidth, totalHeight);
     }
 }

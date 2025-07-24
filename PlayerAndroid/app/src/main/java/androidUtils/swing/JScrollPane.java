@@ -16,7 +16,7 @@ import androidUtils.awt.Rectangle;
 import androidUtils.swing.tree.JTree;
 import playerAndroid.app.StartAndroidApp;
 
-public class JScrollPane extends FrameLayout implements ViewComponent{
+public class JScrollPane extends JPanel implements ViewComponent{
     private CustomScrollView verticalScrollView;
     private CustomHorizontalScrollView horizontalScrollView;
     private View viewportView;
@@ -24,19 +24,19 @@ public class JScrollPane extends FrameLayout implements ViewComponent{
     private FrameLayout viewportContainer;
 
     public JScrollPane() {
-        super(StartAndroidApp.getAppContext());
+        super();
         init();
     }
 
 
     public JScrollPane(View view) {
-        super(StartAndroidApp.getAppContext());
+        super();
         init();
         setViewportView(view);
     }
 
     public JScrollPane(AttributeSet attrs) {
-        super(StartAndroidApp.getAppContext(), attrs);
+        super(attrs);
         init();
     }
 

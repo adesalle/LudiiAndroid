@@ -47,7 +47,7 @@ public class PlayerView extends View {
         final int numPlayers = game.players().count();
 
         final int maxHandHeight = 100;                    // Maximum height of a player's hand.
-        final double maxPanelPercentageHeight = 0.7;    // Maximum height of the entire panel (as percentage of app height).
+        final double maxPanelPercentageHeight = 0.5;    // Maximum height of the entire panel (as percentage of app height).
 
         int boardSize = app.height();
         if (SettingsExhibition.exhibitionVersion)

@@ -6,7 +6,7 @@ import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.swing.FileNameExtensionFilter;
 import androidUtils.swing.JFileChooser;
-import androidUtils.swing.JMenu;
+import androidUtils.swing.menu.JMenu;
 import main.FileHandling;
 import playerAndroid.app.display.dialogs.visual_editor.handler.Handler;
 

@@ -16,7 +16,6 @@ import androidUtils.awt.Component;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Font;
 import androidUtils.awt.Graphics;
-import androidUtils.awt.Image;
 import androidUtils.awt.event.ActionEvent;
 import androidUtils.awt.event.ActionListener;
 import androidUtils.awt.event.MouseListener;
@@ -42,6 +41,7 @@ public class JButton extends Component implements ViewComponent {
     private List<ActionListener> actionListeners = new ArrayList<>();
 
     private ImageIcon icon;
+    private boolean isDefaultButton = false;
 
 
     public JButton(String text) {
@@ -63,6 +63,31 @@ public class JButton extends Component implements ViewComponent {
         super();
         nativeButton = new Graphics2DView();
         setupListeners();
+    }
+
+    public void setAsDefaultButton(boolean isDefault) {
+        this.isDefaultButton = isDefault;
+        refreshDefaultState();
+    }
+
+    public void refreshDefaultState() {
+        if (isDefaultButton) {
+            // Mettre en valeur le bouton par défaut
+            setBackgroundColor(Color.parseColor("#2E86C1")); // Bleu plus foncé
+            nativeButton.setTextColor(Color.WHITE.toArgb());
+        } else {
+            // Apparence normale
+            setBackgroundColor(Color.parseColor("#3498DB")); // Bleu standard
+            nativeButton.setTextColor(Color.WHITE.toArgb());
+        }
+    }
+
+    public boolean performClick() {
+        super.performClick();
+        // Gérer l'effet visuel du clic
+        animate().scaleX(0.95f).scaleY(0.95f).setDuration(50)
+                .withEndAction(() -> animate().scaleX(1f).scaleY(1f).setDuration(50));
+        return false;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -235,8 +260,7 @@ public class JButton extends Component implements ViewComponent {
 
     public void setActionCommand(String command) {
         this.actionCommand = command;
-        // Stocke aussi dans le tag pour accès facile
-        nativeButton.setTag(command);
+        //nativeButton.setTag(command);
     }
 
     public String getActionCommand() {

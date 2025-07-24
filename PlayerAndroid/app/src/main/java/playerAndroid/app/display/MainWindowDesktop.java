@@ -37,6 +37,7 @@ import app.PlayerApp;
 import playerAndroid.app.StartAndroidApp;
 import playerAndroid.app.display.util.DevTooltip;
 //import app.display.util.ZoomBox;
+import playerAndroid.app.display.util.ZoomBox;
 import playerAndroid.app.display.views.OverlayView;
 import playerAndroid.app.display.views.tabs.TabView;
 //import app.loading.FileLoading;
@@ -111,7 +112,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
     static String volatileMessage = "";
 
     /** ZoomBox (magnifying glass) pane. */
-    //public ZoomBox zoomBox;
+    public ZoomBox zoomBox;
 
     /** If we are currently painting the desktop frame. */
     public boolean isPainting = false;
@@ -136,12 +137,11 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
         graphics = new Graphics();
 
         // Convertir le seuil de clic de dp en pixels
-
         final float density = StartAndroidApp.getAppContext().getResources().getDisplayMetrics().density;
         clickThresholdPx = CLICK_THRESHOLD_DP * density;
-
         setOnTouchListener(this);
         setVisibility(android.view.View.VISIBLE);
+        zoomBox = new ZoomBox(app, this);
     }
     //-------------------------------------------------------------------------
 
@@ -150,15 +150,10 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
      */
     public void createPanels()
     {
-        System.out.println("panels onCreate");
         MVCSetup.setMVC(app);
-
-
         panels.clear();
-
-
         removeAll();
-
+        app.graphicsCache().setBoardImage(null);
 
         final boolean portraitMode = width < height;
 
@@ -169,7 +164,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
         // create the player panel
         playerPanel = new PlayerView(app, portraitMode, false);
         panels.add(playerPanel);
-/*
+
 
         // Create tool panel
         toolPanel = new ToolView(app, portraitMode);
@@ -183,12 +178,10 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
         }
 
         // Create overlay panel
-        overlayPanel = new OverlayView(app);
-        panels.add(overlayPanel);
+        //overlayPanel = new OverlayView(app);
+        //panels.add(overlayPanel);
 
-*/
 
-        System.out.println("panels Create");
         if (SettingsExhibition.exhibitionVersion)
             app.settingsPlayer().setAnimationType(AnimationVisualsType.Single);
 
@@ -201,9 +194,8 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        System.out.println(app.width());
         graphics.setCanvas(canvas);
-        System.out.println("canvas width " + canvas.getWidth() + " " + canvas.getHeight());
-        System.out.println(getX() + " " + getX());
         graphics.resetPaint();
         paintComponent(graphics);
     }
@@ -217,7 +209,6 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
 
     public void paintComponent(final Graphics g)
     {
-
             try
             {
 
@@ -234,12 +225,15 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
                 setDisplayFont(app);
                 app.graphicsCache().allDrawnComponents().clear();
 
+                System.out.println(width + " x " + height);
+                System.out.println(getWidth() + " x " + getHeight());
 
-                if (panels.isEmpty())
+                if (panels.isEmpty() || width != getWidth() || height != getHeight())
                 {
+                    width = getWidth();
+                    height = getHeight();
                     createPanels();
                 }
-                System.out.println("after create panels");
 
                 app.updateTabs(app.contextSnapshot().getContext(app));
 
@@ -256,7 +250,6 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
 
                 // Paint each panel
                 for (final View panel : panels) {
-                    System.out.println(panel.getClass());
                     panel.paint(g);
 
                 }

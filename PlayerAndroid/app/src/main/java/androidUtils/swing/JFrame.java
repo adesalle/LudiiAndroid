@@ -16,11 +16,12 @@ import androidUtils.awt.Container;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Layout;
+import androidUtils.awt.Toolkit;
 import androidUtils.awt.image.BufferedImage;
 import androidUtils.awt.event.WindowAdapter;
 import androidUtils.awt.event.WindowEvent;
+import androidUtils.swing.menu.JMenuBar;
 import playerAndroid.app.StartAndroidApp;
-import playerAndroid.app.menu.MainMenu;
 import playerAndroid.app.util.SettingsDesktop;
 
 public class JFrame extends LinearLayout implements RootPanel{
@@ -66,7 +67,7 @@ public class JFrame extends LinearLayout implements RootPanel{
 
     private void init() {
         // Setup basic frame properties
-        setBackgroundColor(android.graphics.Color.WHITE);
+
         // Default layout
         layout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);
         setLayout(layout);
@@ -76,9 +77,18 @@ public class JFrame extends LinearLayout implements RootPanel{
     public void setTitle(String title) {
         this.title = title;
     }
+    public String getTitle()
+    {
+        return title;
+    }
 
     public void setView(Activity activity)
     {
+        frame.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        ));
+
         activity.setContentView(this);
     }
 
@@ -103,6 +113,7 @@ public class JFrame extends LinearLayout implements RootPanel{
 
 
         contentPane = panel;
+        contentPane.setBackgroundColor(android.graphics.Color.WHITE);
         if(menubar != null)
         {
             removeViewAt(1);
@@ -114,6 +125,7 @@ public class JFrame extends LinearLayout implements RootPanel{
                     LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT
             ));
+
             addView(contentPane, 0);
         }
 
@@ -121,21 +133,13 @@ public class JFrame extends LinearLayout implements RootPanel{
     }
 
     public void setJMenuBar(JMenuBar mainMenu) {
-        // Remove any existing menu bar if present
-        if (getChildCount() > 0 && getChildAt(0) instanceof ViewGroup) {
-            View firstChild = getChildAt(0);
-            if (firstChild.getTag() != null && firstChild.getTag().equals("menuBar")) {
+        if (getChildCount() > 0 && getChildAt(0) instanceof JMenuBar) {
                 removeViewAt(0);
-            }
         }
-
         if (mainMenu != null) {
-            // Tag the menu view so we can identify it later
-            mainMenu.setTag("menuBar");
 
-            // Add the menu as the first child (top of the frame)
+            menubar = mainMenu;
             addView(mainMenu, 0);
-
 
             // Set layout params for the menu
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -149,14 +153,15 @@ public class JFrame extends LinearLayout implements RootPanel{
     }
 
     private void updateContentPaneLayout() {
-        if (contentPane != null) {
-            LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(
-                    LinearLayoutCompat.LayoutParams.MATCH_PARENT,
-                    0,
-                    1f
-            );
-            contentPane.setLayoutParams(params);
-        }
+
+        LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(
+                LinearLayoutCompat.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+        );
+
+        contentPane.setLayoutParams(params);
+
     }
 
     public void setDefaultButton(JButton button) {
@@ -329,23 +334,6 @@ public class JFrame extends LinearLayout implements RootPanel{
         // Standard layout - don't modify the coordinates
         super.onLayout(changed, l, t, r, b);
 
-        // Additional layout if needed
-        if (menubar != null) {
-            menubar.measure(
-                    MeasureSpec.makeMeasureSpec(r - l, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            );
-            int menuHeight = menubar.getMeasuredHeight();
-            menubar.layout(l, t, r, t + menuHeight);
-
-            if (contentPane != null) {
-                contentPane.measure(
-                        MeasureSpec.makeMeasureSpec(r - l, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(b - t - menuHeight, MeasureSpec.EXACTLY)
-                );
-                contentPane.layout(l, t + menuHeight, r, b);
-            }
-        }
     }
 
     @Override

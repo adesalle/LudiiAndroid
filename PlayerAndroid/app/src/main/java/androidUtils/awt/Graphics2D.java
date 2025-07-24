@@ -368,7 +368,9 @@ public class Graphics2D{
 
     public void drawString(String text, int x, int y)
     {
-        paint.setStyle(Paint.Style.STROKE);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);          // Lissage activé (essentiel)
+        paint.setSubpixelText(true);
         canvas.drawText(text, x, y, paint);
         paint = new Paint(paint);
         

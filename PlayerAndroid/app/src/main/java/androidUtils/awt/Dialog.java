@@ -1,135 +1,119 @@
 package androidUtils.awt;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidUtils.swing.JDialog;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
+import java.util.Objects;
+
+import androidUtils.awt.event.OnOptionSelectedListener;
+import androidUtils.awt.event.WindowAdapter;
+import androidUtils.awt.event.WindowEvent;
+import androidUtils.swing.JButton;
 import androidUtils.swing.JPanel;
-import androidUtils.swing.JRootPane;
 import androidUtils.swing.RootPanel;
 import androidUtils.swing.WindowConstants;
-import playerAndroid.app.StartAndroidApp;
 
-public class Dialog extends android.app.Dialog implements RootPanel {
-    private ModalityType modalityType = ModalityType.MODELESS;
-    private int defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE;
-    private boolean isResizable = true;
-    private Bitmap iconImage;
-    private JRootPane rootPane;
-
-    private boolean undecorated = false;
+public class Dialog extends DialogFragment implements RootPanel {
+    protected ModalityType modalityType = ModalityType.MODELESS;
+    protected int defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE;
+    protected boolean isResizable = true;
+    protected Bitmap iconImage;
+    protected JPanel contentPane;
+    protected boolean undecorated = false;
+    protected OnOptionSelectedListener optionSelectedListener;
+    protected WindowAdapter windowAdapter;
+    protected String title;
+    protected int width = -1;
+    protected int height = -1;
+    protected int x = -1;
+    protected int y = -1;
+    private DialogInterface.OnShowListener showListener;
+    private boolean isShowing = false;
 
     public Dialog() {
-        super(StartAndroidApp.startAndroidApp());
-        initDialog();
+        super();
     }
 
     public Dialog(ViewGroup owner, ModalityType modalityType) {
-        super(owner != null ? owner.getContext() : StartAndroidApp.getAppContext());
+        this();
         this.modalityType = modalityType;
-        initDialog();
     }
 
-    public Dialog(JDialog owner, ModalityType modalityType) {
-        super(owner != null ? owner.getContext() : StartAndroidApp.getAppContext());
+    public Dialog(Dialog owner, ModalityType modalityType) {
+        this();
         this.modalityType = modalityType;
-        initDialog();
     }
 
-    protected void initDialog() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setCancelable(modalityType != ModalityType.MODELESS);
-
-
-        rootPane = new JRootPane();
-
+    @NonNull
+    @Override
+    public android.app.Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        android.app.Dialog dialog = super.onCreateDialog(savedInstanceState);
+        configureDialog(dialog);
+        return dialog;
     }
 
-    public JRootPane getRootPane() {
-        return rootPane;
+    protected void configureDialog(android.app.Dialog dialog) {
+        if (undecorated) {
+            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
+        dialog.setCancelable(modalityType != ModalityType.APPLICATION_MODAL);
+
+        if (title != null) {
+            dialog.setTitle(title);
+        }
+
+        if (contentPane != null) {
+            dialog.setContentView(contentPane);
+        }
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        if (width > 0 && height > 0) {
+            params.width = width;
+            params.height = height;
+        }
+
+        if (x >= 0 && y >= 0) {
+            params.x = x;
+            params.y = y;
+        }
+
+        dialog.getWindow().setAttributes(params);
     }
 
 
-    public JPanel getContentPane()
+
+    public Dialog getRootPane()
     {
-        return rootPane.getContentPane();
-    }
-
-    public void setRootPane(JRootPane pane)
-    {
-        rootPane = pane;
-    }
-
-    public void setContentPane(JPanel pane)
-    {
-        rootPane.setContentPane(pane);
-    }
-
-    public void toFront() {
-        Window window = getWindow();
-        if (window != null) {
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-            );
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-            );
-        }
-    }
-
-    public void add(View view) {
-        if(getContentPane() != null)
-        {
-            getContentPane().addView(view);
-        }
-
-    }
-
-    public void add(View view, ViewGroup.LayoutParams params) {
-        add(view);
-    }
-
-    public void remove(View view) {
-        if(getContentPane() != null)
-        {
-            getContentPane().removeView(view);
-        }
-
-    }
-
-    public void removeAllViews() {
-        if(getContentPane() != null)
-        {
-            getContentPane().removeAllViews();
-        }
+        return this;
     }
 
 
-    public Window getWindow() {
-        return super.getWindow();
+    public JPanel getContentPane() {
+        return contentPane;
+    }
+
+    public JPanel getContentView() {
+        return contentPane;
     }
 
     public void setModalityType(ModalityType type) {
         this.modalityType = type;
-        setCancelable(type != ModalityType.MODELESS);
-
-        if (getWindow() != null) {
-            if (type == ModalityType.APPLICATION_MODAL || type == ModalityType.DOCUMENT_MODAL) {
-                getWindow().setFlags(
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                );
-            }
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.setCancelable(type != ModalityType.APPLICATION_MODAL);
         }
     }
 
@@ -141,81 +125,54 @@ public class Dialog extends android.app.Dialog implements RootPanel {
         setModalityType(modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
     }
 
-    @Override
-    public void setTitle(CharSequence title) {
-        super.setTitle(title);
-    }
-
     public void setTitle(String title) {
-        setTitle((CharSequence)title);
+        this.title = title;
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.setTitle(title);
+        }
     }
 
-    public void setIconImage(Image image)
-    {
-        if(image == null)
-        {
-            iconImage = null;
-            return;
-        }
-        setIconImage(image.bitmap);
-    }
 
-    public void setIconImage(Bitmap image) {
-        this.iconImage = image;
-        if (getWindow() != null && image != null) {
-
-            Drawable iconDrawable = new BitmapDrawable(getContext().getResources(), image);
-
-            getWindow().setFeatureDrawable(
-                    Window.FEATURE_LEFT_ICON,
-                    iconDrawable
-            );
-
-        }
+    public void setIconImage(Image image) {
+        this.iconImage = image.getImage();
+        // Implémentation de la logique pour l'icône
     }
 
     public void setDefaultCloseOperation(int operation) {
         this.defaultCloseOperation = operation;
-        switch (operation) {
-            case WindowConstants.DO_NOTHING_ON_CLOSE:
-                setCancelable(false);
-                break;
-            case WindowConstants.DISPOSE_ON_CLOSE:
-            case WindowConstants.HIDE_ON_CLOSE:
-                setCancelable(true);
-                break;
-        }
-    }
-
-    public void setLocationRelativeTo(View view) {
-        Window window = getWindow();
-        if (window != null && view != null) {
-            int[] location = new int[2];
-            view.getLocationOnScreen(location);
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.x = location[0];
-            params.y = location[1];
-            window.setAttributes(params);
-        }
     }
 
     public void setLocation(int x, int y) {
-        Window window = getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
+        this.x = x;
+        this.y = y;
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
             params.x = x;
             params.y = y;
-            window.setAttributes(params);
+            dialog.getWindow().setAttributes(params);
         }
     }
 
     public void setSize(int width, int height) {
-        Window window = getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
+        this.width = width;
+        this.height = height;
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
             params.width = width;
             params.height = height;
-            window.setAttributes(params);
+            dialog.getWindow().setAttributes(params);
+        }
+    }
+
+    public void show() {
+
+        try {
+            show(requireActivity().getSupportFragmentManager(), "jdialog_" + hashCode());
+        } catch (IllegalStateException ignored) {
+            System.out.println("error");
         }
     }
 
@@ -225,6 +182,7 @@ public class Dialog extends android.app.Dialog implements RootPanel {
         } else {
             dismiss();
         }
+
     }
 
     public void dispose() {
@@ -233,83 +191,274 @@ public class Dialog extends android.app.Dialog implements RootPanel {
 
     public void setResizable(boolean resizable) {
         this.isResizable = resizable;
-        Window window = getWindow();
-        if (window != null) {
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
             if (resizable) {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+                params.flags &= ~WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
             } else {
-                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+                params.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
             }
-        }
-    }
-    public void setUndecorated(boolean undecorated) {
-        this.undecorated = undecorated;
-        Window window = getWindow();
-        if (window != null) {
-            if (undecorated) {
-                // Remove title bar and all window decorations
-                window.requestFeature(Window.FEATURE_NO_TITLE);
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT.toArgb()));
-                window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            } else {
-                // Restore default decorations
-                window.requestFeature(Window.FEATURE_NO_TITLE); // Keep no title for consistency
-
-                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            }
-        }
-    }
-
-    /**
-     * @return true if this dialog has no window decorations
-     */
-    public boolean isUndecorated() {
-        return undecorated;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (undecorated) {
-            Window window = getWindow();
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT.toArgb()));
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            dialog.getWindow().setAttributes(params);
         }
     }
 
     public boolean isResizable() {
-        return this.isResizable;
+        return isResizable;
     }
 
-    @Override
+    public void setUndecorated(boolean undecorated) {
+        this.undecorated = undecorated;
+    }
+
+    public boolean isUndecorated() {
+        return undecorated;
+    }
+
     public int getWidth() {
-        int width = 0;
-        Window window = getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
-            width = params.width;
-            window.setAttributes(params);
-        }
         return width;
     }
 
-    @Override
     public int getHeight() {
-        int height = 0;
-        Window window = getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
-            height = params.height;
-            window.setAttributes(params);
-        }
         return height;
     }
 
+    public void setDefaultButton(JButton okButton) {
+        // Implémentation de la logique pour le bouton par défaut
+    }
+
+    public void setOnOptionSelectedListener(OnOptionSelectedListener o) {
+        this.optionSelectedListener = o;
+    }
+
+    public void notifyOptionSelected(int option) {
+        if (optionSelectedListener != null) {
+            optionSelectedListener.onOptionSelected(option);
+        }
+    }
+
+    public void addWindowFocusListener(WindowAdapter adapter) {
+        this.windowAdapter = adapter;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        isShowing = true;
+        if (windowAdapter != null) {
+            windowAdapter.windowOpened(new WindowEvent(this, WindowEvent.WINDOW_OPENED));
+        }
+        if (showListener != null && getDialog() != null) {
+            showListener.onShow(getDialog());
+        }
+        updateContentPane();
+    }
+
+    private void updateContentPane() {
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null && contentPane != null) {
+            // Applique les paramètres de layout si nécessaire
+            if (contentPane.getLayoutParams() == null) {
+                contentPane.setLayoutParams(new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+
+            // Définit le contentPane comme vue principale
+            dialog.setContentView(contentPane);
+
+            // Applique la taille si elle a été spécifiée
+            if (width > 0 && height > 0) {
+                Window window = dialog.getWindow();
+                if (window != null) {
+                    window.setLayout(width, height);
+                }
+            }
+        }
+    }
+
+    public void setContentPane(JPanel pane) {
+        if (this.contentPane == pane) {
+            return; // Évite les opérations inutiles si c'est le même panel
+        }
+
+        // Détache l'ancien contentPane
+        if (this.contentPane != null) {
+            ViewGroup parent = (ViewGroup) this.contentPane.getParent();
+            if (parent != null) {
+                parent.removeView(this.contentPane);
+            }
+        }
+
+        this.contentPane = pane;
+
+        // Si le dialog est visible, met à jour immédiatement
+        if (isAdded() && getDialog() != null) {
+            getDialog().setContentView(contentPane);
+            if (width > 0 && height > 0) {
+                Window window = getDialog().getWindow();
+                if (window != null) {
+                    window.setLayout(width, height);
+                }
+            }
+        }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        isShowing = false;
+        if (windowAdapter != null) {
+            windowAdapter.windowClosed(new WindowEvent(this, WindowEvent.WINDOW_CLOSED));
+        }
+    }
+
+    public boolean isShowing() {
+        android.app.Dialog dialog = getDialog();
+        return dialog != null && dialog.isShowing();
+    }
+
+    public void setOnShowListener(DialogInterface.OnShowListener o) {
+        this.showListener = o;
+    }
+
+    public void toFront() {
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow() != null) {
+            // Pour les API Level >= 21 (Lollipop)
+                dialog.getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+                // Affiche la boîte de dialogue
+                dialog.show();
+
+                // Rétablit les flags normaux
+                dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+            // Force le focus sur la boîte de dialogue
+            dialog.getWindow().getDecorView().requestFocus();
+        }
+    }
+
+    /**
+     * Positionne la boîte de dialogue au centre du composant spécifié ou de l'écran
+     * @param frame Le composant parent (peut être null pour centrer sur l'écran)
+     */
+    public void setLocationRelativeTo(@Nullable View frame) {
+        if (!isAdded()) {
+            Log.w("JDialog", "Dialog not attached to FragmentManager");
+            return;
+        }
+        android.app.Dialog dialog = getDialog();
+        if (dialog == null || dialog.getWindow() == null) {
+            return;
+        }
+
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+
+        if (frame != null && frame.isAttachedToWindow()) {
+            try {
+                // 1. Obtenir la position et taille du parent
+                int[] parentLocation = new int[2];
+                frame.getLocationOnScreen(parentLocation);
+
+                // 2. Obtenir la taille du dialogue
+                window.getDecorView().measure(
+                        View.MeasureSpec.UNSPECIFIED,
+                        View.MeasureSpec.UNSPECIFIED);
+                int dialogWidth = window.getDecorView().getMeasuredWidth();
+                int dialogHeight = window.getDecorView().getMeasuredHeight();
+
+                // 3. Calculer la position centrale
+                params.x = parentLocation[0] + (frame.getWidth() - dialogWidth) / 2;
+                params.y = parentLocation[1] + (frame.getHeight() - dialogHeight) / 2;
+
+                // 4. Ajuster pour ne pas sortir de l'écran
+                DisplayMetrics metrics = new DisplayMetrics();
+                window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+                params.x = Math.max(0, Math.min(params.x, metrics.widthPixels - dialogWidth));
+                params.y = Math.max(0, Math.min(params.y, metrics.heightPixels - dialogHeight));
+
+            } catch (Exception e) {
+                // Fallback au centrage écran en cas d'erreur
+                params.gravity = Gravity.CENTER;
+            }
+        } else {
+            // Centrage simple sur l'écran
+            params.gravity = Gravity.CENTER;
+        }
+
+        // Appliquer les changements
+        window.setAttributes(params);
+
+        // Forcer un recalcul du layout
+        window.getDecorView().requestLayout();
+    }
+
+    public void invalidate() {
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            View decorView = getDialog().getWindow().getDecorView();
+            decorView.post(() -> {
+                decorView.invalidate();
+                if (contentPane != null) {
+                    contentPane.invalidate();
+                }
+            });
+        }
+    }
+
+    public void repaint() {
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            View decorView = getDialog().getWindow().getDecorView();
+            decorView.post(() -> {
+                decorView.invalidate();
+                decorView.requestLayout();
+                if (contentPane != null) {
+                    contentPane.invalidate();
+                    contentPane.requestLayout();
+                }
+            });
+        }
+    }
+
+    public void add(View view) {
+        if (contentPane != null) {
+
+            contentPane.add(view);
+
+            if (getDialog() != null && getDialog().getWindow() != null) {
+                getDialog().getWindow().getDecorView().post(() -> {
+                    contentPane.measure(
+                            View.MeasureSpec.UNSPECIFIED,
+                            View.MeasureSpec.UNSPECIFIED);
+                    pack();
+                });
+            }
+        }
+    }
+
+    public void pack() {
+        android.app.Dialog dialog = getDialog();
+        if (dialog != null && contentPane != null) {
+            contentPane.measure(
+                    View.MeasureSpec.UNSPECIFIED,
+                    View.MeasureSpec.UNSPECIFIED);
+
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setLayout(
+                        contentPane.getMeasuredWidth(),
+                        contentPane.getMeasuredHeight());
+            }
+        }
+    }
 
     public enum ModalityType {
-        APPLICATION_MODAL,  // Bloque toutes les fenêtres
-        DOCUMENT_MODAL,    // Bloque les fenêtres du même document (traité comme APPLICATION_MODAL sur Android)
-        TOOLKIT_MODAL,     // Bloque seulement la fenêtre parente (support partiel)
-        MODELESS           // Non modal
+        APPLICATION_MODAL,
+        DOCUMENT_MODAL,
+        TOOLKIT_MODAL,
+        MODELESS
     }
 }

@@ -149,6 +149,7 @@ public class DeveloperDialog extends JDialog
 		makeColumnOther(app, contentPanel, topology);
 	}
 
+
 	//-----------------------------------------------------------------------------------------
 	
 	/**

@@ -1,11 +1,16 @@
 package androidUtils.swing.menu;
 
+import static androidUtils.awt.event.InputEvent.CTRL_DOWN_MASK;
+
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import androidUtils.awt.event.InputEvent;
+import androidUtils.swing.KeyStroke;
 
 
 public class MenuExampleActivity extends AppCompatActivity {
@@ -24,6 +29,20 @@ public class MenuExampleActivity extends AppCompatActivity {
         JMenu fileMenu = menuBar.addMenu("Fichier");
         JMenu editMenu = menuBar.addMenu("Édition");
         JMenu helpMenu = menuBar.addMenu("Aide");
+
+        JMenuItem menuItem;
+        JMenu menu = new JMenu("Ludii");
+        menuBar.add(menu);
+
+        menuItem = new JMenuItem("Preferences");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.SHIFT_DOWN_MASK));
+
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Quit");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke('Q', CTRL_DOWN_MASK));
+
+        menu.add(menuItem);
 
         // Ajout des items au menu Fichier
         fileMenu.add("Nouveau").setOnMenuItemClickListener(item -> {
