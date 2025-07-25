@@ -76,12 +76,6 @@ public class MouseInfo {
     }
 
     private static void setupTouchRecursive(View view) {
-        if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) {
-                setupTouchRecursive(group.getChildAt(i));
-            }
-        }
 
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override

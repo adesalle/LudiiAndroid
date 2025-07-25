@@ -35,7 +35,7 @@ public class NodeHelp extends JDialog
         setModal(true);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        setLayout(new BoxLayout(getContentView(), BoxLayout.Y_AXIS));
 
 
         // add symbol title
@@ -54,7 +54,7 @@ public class NodeHelp extends JDialog
         }
         clauseList.setListData(clauseStrings);
         JComboBox<String> clauseDropdown = new JComboBox<>(clauseStrings);
-        clauseDropdown.addItemListener((ItemListener) e -> {
+        clauseDropdown.addItemListener( e -> {
             if (e.getStateChange() == ItemEvent.SELECTED)
             {
                 Clause selectedClause = clauseMap.get(clauseDropdown.getSelectedItem());

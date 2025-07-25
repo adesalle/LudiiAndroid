@@ -16,6 +16,7 @@ public class Container extends Component{
     public Container(ViewGroup viewGroup) {
         super();
         this.containerView = viewGroup;
+
     }
 
     public ViewGroup getView()

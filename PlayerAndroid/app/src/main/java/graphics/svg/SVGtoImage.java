@@ -140,6 +140,7 @@ public class SVGtoImage {
     )  {
         // Load the string from file
         try {
+
             SVG svg = SVG.getFromInputStream(stream);
 
             g2d.save();

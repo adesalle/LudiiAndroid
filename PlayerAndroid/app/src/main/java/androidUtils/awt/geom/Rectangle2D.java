@@ -152,7 +152,7 @@ public abstract class Rectangle2D implements Shape {
 
         @Override
         public Point2D getLocation() {
-            return null;
+            return new Point2D.Double(x, y);
         }
     }
 }

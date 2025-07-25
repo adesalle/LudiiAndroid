@@ -67,7 +67,6 @@ public class FileHandling {
                     String path = new File(url.toURI()).getPath();
                     path = path.substring(0, path.length() - "board/space/line/Tic-Tac-Toe.lud".length());
 
-                    //System.out.println(path);
                     // Get the list of .lud files in this directory and subdirectories
                     visit(path, names);
                     Collections.sort(names);
@@ -326,7 +325,6 @@ public class FileHandling {
     public static String[] getResourceListing(final Class<?> cls, final String path, final String filter) {
         Context context = StartAndroidApp.getAppContext();
         List<String> result = new ArrayList<>();
-        System.out.println("path " +path + " " + filter);
         try {
             if (filter.contains(".svg")) {
                 // Recherche dans les SVG décompressés
@@ -342,7 +340,6 @@ public class FileHandling {
 
             if (!result.isEmpty()) {
                 Collections.sort(result);
-                System.out.println(Arrays.toString(result.toArray(new String[0])));
                 return result.toArray(new String[0]);
             }
         } catch (IOException e) {

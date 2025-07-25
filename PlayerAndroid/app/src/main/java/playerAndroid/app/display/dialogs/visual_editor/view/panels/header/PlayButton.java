@@ -1,7 +1,6 @@
 package playerAndroid.app.display.dialogs.visual_editor.view.panels.header;
 
 import android.graphics.drawable.ColorDrawable;
-import android.view.View;
 
 import androidUtils.awt.Font;
 import androidUtils.awt.Graphics;

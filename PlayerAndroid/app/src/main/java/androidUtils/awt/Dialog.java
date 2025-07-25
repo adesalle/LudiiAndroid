@@ -2,6 +2,7 @@ package androidUtils.awt;
 
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -25,6 +26,7 @@ import androidUtils.swing.JButton;
 import androidUtils.swing.JPanel;
 import androidUtils.swing.RootPanel;
 import androidUtils.swing.WindowConstants;
+import playerAndroid.app.StartAndroidApp;
 
 public class Dialog extends DialogFragment implements RootPanel {
     protected ModalityType modalityType = ModalityType.MODELESS;
@@ -66,33 +68,46 @@ public class Dialog extends DialogFragment implements RootPanel {
     }
 
     protected void configureDialog(android.app.Dialog dialog) {
-        if (undecorated) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            if (undecorated) {
+                window.requestFeature(Window.FEATURE_NO_TITLE);
+            }
+
+            // Set transparency
+            window.setBackgroundDrawable(new ColorDrawable(Color.WHITE.toArgb()));
+
+            window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+            window.setDimAmount(0.9f); // Niveau d'assombrissement (0 = transparent, 1 = noir)
+            // Set layout params
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.gravity = Gravity.TOP | Gravity.START;
+
+            if (width > 0 && height > 0) {
+                params.width = width;
+                params.height = height;
+            } else {
+                params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            }
+
+            if (x >= 0 && y >= 0) {
+                params.x = x;
+                params.y = y;
+            }
+
+            window.setAttributes(params);
         }
+
         dialog.setCancelable(modalityType != ModalityType.APPLICATION_MODAL);
 
         if (title != null) {
             dialog.setTitle(title);
         }
-
-        if (contentPane != null) {
-            dialog.setContentView(contentPane);
-        }
-
-        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-        if (width > 0 && height > 0) {
-            params.width = width;
-            params.height = height;
-        }
-
-        if (x >= 0 && y >= 0) {
-            params.x = x;
-            params.y = y;
-        }
-
-        dialog.getWindow().setAttributes(params);
     }
-
 
 
     public Dialog getRootPane()
@@ -170,9 +185,9 @@ public class Dialog extends DialogFragment implements RootPanel {
     public void show() {
 
         try {
-            show(requireActivity().getSupportFragmentManager(), "jdialog_" + hashCode());
-        } catch (IllegalStateException ignored) {
-            System.out.println("error");
+            show(StartAndroidApp.startAndroidApp().getSupportFragmentManager(), "jdialog_" + hashCode());
+        } catch (IllegalStateException e) {
+            System.out.println("error" + e.getMessage());
         }
     }
 
@@ -279,11 +294,11 @@ public class Dialog extends DialogFragment implements RootPanel {
 
     public void setContentPane(JPanel pane) {
         if (this.contentPane == pane) {
-            return; // Évite les opérations inutiles si c'est le même panel
+            return;
         }
 
-        // Détache l'ancien contentPane
-        if (this.contentPane != null) {
+        // Remove old contentPane if it exists
+        if (this.contentPane != null && getDialog() != null) {
             ViewGroup parent = (ViewGroup) this.contentPane.getParent();
             if (parent != null) {
                 parent.removeView(this.contentPane);
@@ -292,17 +307,23 @@ public class Dialog extends DialogFragment implements RootPanel {
 
         this.contentPane = pane;
 
-        // Si le dialog est visible, met à jour immédiatement
+        // Apply layout params if not set
+        if (contentPane.getLayoutParams() == null) {
+            contentPane.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+
+        // Update dialog if showing
         if (isAdded() && getDialog() != null) {
             getDialog().setContentView(contentPane);
             if (width > 0 && height > 0) {
-                Window window = getDialog().getWindow();
-                if (window != null) {
-                    window.setLayout(width, height);
-                }
+                getDialog().getWindow().setLayout(width, height);
             }
+            contentPane.requestLayout();
         }
     }
+
     @Override
     public void onStop() {
         super.onStop();

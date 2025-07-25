@@ -164,7 +164,7 @@ public abstract class JComponent extends Container implements ViewComponent{
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        border.paintBorder(this, new Graphics(canvas));
+        //border.paintBorder(this, new Graphics(canvas));
     }
 
     protected void addMouseListener(MouseListener clickListener) {

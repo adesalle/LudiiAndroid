@@ -1,12 +1,12 @@
 package androidUtils.swing;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
@@ -37,6 +37,7 @@ public class JTextField extends androidx.appcompat.widget.AppCompatEditText impl
 
     public JTextField() {
         super(StartAndroidApp.getAppContext());
+
         init();
     }
 
@@ -56,9 +57,22 @@ public class JTextField extends androidx.appcompat.widget.AppCompatEditText impl
     private void init() {
         setSingleLine(true);
         setMaxLines(1);
+
+        // Configuration essentielle pour le clavier
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        setClickable(true);
+        setLongClickable(true);
+
+        // Couleurs explicites
+        setTextColor(Color.BLACK); // Texte noir
+        setHintTextColor(Color.GRAY); // Hint en gris
+        setBackgroundColor(Color.LTGRAY); // Fond transparent
+
+        // Style par défaut
         paint = new Paint();
-        paint.setColor(0xFFFFFFFF); // White background by default
-        paint.setStyle(Paint.Style.FILL);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.LTGRAY); // Bordure légère par défaut
     }
 
     public void addActionListener(Runnable action) {
@@ -222,17 +236,23 @@ public class JTextField extends androidx.appcompat.widget.AppCompatEditText impl
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        // Draw background
-        canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
-
-        // Draw border
-        if (border != null) {
-            border.paintBorder(this, new Graphics(canvas));
+        // Dessiner d'abord le fond si nécessaire
+        if (paint.getStyle() == Paint.Style.FILL) {
+            canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
         }
 
+        // Dessiner la bordure
+        if (border != null) {
+            border.paintBorder(this, new Graphics(canvas));
+        } else {
+            // Bordure par défaut
+            canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+        }
 
+        // Dessiner le texte (géré par super)
         super.dispatchDraw(canvas);
     }
+
     public void setBorder(Border b) {
         border = b;
     }

@@ -33,6 +33,7 @@ import androidUtils.awt.event.MouseListener;
 import androidUtils.awt.event.MouseMotionListener;
 import androidUtils.swing.border.Border;
 import androidUtils.swing.border.EmptyBorder;
+import androidUtils.swing.menu.JSeparator;
 import playerAndroid.app.StartAndroidApp;
 import playerAndroid.app.util.SettingsDesktop;
 
@@ -72,6 +73,7 @@ public class JPanel extends LinearLayout implements ViewComponent{
 
     public JPanel() {
         super(StartAndroidApp.getAppContext());
+        setOrientation(VERTICAL);
         panel = this;
         init();
         layoutManager = new FlowLayout(FlowLayout.LEFT);
@@ -81,6 +83,7 @@ public class JPanel extends LinearLayout implements ViewComponent{
     }
     public JPanel(AttributeSet set) {
         super(StartAndroidApp.getAppContext(), set);
+        setOrientation(VERTICAL);
         panel = this;
         init();
         layoutManager = new FlowLayout(FlowLayout.LEFT);
@@ -131,7 +134,8 @@ public class JPanel extends LinearLayout implements ViewComponent{
     public void add(View comp) {
         add(comp, null); // Appelle la méthode avec contraintes
     }
-
+    public void add(JSeparator comp) {
+    }
 
     public void add(View comp, Object constraints) {
         addView(comp);

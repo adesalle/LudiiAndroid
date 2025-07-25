@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 import androidUtils.ZipManager;
 import androidUtils.awt.Dialog;
@@ -37,12 +39,16 @@ import androidUtils.awt.Graphics;
 import androidUtils.awt.MouseInfo;
 import androidUtils.awt.SVGGraphics2D;
 import androidUtils.awt.Toolkit;
+import androidUtils.awt.event.ItemEvent;
 import androidUtils.swing.JButton;
+import androidUtils.swing.JComboBox;
 import androidUtils.swing.JDialog;
 import androidUtils.swing.JFrame;
 
 import androidUtils.swing.JLabel;
 import androidUtils.swing.JPanel;
+import androidUtils.swing.JTextArea;
+import androidUtils.swing.JTextField;
 import androidUtils.swing.WindowConstants;
 import app.playerandroid.R;
 import manager.Manager;
@@ -81,11 +87,8 @@ public class StartAndroidApp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setupInitialVariable();
-        System.out.println("width height");
-        System.out.println(Toolkit.getDefaultToolkit().getScreenSize().width);
-        System.out.println(Toolkit.getDefaultToolkit().getScreenSize().height);
-        androidApp.createAndroidApp();
 
+        androidApp.createAndroidApp();
         frame = AndroidApp.frame();
         frame.setView(StartAndroidApp.startAndroidApp());
 

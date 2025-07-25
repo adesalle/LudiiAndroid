@@ -141,7 +141,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
         clickThresholdPx = CLICK_THRESHOLD_DP * density;
         setOnTouchListener(this);
         setVisibility(android.view.View.VISIBLE);
-        zoomBox = new ZoomBox(app, this);
+        //zoomBox = new ZoomBox(app, this);
     }
     //-------------------------------------------------------------------------
 

@@ -1,11 +1,14 @@
 package app.views.players;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import androidUtils.ZipManager;
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
 import androidUtils.awt.Font;
@@ -15,6 +18,7 @@ import androidUtils.awt.Rectangle;
 import androidUtils.awt.SVGGraphics2D;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
+import androidUtils.awt.image.BufferedImage;
 import app.PlayerApp;
 import app.utils.GUIUtil;
 import app.utils.SVGUtil;
@@ -327,17 +331,16 @@ public class PlayerViewUser extends View {
             else if (happinessValue < 0.8)
                 imagePath = "/svg/faces/symbola_happy.svg";
 
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(imagePath)))) {
-                final Rectangle2D nameRect = app.playerNameList()[playerId];
-                final double r = playerView.playerNameFont.getSize();
-                final SVGGraphics2D svg = new SVGGraphics2D((int) r, (int) r);
-                SVGtoImage.loadFromReader(svg, reader, new Rectangle2D.Double(0, 0, r, r), Color.BLACK, Color.WHITE, 0);
-                final Point2D drawPosn = new Point2D.Double(nameRect.getX() + nameRect.getWidth() + g2d.getFont().getSize() / 5, nameRect.getCenterY() - g2d.getFont().getSize() / 5);
-                g2d.drawImage(SVGUtil.createSVGImage(svg.getSVGDocument(), (int) r, (int) r), (int) drawPosn.getX(), (int) drawPosn.getY(), null);
-                reader.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
+            File file = ZipManager.getFile(imagePath, ".svg");
+            final Rectangle2D nameRect = app.playerNameList()[playerId];
+            final double r = playerView.playerNameFont.getSize();
+            final SVGGraphics2D svg = new SVGGraphics2D((int) r, (int) r);
+            SVGtoImage.loadFromFilePath(svg, file.getPath(), new Rectangle2D.Double(0, 0, r, r), Color.BLACK, Color.WHITE, 0);
+            final Point2D drawPosn = new Point2D.Double(nameRect.getX() + nameRect.getWidth() + g2d.getFont().getSize() / 5, nameRect.getCenterY() - g2d.getFont().getSize() / 5);
+            BufferedImage image = new BufferedImage(svg.getBitmap());
+            g2d.drawImage (image, (int) drawPosn.getX(), (int) drawPosn.getY(), null);
+
+
         }
     }
 

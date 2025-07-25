@@ -1,12 +1,17 @@
 package playerAndroid.app.display.dialogs;
 
+import android.graphics.Typeface;
+import android.widget.LinearLayout;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Objects;
 
 
 import androidUtils.JSONObject;
 import androidUtils.awt.BorderLayout;
+import androidUtils.awt.Color;
 import androidUtils.awt.Dialog;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.EventQueue;
@@ -21,6 +26,7 @@ import androidUtils.swing.JDialog;
 import androidUtils.swing.JLabel;
 import androidUtils.swing.JPanel;
 import androidUtils.swing.JScrollPane;
+import androidUtils.swing.border.EmptyBorder;
 import androidUtils.swing.menu.JSeparator;
 import androidUtils.swing.JTabbedPane;
 import androidUtils.swing.JTextField;
@@ -35,6 +41,7 @@ import manager.ai.AIDetails;
 import manager.ai.AIUtil;
 import other.context.Context;
 import playerAndroid.app.AndroidApp;
+import playerAndroid.app.StartAndroidApp;
 import playerAndroid.app.display.dialogs.util.DialogUtil;
 import playerAndroid.app.display.dialogs.util.MaxLengthTextDocument;
 import playerAndroid.app.display.util.AndroidGUIUtil;
@@ -79,7 +86,9 @@ public class SettingsDialog extends JDialog
 		try
 		{
 			dialog = new SettingsDialog(app);
-			DialogUtil.initialiseSingletonDialog(dialog, "Preferences", new Rectangle(AndroidApp.frame().getX() + AndroidApp.frame().getWidth()/2 - 240, AndroidApp.frame().getY(), 500, AndroidApp.frame().getHeight()));
+			DialogUtil.initialiseSingletonDialog(dialog, "Preferences", new Rectangle(AndroidApp.frame().getX(), AndroidApp.frame().getY(),
+					AndroidApp.frame().getWidth() * 0.75f, AndroidApp.frame().getHeight() * .75f));
+
 		}
 		catch (final Exception e)
 		{
@@ -107,7 +116,7 @@ public class SettingsDialog extends JDialog
 	
 
 		playerPanel = new JPanel();
-		//playerPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		playerPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		final JScrollPane scroll = new JScrollPane(playerPanel);
 		tabbedPane.addTab("Player", null, scroll, null);
 
@@ -133,10 +142,12 @@ public class SettingsDialog extends JDialog
 		addPlayerDetails(app, playerPanel, 16, context);
 		
 		textFieldThinkingTimeAll = new JTextField();
-		textFieldThinkingTimeAll.setBounds(275, 165 + playerSectionHeight, 103, 20);
+		//textFieldThinkingTimeAll.setBounds(275, 165 + playerSectionHeight, 103, 20);
 		textFieldThinkingTimeAll.setEnabled(false);
+
 		if (numPlayers > 1)
 			textFieldThinkingTimeAll.setEnabled(true);
+		System.out.println("numPlayers " + numPlayers + " enabled " + textFieldThinkingTimeAll.isEnabled());
 		textFieldThinkingTimeAll.setColumns(10);
 		textFieldThinkingTimeAll.setText("-");
 
@@ -308,8 +319,8 @@ public class SettingsDialog extends JDialog
 				}
 				
 				app.settingsPlayer().setEditorFontSize(editorFontSize);
-				//AndroidApp.view().getPanels().clear();
-				//app.repaint();
+				AndroidApp.view().getPanels().clear();
+				app.repaint();
 			}
 		};
 
@@ -329,35 +340,43 @@ public class SettingsDialog extends JDialog
 		final JButton btnApply = new JButton("Apply");
 		btnApply.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnApply.setBounds(339, 238 + playerSectionHeight, 97, 29);
-		
+
 		btnApply.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(final ActionEvent e)
 			{
 
+				System.out.println("clicl on Apply");
 				// AI type for all
 				if (comboBoxAgentAll.isEnabled() && comboBoxAgentAll.getSelectedIndex() != aiStringsBlank.size() - 1)
 				{
 					// set AI name/type
-					for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
+					for (int i = 1; i <= context.game().players().count(); i++)
 						playerAgentsArray[i].setSelectedItem(comboBoxAgentAll.getSelectedItem().toString());
 				}
 
 				// AI search time for all
 				if (textFieldThinkingTimeAll.isEnabled())
 				{
+					System.out.println("enabled");
 					try
 					{
-						double allSearchTimeValue = Double.valueOf(textFieldThinkingTimeAll.getText().toString()).doubleValue();
+						int allSearchTimeValue = Integer.valueOf(Objects.requireNonNull(textFieldThinkingTimeAll.getText()).toString()).intValue();
 						if (allSearchTimeValue <= 0)
-							allSearchTimeValue = 1.0;
+							allSearchTimeValue = 1;
 	
-						for (int i = 1; i <= Constants.MAX_PLAYERS; i++)
-							playerThinkTimesArray[i].setSelectedItem(String.valueOf(Double.valueOf(allSearchTimeValue)));
+						for (int i = 1; i <= context.game().players().count(); i++)
+						{
+							System.out.println(String.valueOf(Double.valueOf(allSearchTimeValue)));
+							playerThinkTimesArray[i].setSelectedItem(String.valueOf(Integer.valueOf(allSearchTimeValue))+"s");
+						}
+
+
 					}
 					catch (final Exception E)
 					{
+						System.out.println("enabledException");
 						// invalid think time
 					}
 				}
@@ -382,21 +401,29 @@ public class SettingsDialog extends JDialog
 		playerPanel.setPreferredSize(new Dimension(450, 320 + playerSectionHeight));
 		
 		final JSeparator separator_3 = new JSeparator();
-		separator_3.setBounds(0, 116 + playerSectionHeight, 475, 8);
+		//separator_3.setBounds(0, 116 + playerSectionHeight, 475, 8);
 		playerPanel.add(separator_3);
+		lblName.setTextColor(Color.WHITE.toArgb());
 		playerPanel.add(lblName);
 		playerPanel.add(btnApply);
+		lblAllPlayers.setTextColor(Color.WHITE.toArgb());
 		playerPanel.add(lblAllPlayers);
+		lblAllPlayers.setTextColor(Color.WHITE.toArgb());
 		playerPanel.add(lblAgent);
 		playerPanel.add(comboBoxAgentAll);
-		playerPanel.add(textFieldThinkingTimeAll);
+
+		JPanel layout = new JPanel();
+		layout.setOrientation(LinearLayout.HORIZONTAL);
+
 		playerPanel.add(lblThinkingTime);
+		playerPanel.add(textFieldThinkingTimeAll);
+
 		
 		final JSeparator separator_4 = new JSeparator();
-		separator_4.setBounds(0, 216 + playerSectionHeight, 475, 8);
+		separator_4.setBounds(0, 216 + playerSectionHeight, 475, 16);
 		playerPanel.add(separator_4);
 		
-		final JButton buttonResetPlayerNames = new JButton("");
+		final JButton buttonResetPlayerNames = new JButton("Reset Names to Defaults");
 		buttonResetPlayerNames.setBounds(212, 242 + playerSectionHeight, 26, 23);
 		playerPanel.add(buttonResetPlayerNames);
 		
@@ -405,7 +432,7 @@ public class SettingsDialog extends JDialog
 			@Override
 			public void actionPerformed(final ActionEvent e)
 			{
-				for (int i = 1; i < app.manager().aiSelected().length; i++)
+				for (int i = 1; i <= context.game().players().count(); i++)
 				{
 					app.manager().aiSelected()[i].setName("Player " + i);
 					playerNamesArray[i].setText("Player " + i);
@@ -429,14 +456,10 @@ public class SettingsDialog extends JDialog
 			if (!app.manager().settingsNetwork().getOnlineAIAllowed())
 				btnApply.setEnabled(false);
 		}
-		
-		final JLabel label = new JLabel("Reset Names to Defaults");
-		label.setFont(new Font("Dialog", Font.PLAIN, 14));
-		label.setBounds(29, 247 + playerSectionHeight, 192, 17);
-		playerPanel.add(label);
+
 
 		otherPanel = new JPanel();
-		//otherPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		otherPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		final JScrollPane scroll2 = new JScrollPane(otherPanel);
 		tabbedPane.addTab("Advanced", null, scroll2, null);
 
@@ -872,64 +895,59 @@ public class SettingsDialog extends JDialog
 	 */
 	static void addPlayerDetails(final PlayerApp app, final JPanel playerJpanel, final int playerId, final Context context)
 	{
-		// Player Labels (fixed)
-		final int maxNameLength = 21;
-		final JLabel lblPlayer_1 = new JLabel("Player " + playerId);
-		lblPlayer_1.setBounds(20, 49 + playerId*30, 74, 14);
-		playerJpanel.add(lblPlayer_1);
-		
-		// Player Names
-		final JTextField textFieldPlayerName1 = new JTextField();
-		textFieldPlayerName1.setBounds(100, 46 + playerId*30, 130, 20);
-		final MaxLengthTextDocument maxLength1 = new MaxLengthTextDocument();
-		maxLength1.setMaxChars(maxNameLength);
-		textFieldPlayerName1.setDocument(maxLength1);
-		textFieldPlayerName1.setEnabled(true);
-		textFieldPlayerName1.setText(app.manager().aiSelected()[playerId].name());
-		playerJpanel.add(textFieldPlayerName1);
-		
-		// AI Algorithm
-		final AIDetails associatedAI = app.manager().aiSelected()[playerId];
-		final String[] comboBoxContents = AndroidGUIUtil.getAIDropdownStrings(app, true).toArray(new String[AndroidGUIUtil.getAIDropdownStrings(app, true).size()]);
-		final JComboBox<String> myComboBox = new JComboBox<String>(comboBoxContents); //comboBoxContents
-		myComboBox.setBounds(240, 46 + playerId*30, 100, 20);
-		if (!myComboBox.getSelectedItem().equals(associatedAI.menuItemName()))
-			myComboBox.setSelectedItem(associatedAI.menuItemName());
-		playerJpanel.add(myComboBox);
-		
-		// AI think time
-		final String[] comboBoxContentsThinkTime = {"1s", "2s", "3s", "5s", "10s", "30s", "60s", "120s", "180s", "240s", "300s"};
-		final JComboBox<String> myComboBoxThinkTime = new JComboBox<String>(comboBoxContentsThinkTime); //comboBoxContentsThinkTime
-		myComboBoxThinkTime.setBounds(350, 46 + playerId*30, 60, 20);
-		myComboBoxThinkTime.setEditable(true);	
-		final DecimalFormat format = new DecimalFormat("0.#");
-		myComboBoxThinkTime.setSelectedItem(String.valueOf(format.format(associatedAI.thinkTime())) + "s");
-		playerJpanel.add(myComboBoxThinkTime);
-
 		// Hide boxes for players not in this game.
-		if (context.game().players().count() < playerId)
-		{
-			textFieldPlayerName1.setVisible(false);
-			lblPlayer_1.setVisible(false);
-			myComboBoxThinkTime.setVisible(false);
-			myComboBox.setVisible(false);
-		}
-		
-		// Hide certain details if this is a network game.
-		if (app.manager().settingsNetwork().getActiveGameId() != 0)
-		{
-			textFieldPlayerName1.setEnabled(false);
-			if (!app.manager().settingsNetwork().getOnlineAIAllowed() || playerId != app.manager().settingsNetwork().getNetworkPlayerNumber())
-			{
-				myComboBoxThinkTime.setEnabled(false);
-				myComboBox.setEnabled(false);
+		if (context.game().players().count() >= playerId) {
+			// Player Labels (fixed)
+			final int maxNameLength = 21;
+			final JLabel lblPlayer_1 = new JLabel("Player " + playerId);
+			lblPlayer_1.setTextColor(Color.WHITE.toArgb());
+			lblPlayer_1.setBounds(20, 49 + playerId * 30, 74, 14);
+			playerJpanel.add(lblPlayer_1);
+
+			// Player Names
+			final JTextField textFieldPlayerName1 = new JTextField();
+			//textFieldPlayerName1.setBounds(100, 46 + playerId * 30, 130, 20);
+			final MaxLengthTextDocument maxLength1 = new MaxLengthTextDocument();
+			maxLength1.setMaxChars(maxNameLength);
+			textFieldPlayerName1.setDocument(maxLength1);
+			textFieldPlayerName1.setEnabled(true);
+			textFieldPlayerName1.setText(app.manager().aiSelected()[playerId].name());
+			playerJpanel.add(textFieldPlayerName1);
+
+			// AI Algorithm
+			final AIDetails associatedAI = app.manager().aiSelected()[playerId];
+			final String[] comboBoxContents = AndroidGUIUtil.getAIDropdownStrings(app, true).toArray(new String[AndroidGUIUtil.getAIDropdownStrings(app, true).size()]);
+			final JComboBox<String> myComboBox = new JComboBox<String>(comboBoxContents); //comboBoxContents
+			myComboBox.setBounds(240, 46 + playerId * 30, 100, 20);
+			if (!myComboBox.getSelectedItem().equals(associatedAI.menuItemName()))
+				myComboBox.setSelectedItem(associatedAI.menuItemName());
+			playerJpanel.add(myComboBox);
+
+			// AI think time
+			final String[] comboBoxContentsThinkTime = {"1s", "2s", "3s", "5s", "10s", "30s", "60s", "120s", "180s", "240s", "300s"};
+			final JComboBox<String> myComboBoxThinkTime = new JComboBox<String>(comboBoxContentsThinkTime); //comboBoxContentsThinkTime
+			myComboBoxThinkTime.setBounds(350, 46 + playerId * 30, 60, 20);
+			myComboBoxThinkTime.setEditable(true);
+			final DecimalFormat format = new DecimalFormat("0.#");
+
+			myComboBoxThinkTime.setSelectedItem(String.valueOf(format.format(associatedAI.thinkTime())) + "s");
+			playerJpanel.add(myComboBoxThinkTime);
+
+
+			// Hide certain details if this is a network game.
+			if (app.manager().settingsNetwork().getActiveGameId() != 0) {
+				textFieldPlayerName1.setEnabled(false);
+				if (!app.manager().settingsNetwork().getOnlineAIAllowed() || playerId != app.manager().settingsNetwork().getNetworkPlayerNumber()) {
+					myComboBoxThinkTime.setEnabled(false);
+					myComboBox.setEnabled(false);
+				}
 			}
+
+			// Save selected entries.
+			playerNamesArray[playerId] = textFieldPlayerName1;
+			playerAgentsArray[playerId] = myComboBox;
+			playerThinkTimesArray[playerId] = myComboBoxThinkTime;
 		}
-		
-		// Save selected entries.
-		playerNamesArray[playerId] = textFieldPlayerName1;
-		playerAgentsArray[playerId] = myComboBox;
-		playerThinkTimesArray[playerId] = myComboBoxThinkTime;
 	}
 	
 	//-------------------------------------------------------------------------
@@ -940,7 +958,7 @@ public class SettingsDialog extends JDialog
 	 */
 	static void applyPlayerDetails(final PlayerApp app, final Context context)
 	{
-		for (int i = 1; i < playerNamesArray.length; i++)
+		for (int i = 1; i <= context.game().players().count(); i++)
 		{
 			// Player Names
 			final String name = playerNamesArray[i].getText().toString();
@@ -950,7 +968,8 @@ public class SettingsDialog extends JDialog
 				app.manager().aiSelected()[i].setName("");
 			
 			// Think time
-			String comboBoxThinkTime = playerThinkTimesArray[i].getSelectedItem().toString();
+			String comboBoxThinkTime = playerThinkTimesArray[i].getSelectedItem();
+			System.out.println("comboBoxThinkTime " + comboBoxThinkTime);
 			if (comboBoxThinkTime.toLowerCase().charAt(comboBoxThinkTime.length()-1) == 's')
 				comboBoxThinkTime = comboBoxThinkTime.substring(0, comboBoxThinkTime.length()-1);
 			double thinkTime = 0.0;
@@ -964,7 +983,6 @@ public class SettingsDialog extends JDialog
 			}
 			if (thinkTime <= 0)
 				thinkTime = 1;
-			
 			app.manager().aiSelected()[i].setThinkTime(thinkTime);
 
 			// AI agent

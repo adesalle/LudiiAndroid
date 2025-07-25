@@ -51,7 +51,6 @@ android {
 
 
 dependencies {
-    implementation(libs.dexlib2)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

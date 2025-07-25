@@ -26,6 +26,7 @@ import other.concept.Concept;
 import other.context.Context;
 import other.location.FullLocation;
 import other.move.Move;
+import playerAndroid.app.AndroidApp;
 
 //-----------------------------------------------------------------------------
 
@@ -72,10 +73,10 @@ public class ToolView extends View {
         if (portraitMode && app.manager().isWebApp())
             toolHeight = 80;
 
-        int boardSize = app.height();
+        int boardSize = AndroidApp.view().getBoardPanel().boardSize();
         int startX = boardSize;
-        int startY = app.height() - toolHeight;
-        int width = app.width() - boardSize - toolHeight;
+        int startY = AndroidApp.view().getHeight() - toolHeight;
+        int width = AndroidApp.view().getWidth() - boardSize - toolHeight;
 
         if (SettingsExhibition.exhibitionVersion) {
             startX = 450;
@@ -211,9 +212,6 @@ public class ToolView extends View {
             {
                 button.draw(g2d);
             }
-
-
-
 
         paintDebug(g2d, Color.BLUE);
     }

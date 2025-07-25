@@ -1,5 +1,6 @@
 package androidUtils.swing;
 
+import androidUtils.awt.Color;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Font;
 import androidUtils.awt.event.MouseAdapter;
@@ -24,6 +25,7 @@ public class JLabel extends androidx.appcompat.widget.AppCompatTextView implemen
     public JLabel(Context context)
     {
         super(context);
+        setTextColor(Color.WHITE.toArgb());
     }
     public JLabel(ImageIcon icon)
     {
@@ -71,9 +73,9 @@ public class JLabel extends androidx.appcompat.widget.AppCompatTextView implemen
     }
 
     public void setBounds(int x, int y, int w, int h) {
-        setLeft(x);
-        setTop(y);
-        setSize(w, h);
+            //layout(x, y, x + w, y + h);
+
+        //invalidate();
     }
 
     public void setLabelFor(View view) {

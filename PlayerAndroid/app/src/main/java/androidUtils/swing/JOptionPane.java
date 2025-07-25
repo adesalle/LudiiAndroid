@@ -383,7 +383,7 @@ public class JOptionPane extends  JPanel {
             buttonPanel.addView(button);
         }
 
-        dialog.getContentPane().addView(buttonPanel);
+        dialog.getContentView().addView(buttonPanel);
     }
 
     private Object[] getButtonsToShow() {

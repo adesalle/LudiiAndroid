@@ -344,7 +344,7 @@ public class Graphics2D{
 
     public void draw(GeneralPath path)
     {
-        paint.setStyle(Paint.Style.STROKE);
+        //paint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(path.getPath(), paint);
         paint = new Paint(paint);
         

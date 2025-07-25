@@ -31,38 +31,38 @@ public class JComboCheckBox extends JComboBox
 {
 	private static final long serialVersionUID = 1L;
 
-public JComboCheckBox() {
-      init();
-   }
-    
-   @SuppressWarnings("unchecked")
-public JComboCheckBox(final JCheckBox[] items) {
-      super(items);
-      init();
-   }
-    
-   @SuppressWarnings("unchecked")
-public JComboCheckBox(final Vector items) {
-      super(items);
-      init();
-   }
-    
-   @SuppressWarnings("unchecked")
-public JComboCheckBox(final ComboBoxModel aModel) {
-      super(aModel);
-      init();
-   }
-    
-   @SuppressWarnings("unchecked")
-private void init() {
-      setRenderer(new ComboBoxRenderer());
-      addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(final ActionEvent ae) {
-            itemSelected();
-         }
-      });
-   }
+    public JComboCheckBox() {
+          init();
+       }
+
+       @SuppressWarnings("unchecked")
+    public JComboCheckBox(final JCheckBox[] items) {
+          super(items);
+          initB();
+       }
+
+       @SuppressWarnings("unchecked")
+    public JComboCheckBox(final Vector items) {
+          super(items);
+          initB();
+       }
+
+       @SuppressWarnings("unchecked")
+    public JComboCheckBox(final ComboBoxModel aModel) {
+          super(aModel);
+          initB();
+       }
+
+       @SuppressWarnings("unchecked")
+    private void initB() {
+          setRenderer(new ComboBoxRenderer());
+          addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent ae) {
+                itemSelected();
+             }
+          });
+       }
   
 	void itemSelected()
 	{

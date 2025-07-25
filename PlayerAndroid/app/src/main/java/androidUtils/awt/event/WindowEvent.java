@@ -20,7 +20,7 @@ public class WindowEvent {
     }
 
     public WindowEvent(Dialog source, int id) {
-        this.source = source.getContentPane();
+        this.source = source.getContentView();
         this.id = id;
     }
 

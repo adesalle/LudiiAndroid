@@ -2,6 +2,7 @@ package playerAndroid.app.display.dialogs.visual_editor.view.panels.editor.tabPa
 
 
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import androidUtils.awt.BoxLayout;
 import androidUtils.awt.Component;
@@ -143,11 +144,11 @@ public class LayoutSettingsPanel extends JPanel
 
         // # Adding check boxes #
 
-        autoPlacement.addChangeListener((ChangeListener) e -> Handler.autoplacement = ((JCheckBox) e.getSource()).isSelected());
+        autoPlacement.addChangeListener((CompoundButton.OnCheckedChangeListener) (button, check) -> Handler.autoplacement = check);
         autoPlacement.setSelected(Handler.autoplacement);
         //add(autoPlacement);
 
-        animatePlacement.addChangeListener((ChangeListener)e -> Handler.animation = ((JCheckBox) e.getSource()).isSelected());
+        animatePlacement.addChangeListener((CompoundButton.OnCheckedChangeListener)(button, check) -> Handler.animation = check);
         animatePlacement.setSelected(Handler.animation);
         //add(animatePlacement);
 
