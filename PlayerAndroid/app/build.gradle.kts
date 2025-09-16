@@ -22,6 +22,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isShrinkResources= false
         }
 
 
@@ -55,6 +56,10 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation("com.github.bmelnychuk:atv:1.2.9") {
+        exclude(group = "com.google.code.gson")
+        exclude(group = "com.android.support")
+    }
     implementation(files("src/main/libs/libCommon/gtranslateapi-1.0.jar"))
     implementation(files("src/main/libs/libCommon/hamcrest-all-1.3.jar"))
     implementation(files("src/main/libs/libCommon/json-20180813.jar"))
@@ -68,7 +73,12 @@ dependencies {
     implementation(files("src/main/libs/libPlayer/svgSalamander-1.1.2.jar"))
     implementation(files("src/main/libs/libPlayer/xml-apis-ext-1.3.04.jar"))
     implementation(files("src/main/libs/libPlayer/xmlgraphics-commons-2.3.jar"))
+
     implementation(libs.androidsvg)
+    annotationProcessor(libs.org.atteo.classindex.classindex2)
+    implementation(libs.org.atteo.classindex.classindex2)
+    implementation(libs.reflections)
+    implementation(libs.slf4j.slf4j.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

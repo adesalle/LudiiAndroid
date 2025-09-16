@@ -2,6 +2,10 @@
 agp = "8.6.0"
 androidMail = "1.6.7"
 androidsvgAar = "1.4"
+atteoClassindexVersion = "3.13"
+atv = "1.2.9"
+classgraphVersion = "4.8.157"
+classindex = "3.6.1"
 coreKtx = "1.16.0"
 dexlib2 = "2.5.2"
 javaxActivation = "1.2.0"
@@ -15,13 +19,18 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 multidex = "2.0.1"
 carUiLib = "2.6.0"
+reflections = "0.10.2"
+slf4jSlf4jAndroid = "1.7.36"
 
 [libraries]
 android-mail = { module = "com.sun.mail:android-mail", version.ref = "androidMail" }
 androidsvg = { module = "com.caverock:androidsvg", version.ref = "androidsvgAar" }
 androidsvg-aar = { module = "com.caverock:androidsvg-aar", version.ref = "androidsvgAar" }
+atv = { module = "com.github.bmelnychuk:atv", version.ref = "atv" }
+classindex = { module = "io.github.classindex:classindex", version.ref = "classindex" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 dexlib2 = { module = "org.smali:dexlib2", version.ref = "dexlib2" }
+github-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraphVersion" }
 javax-activation = { module = "com.sun.activation:javax.activation", version.ref = "javaxActivation" }
 jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxbApi" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -33,6 +42,9 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "carUiLib" }
+org-atteo-classindex-classindex2 = { module = "org.atteo.classindex:classindex", version.ref = "atteoClassindexVersion" }
+reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+slf4j-slf4j-android = { module = "org.slf4j:slf4j-android", version.ref = "slf4jSlf4jAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

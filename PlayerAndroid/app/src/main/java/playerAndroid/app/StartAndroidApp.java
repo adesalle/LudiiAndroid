@@ -47,9 +47,13 @@ import androidUtils.swing.JFrame;
 
 import androidUtils.swing.JLabel;
 import androidUtils.swing.JPanel;
+import androidUtils.swing.JScrollPane;
 import androidUtils.swing.JTextArea;
 import androidUtils.swing.JTextField;
 import androidUtils.swing.WindowConstants;
+import androidUtils.swing.tree.DefaultMutableTreeNode;
+import androidUtils.swing.tree.DefaultTreeCellRenderer;
+import androidUtils.swing.tree.JTree;
 import app.playerandroid.R;
 import manager.Manager;
 import manager.ai.AIDetails;
@@ -91,35 +95,12 @@ public class StartAndroidApp extends AppCompatActivity {
         androidApp.createAndroidApp();
         frame = AndroidApp.frame();
         frame.setView(StartAndroidApp.startAndroidApp());
+        frame.setTitle(AppName);
 
 
         frame.setVisible(true);
         MouseInfo.setupTouchTracking(this);
 
-
-/*        JFrame fram = new JFrame();
-
-        JPanel layout = new JPanel();
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-
-        canvasView.setColor(Color.ORANGE);
-        canvasView.drawLine(0, 0, 100, 100);
-        layout.addView(canvasView, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                800));
-
-        //canvasView.draw(new Line2D.Double(300, 100, 10, 100));
-        canvasView.invalidate();
-
-
-        Button button = new Button(this);
-        button.setText("Dessiner une ligne bleue");
-        layout.addView(button);
-
-
-        fram.setContentPane(layout);
-        setContentView(fram);*/
     }
 
     void showDialog(Dialog dialog) {

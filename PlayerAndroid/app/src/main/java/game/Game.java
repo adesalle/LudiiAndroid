@@ -111,12 +111,12 @@ import other.topology.Topology;
 import other.topology.TopologyElement;
 import other.translation.LanguageUtils;
 import other.trial.Trial;
-
 /**
  * Defines the main ludeme that describes the players, mode, equipment and rules of a game.
  *
  * @author Eric.Piette and cambolbro
  */
+
 public class Game extends BaseLudeme implements API, Serializable {
     private static final long serialVersionUID = 1L;
 

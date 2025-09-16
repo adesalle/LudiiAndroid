@@ -1,59 +1,31 @@
 package androidUtils.swing.tree;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-
 public class DefaultTreeCellEditor implements TreeCellEditor {
-    private Context context;
-    private Object currentValue;
-    private EditText editText;
 
-    public DefaultTreeCellEditor(Context context) {
-        this.context = context;
-    }
+    private EditText editor;
 
     @Override
-    public View getTreeCellEditorView(JTree tree, Object value,
-                                      boolean selected, boolean expanded,
-                                      boolean leaf, int row) {
-        this.currentValue = value;
-        editText = new EditText(context);
-        editText.setText(value.toString());
-        editText.setSelectAllOnFocus(true);
-
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                currentValue = s.toString();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        return editText;
+    public View getTreeCellEditorComponent(Context context, JTree tree, Object value,
+                                           boolean selected, boolean expanded,
+                                           boolean leaf, int row) {
+        editor = new EditText(context);
+        editor.setText(value != null ? value.toString() : "");
+        editor.setPadding(16, 8, 16, 8);
+        return editor;
     }
 
     @Override
     public Object getCellEditorValue() {
-        return currentValue;
+        return editor != null ? editor.getText().toString() : null;
     }
 
     @Override
-    public boolean stopCellEditing() {
-        // Validation optionnelle ici
+    public boolean isCellEditable(Object event) {
+        // Tu peux améliorer cela : vérifier s’il s’agit d’un double-clic, long-click, etc.
         return true;
-    }
-
-    @Override
-    public void cancelCellEditing() {
-        // Réinitialiser à la valeur originale si nécessaire
     }
 }

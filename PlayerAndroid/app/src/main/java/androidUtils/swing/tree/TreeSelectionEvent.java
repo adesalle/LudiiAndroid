@@ -1,17 +1,12 @@
 package androidUtils.swing.tree;
 
 public class TreeSelectionEvent {
-    private Object source;
-    private TreePath[] paths;
-    private TreePath[] oldPaths;
-    private TreePath leadPath;
+    private final Object source;
+    private final TreePath[] paths;
 
-    public TreeSelectionEvent(Object source, TreePath[] paths,
-                              TreePath[] oldPaths, TreePath leadPath) {
+    public TreeSelectionEvent(Object source, TreePath... paths) {
         this.source = source;
         this.paths = paths;
-        this.oldPaths = oldPaths;
-        this.leadPath = leadPath;
     }
 
     public Object getSource() {
@@ -20,13 +15,5 @@ public class TreeSelectionEvent {
 
     public TreePath[] getPaths() {
         return paths;
-    }
-
-    public TreePath[] getOldPaths() {
-        return oldPaths;
-    }
-
-    public TreePath getLeadSelectionPath() {
-        return leadPath;
     }
 }

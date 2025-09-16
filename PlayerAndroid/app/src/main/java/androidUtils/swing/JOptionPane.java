@@ -1,8 +1,10 @@
 package androidUtils.swing;
 
 import androidUtils.awt.BorderLayout;
+import androidUtils.awt.Rectangle;
 import androidUtils.awt.event.WindowAdapter;
 import androidUtils.awt.event.WindowEvent;
+import playerAndroid.app.AndroidApp;
 import playerAndroid.app.JFrameListener;
 import playerAndroid.app.StartAndroidApp;
 
@@ -11,15 +13,20 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class JOptionPane extends  JPanel {
+public class JOptionPane extends ConstraintLayout {
     // Constantes pour les types de message
     public static final int PLAIN_MESSAGE = -1;
     public static final int ERROR_MESSAGE = 0;
@@ -54,6 +61,8 @@ public class JOptionPane extends  JPanel {
     private Object initialSelectionValue;
     private boolean wantsInput = false;
 
+
+
     // Constructeurs
     public JOptionPane() {
         this("Message");
@@ -80,7 +89,8 @@ public class JOptionPane extends  JPanel {
     }
 
     public JOptionPane(Object message, int messageType, int optionType, Icon icon, Object[] options, Object initialValue) {
-        super();
+        super(StartAndroidApp.getAppContext());
+
         this.message = message;
         this.messageType = messageType;
         this.optionType = optionType;
@@ -235,24 +245,26 @@ public class JOptionPane extends  JPanel {
         // On utilise simplement la disposition par défaut
 
         // Configuration du contenu
-        
-        JPanel contentPane = new JPanel();
 
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(this, BorderLayout.CENTER);
+        //setLayout(new BorderLayout());
+        Rectangle bounds = new Rectangle(AndroidApp.frame().getX(), AndroidApp.frame().getY(),
+                AndroidApp.frame().getWidth() * 0.75f, AndroidApp.frame().getHeight() * .75f);
+        dialog.setLocation(bounds.getLocation());
+        if (bounds.width > 0 && bounds.height > 0)
+        {
+            dialog.setSize(bounds.width, bounds.height);
+        }
+
 
         View messageView = createMessageView();
-        contentPane.addView(messageView);
 
-        // Configuration des boutons
-        setupButtons(dialog, contentPane);
 
-        JScrollPane scrollView = new JScrollPane();
-        scrollView.addView(contentPane);
-        dialog.setContentPane(scrollView);
+        JScrollPane scrollView = new JScrollPane(messageView);
+
+        dialog.getContentPane().addView(scrollView);
         dialog.setResizable(false);
 
-        dialog.pack();
+        //dialog.pack();
 
         if (parentComponent != null) {
             dialog.setLocationRelativeTo(parentComponent);
@@ -279,7 +291,7 @@ public class JOptionPane extends  JPanel {
             @Override
             public void windowClosed(WindowEvent e) {
                 removePropertyChangeListener(listener);
-                contentPane.removeAllViews();
+                removeAllViews();
             }
             
         };
@@ -303,13 +315,15 @@ public class JOptionPane extends  JPanel {
     }
 
     // Méthode utilitaire pour configurer les boutons
-    private void setupButtons(JDialog dialog, LinearLayout contentPane) {
-        LinearLayout buttonPanel = new LinearLayout(getContext());
+    private void setupButtons(JDialog dialog, JPanel contentPane) {
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         buttonPanel.setOrientation(LinearLayout.HORIZONTAL);
 
         Object[] buttons = getButtonsToShow();
+        System.out.println("button to show " + Arrays.toString(buttons));
         for (int i = 0; i < buttons.length; i++) {
-            Button button = new Button(getContext());
+            Button button = new Button(StartAndroidApp.getAppContext());
             button.setText(buttons[i].toString());
             final int returnValue = getReturnValueForButton(i);
 
@@ -318,10 +332,10 @@ public class JOptionPane extends  JPanel {
                 dialog.dismiss();
             });
 
-            buttonPanel.addView(button);
+            buttonPanel.add(button);
         }
 
-        contentPane.addView(buttonPanel);
+        contentPane.add(buttonPanel);
     }
     // Crée la vue du message selon son type
     private View createMessageView() {
@@ -383,7 +397,7 @@ public class JOptionPane extends  JPanel {
             buttonPanel.addView(button);
         }
 
-        dialog.getContentView().addView(buttonPanel);
+        dialog.getContentView().add(buttonPanel);
     }
 
     private Object[] getButtonsToShow() {
@@ -512,7 +526,7 @@ public class JOptionPane extends  JPanel {
 
 
     // Valeur spéciale pour indiquer qu'aucune sélection n'a été faite
-    private static final Object UNINITIALIZED_VALUE = "uninitializedValue";
+    public static final Object UNINITIALIZED_VALUE = "uninitializedValue";
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {

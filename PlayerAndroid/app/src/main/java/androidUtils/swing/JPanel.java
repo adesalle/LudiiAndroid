@@ -11,6 +11,7 @@ import androidUtils.awt.event.KeyEvent;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import androidUtils.awt.event.MouseMotionListener;
 import androidUtils.swing.border.Border;
 import androidUtils.swing.border.EmptyBorder;
 import androidUtils.swing.menu.JSeparator;
+import androidUtils.swing.tree.JTree;
 import playerAndroid.app.StartAndroidApp;
 import playerAndroid.app.util.SettingsDesktop;
 
@@ -99,6 +101,12 @@ public class JPanel extends LinearLayout implements ViewComponent{
         layoutManager = layout;
         //setLayout();
 
+    }
+
+    public JPanel(JTree tree)
+    {
+        this();
+        add(tree.getView());
     }
 
 

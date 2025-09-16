@@ -1,6 +1,7 @@
 package graphics.svg.element;
 
 import androidUtils.awt.Color;
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Graphics2D;
 
 //-----------------------------------------------------------------------------

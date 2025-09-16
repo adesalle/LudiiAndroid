@@ -1,175 +1,87 @@
 package androidUtils.swing.tree;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.MeasureSpec;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.TextView;
+import com.unnamed.b.atv.model.TreeNode;
+import com.unnamed.b.atv.view.AndroidTreeView;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import androidUtils.awt.Color;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Font;
-import androidUtils.awt.event.FocusEvent;
 import androidUtils.awt.event.FocusListener;
-import androidUtils.awt.event.KeyEvent;
 import androidUtils.awt.event.KeyListener;
-import androidUtils.swing.ViewComponent;
+import androidUtils.awt.event.MouseAdapter;
+import androidUtils.awt.event.MouseEvent;
+import androidUtils.awt.event.MouseListener;
+import androidUtils.swing.event.TreeModelListener;
 import androidUtils.swing.text.Position;
 import playerAndroid.app.StartAndroidApp;
+import playerAndroid.app.display.dialogs.GameLoaderDialog;
 
-public class JTree extends ExpandableListView implements ViewComponent {
+public class JTree extends AndroidTreeView {
 
     private TreeModel model;
     private TreeSelectionModel selectionModel;
     private TreeCellRenderer cellRenderer;
-    private boolean rootVisible = true;
-    private boolean showsRootHandles = true;
-    private boolean editable = false;
     private TreeCellEditor cellEditor;
-    private Font currentFont;
+    private boolean rootVisible = true;
+    private boolean editable = false;
+    private Font font;
+    private Dimension preferredSize;
+    private final List<TreeNode> nodeList = new ArrayList<>();
 
-    public JTree(TreeNode root) {
-        this(new DefaultTreeModel(root, false));
+    private final Map<Object, androidUtils.swing.tree.TreeNode> nodeMapping = new HashMap<>();
+
+
+    public JTree(androidUtils.swing.tree.TreeNode root) {
+        this(new DefaultTreeModel(root));
     }
 
     public JTree(TreeModel model) {
-        this(model, StartAndroidApp.getAppContext());
-    }
+        super(StartAndroidApp.getAppContext());
+        setRoot(convertToAndroidTreeNode(model.getRoot()));
 
-    public JTree(TreeNode root, boolean asksAllowChildren) {
-        this(new DefaultTreeModel(root, asksAllowChildren));
-    }
-
-    private JTree(TreeModel model, Context context) {
-        super(context);
         this.model = model;
         this.selectionModel = new DefaultTreeSelectionModel();
-        this.cellRenderer = new DefaultTreeCellRenderer(context);
-        initAdapter();
+        this.cellRenderer = new DefaultTreeCellRenderer();
+        this.cellEditor = new DefaultTreeCellEditor();
+        setDefaultAnimation(true);
+        rebuildTree();
     }
 
-    private void initAdapter() {
-        setAdapter(new BaseExpandableListAdapter() {
-            @Override
-            public int getGroupCount() {
-                if (model == null || model.getRoot() == null) return 0;
-                if (!rootVisible) {
-                    return model.getChildCount(model.getRoot());
-                }
-                return 1;
-            }
+    private TreeNode convertToAndroidTreeNode(androidUtils.swing.tree.TreeNode swingNode) {
+        TreeNode androidNode = new TreeNode(swingNode.getUserObject());
 
-            @Override
-            public int getChildrenCount(int groupPosition) {
-                TreeNode group = getGroupNode(groupPosition);
-                return group != null ? group.getChildCount() : 0;
-            }
-
-            @Override
-            public Object getGroup(int groupPosition) {
-                return getGroupNode(groupPosition);
-            }
-
-            @Override
-            public Object getChild(int groupPosition, int childPosition) {
-                TreeNode group = getGroupNode(groupPosition);
-                return group != null ? group.getChildAt(childPosition) : null;
-            }
-
-            @Override
-            public long getGroupId(int groupPosition) {
-                return groupPosition;
-            }
-
-            @Override
-            public long getChildId(int groupPosition, int childPosition) {
-                return childPosition;
-            }
-
-            @Override
-            public boolean hasStableIds() {
-                return true;
-            }
-
-            @Override
-            public View getGroupView(int groupPosition, boolean isExpanded,
-                                     View convertView, ViewGroup parent) {
-                TreeNode node = getGroupNode(groupPosition);
-                if (node == null) return new TextView(getContext());
-
-                if (cellRenderer != null) {
-                    return cellRenderer.getTreeCellView(JTree.this, node,
-                            selectionModel.isPathSelected(new TreePath(node)),
-                            isExpanded, node.isLeaf(), 0);
-                }
-
-                return createTextView(node.toString(), 18, Color.BLACK, 50);
-            }
-
-            @Override
-            public View getChildView(int groupPosition, int childPosition,
-                                     boolean isLastChild, View convertView, ViewGroup parent) {
-                TreeNode node = getChildNode(groupPosition, childPosition);
-                if (node == null) return new TextView(getContext());
-
-                TreePath path = buildTreePath(groupPosition, childPosition);
-                if (cellRenderer != null) {
-                    return cellRenderer.getTreeCellView(JTree.this, node,
-                            selectionModel.isPathSelected(path),
-                            isExpanded(path), node.isLeaf(), 1);
-                }
-
-                return createTextView(node.toString(), 16, Color.DKGRAY, 100);
-            }
-
-            @Override
-            public boolean isChildSelectable(int groupPosition, int childPosition) {
-                return true;
-            }
-
-            private TreeNode getGroupNode(int groupPosition) {
-                if (model == null || model.getRoot() == null) return null;
-                if (!rootVisible) {
-                    return model.getChild(model.getRoot(), groupPosition);
-                }
-                return (TreeNode) model.getRoot();
-            }
-
-            private TreeNode getChildNode(int groupPosition, int childPosition) {
-                TreeNode group = getGroupNode(groupPosition);
-                return group != null ? group.getChildAt(childPosition) : null;
-            }
-
-            private TreePath buildTreePath(int groupPosition, int childPosition) {
-                TreeNode group = getGroupNode(groupPosition);
-                TreeNode child = getChildNode(groupPosition, childPosition);
-
-                if (!rootVisible) {
-                    return new TreePath(new TreeNode[]{model.getRoot(), group, child});
-                } else {
-                    return new TreePath(new TreeNode[]{group, child});
-                }
-            }
-        });
-    }
-
-    private TextView createTextView(String text, int textSize, int color, int paddingLeft) {
-        TextView textView = new TextView(getContext());
-        textView.setText(text);
-        textView.setTextSize(textSize);
-        textView.setTextColor(color);
-        textView.setPadding(paddingLeft, 20, 20, 20);
-
-        if (currentFont != null) {
-            textView.setTypeface(currentFont.getFont());
-            textView.setTextSize(currentFont.getSize());
+        androidNode.setViewHolder(new StyledNodeViewHolder(StartAndroidApp.getAppContext()));
+        for (int i = 0; i < swingNode.getChildCount(); i++) {
+            TreeNode child = convertToAndroidTreeNode(swingNode.getChildAt(i));
+            androidNode.addChild(child);
         }
 
-        return textView;
+
+        nodeMapping.put(androidNode.getValue(), swingNode);
+        return androidNode;
+    }
+
+    public void rebuildTree() {
+        TreeNode root = convertToAndroidTreeNode(model.getRoot());
+        System.out.println(((GameLoaderDialog.GameLoaderNode)model.getRoot()).fullName);
+        nodeMapping.put(root.getPath(), model.getRoot());
+        setRoot(root);
+        nodeList.clear();
+        populateNodeList(root);
+    }
+
+    private void populateNodeList(TreeNode node) {
+        nodeList.add(node);
+        for (TreeNode child : node.getChildren()) {
+            populateNodeList(child);
+        }
     }
 
     public TreePath getSelectionPath() {
@@ -178,55 +90,41 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setSelectionPath(TreePath path) {
         selectionModel.setSelectionPath(path);
-        if (path != null) {
-            expandPath(path);
-        }
     }
 
     public void expandPath(TreePath path) {
-        if (path != null) {
-            Object[] pathArray = path.getPath();
-            int groupPos = findGroupPosition(pathArray[0]);
+        TreeNode node = findAndroidNode(path);
+        expandNode(node);
 
-            if (groupPos >= 0) {
-                expandGroup(groupPos);
-
-                if (pathArray.length > 1) {
-                    int childPos = findChildPosition(groupPos, (TreeNode) pathArray[1]);
-                    if (childPos >= 0) {
-                        setSelectedChild(groupPos, childPos, true);
-                    }
-                }
-            }
-        }
     }
+
 
     public void collapsePath(TreePath path) {
-        if (path != null) {
-            Object[] pathArray = path.getPath();
-            int groupPos = findGroupPosition(pathArray[0]);
-            if (groupPos >= 0) {
-                collapseGroup(groupPos);
-            }
-        }
+        collapseNode(findAndroidNode(path));
     }
 
-    private int findGroupPosition(Object node) {
-        for (int i = 0; i < getExpandableListAdapter().getGroupCount(); i++) {
-            if (getExpandableListAdapter().getGroup(i).equals(node)) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    private TreeNode findAndroidNode(TreePath path) {
+        Object[] nodes = path.getPath();
+        androidUtils.swing.tree.TreeNode current = model.getRoot();
+        System.out.println(Arrays.toString(path.getPath()));
+        for (int i = 1; i < nodes.length; i++) {
+            Object target = nodes[i];
+            boolean found = false;
 
-    private int findChildPosition(int groupPosition, TreeNode childNode) {
-        for (int i = 0; i < getExpandableListAdapter().getChildrenCount(groupPosition); i++) {
-            if (getExpandableListAdapter().getChild(groupPosition, i).equals(childNode)) {
-                return i;
+            for (int j = 0; j < current.getChildCount(); j++) {
+                androidUtils.swing.tree.TreeNode child = current.getChildAt(j);
+                System.out.println(child.getUserObject() + " " + target);
+
+                if (child.getUserObject().toString().equals(target.toString())) {
+                    System.out.println(child.getUserObject() + " " + target);
+                    current = child;
+                    found = true;
+                    break;
+                }
             }
+            if (!found) return null;
         }
-        return -1;
+        return convertToAndroidTreeNode(current);
     }
 
     public TreeModel getModel() {
@@ -235,7 +133,7 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setModel(TreeModel newModel) {
         this.model = newModel;
-        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
+        rebuildTree();
     }
 
     public TreeSelectionModel getSelectionModel() {
@@ -252,7 +150,7 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setCellRenderer(TreeCellRenderer renderer) {
         this.cellRenderer = renderer;
-        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
+        rebuildTree();
     }
 
     public boolean isRootVisible() {
@@ -261,7 +159,6 @@ public class JTree extends ExpandableListView implements ViewComponent {
 
     public void setRootVisible(boolean visible) {
         this.rootVisible = visible;
-        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
     }
 
     public boolean isEditable() {
@@ -280,268 +177,183 @@ public class JTree extends ExpandableListView implements ViewComponent {
         this.cellEditor = editor;
     }
 
-    @Override
     public Dimension getPreferredSize() {
-        int width = measureMaxTextWidth() + getPaddingLeft() + getPaddingRight();
-        int height = calculateTotalHeight();
-        return new Dimension(width, height);
+        return preferredSize;
     }
 
-    private int measureMaxTextWidth() {
-        int maxWidth = 0;
-        Paint paint = new Paint();
-        paint.setTextSize(getFont().getSize());
-
-        for (int i = 0; i < model.getChildCount(getModel().getRoot()); i++) {
-            TreeNode group = model.getChild(getModel().getRoot(), i);
-            maxWidth = getWidthGroup(group, paint, maxWidth);
-        }
-
-        return maxWidth + 100;
-    }
-
-    private int getWidthGroup(TreeNode group, Paint paint, int maxWidth) {
-        if (group.isLeaf()) return Math.max(maxWidth, (int) paint.measureText(group.toString()));
-
-        for (int i = 0; i < model.getChildCount(group); i++) {
-            TreeNode child = model.getChild(group, i);
-            maxWidth = getWidthGroup(child, paint, maxWidth);
-        }
-        return maxWidth;
-    }
-
-    private int calculateTotalHeight() {
-        int totalHeight = 0;
-        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
-
-        for (int i = 0; i < adapter.getGroupCount(); i++) {
-            View groupView = adapter.getGroupView(i, false, null, this);
-            groupView.measure(
-                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            );
-            totalHeight += groupView.getMeasuredHeight();
-
-            if (isGroupExpanded(i)) {
-                for (int j = 0; j < adapter.getChildrenCount(i); j++) {
-                    View childView = adapter.getChildView(i, j, false, null, this);
-                    childView.measure(
-                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                    );
-                    totalHeight += childView.getMeasuredHeight();
-                }
-            }
-        }
-
-        int dividerHeight = getDividerHeight();
-        totalHeight += dividerHeight * (adapter.getGroupCount() - 1);
-        totalHeight += getPaddingTop() + getPaddingBottom();
-
-        return totalHeight;
-    }
-
-    @Override
     public void setPreferredSize(Dimension dimension) {
-        setMinimumWidth(dimension.width);
-        setMinimumHeight(dimension.height);
-        requestLayout();
+        this.preferredSize = dimension;
     }
 
-    @Override
     public void setSize(Dimension dimension) {
-        setRight(getLeft() + dimension.width);
-        setBottom(getTop() + dimension.height);
+        setPreferredSize(dimension);
     }
 
-    @Override
     public Dimension getSize() {
-        return new Dimension(getWidth(), getHeight());
+        return preferredSize;
     }
 
-    @Override
-    public void setFont(Font font) {
-        this.currentFont = font;
-        if (cellRenderer instanceof DefaultTreeCellRenderer) {
-            ((DefaultTreeCellRenderer)cellRenderer).setFont(font);
-        }
-        ((BaseExpandableListAdapter)getExpandableListAdapter()).notifyDataSetChanged();
-    }
-
-    @Override
     public Font getFont() {
-        if (getChildCount() > 0) {
-            View firstChild = getChildAt(0);
-            if (firstChild instanceof TextView) {
-                TextView tv = (TextView) firstChild;
-                return new Font(tv.getTypeface(), (int) tv.getTextSize());
-            }
-        }
-        return new Font(Typeface.DEFAULT, 14);
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
     }
 
     public int getRowCount() {
-        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
-        int count = adapter.getGroupCount();
-
-        for (int i = 0; i < adapter.getGroupCount(); i++) {
-            if (isGroupExpanded(i)) {
-                count += adapter.getChildrenCount(i);
-            }
-        }
-
-        return count;
+        return nodeList.size();
     }
 
     public TreePath getPathForRow(int row) {
-        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
-        int currentRow = 0;
-
-        for (int groupPos = 0; groupPos < adapter.getGroupCount(); groupPos++) {
-            if (currentRow == row) {
-                return new TreePath(new TreeNode[]{(TreeNode) adapter.getGroup(groupPos)});
-            }
-            currentRow++;
-
-            if (isGroupExpanded(groupPos)) {
-                for (int childPos = 0; childPos < adapter.getChildrenCount(groupPos); childPos++) {
-                    if (currentRow == row) {
-                        return new TreePath(new TreeNode[]{
-                                (TreeNode) adapter.getGroup(groupPos),
-                                (TreeNode) adapter.getChild(groupPos, childPos)
-                        });
-                    }
-                    currentRow++;
-                }
-            }
+        if (row < 0 || row >= nodeList.size()) return null;
+        TreeNode node = nodeList.get(row);
+        List<Object> path = new ArrayList<>();
+        while (node != null) {
+            path.add(0, node.getValue());
+            node = node.getParent();
         }
-
-        return null;
+        return new TreePath(path.toArray());
     }
+
 
     public int getRowForPath(TreePath path) {
-        if (path == null) return -1;
-
-        BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
-        int row = 0;
-
-        for (int groupPos = 0; groupPos < adapter.getGroupCount(); groupPos++) {
-            TreeNode group = (TreeNode) adapter.getGroup(groupPos);
-            if (path.getPath().length > 0 && path.getPath()[0].equals(group)) {
-                if (path.getPath().length == 1) {
-                    return row;
-                }
-            }
-            row++;
-
-            if (isGroupExpanded(groupPos)) {
-                for (int childPos = 0; childPos < adapter.getChildrenCount(groupPos); childPos++) {
-                    TreeNode child = (TreeNode) adapter.getChild(groupPos, childPos);
-                    if (path.getPath().length > 1 && path.getPath()[1].equals(child)) {
-                        return row;
-                    }
-                    row++;
-                }
-            }
-        }
-
-        return -1;
-    }
-
-    public int getLeadSelectionRow() {
-        TreePath path = getSelectionPath();
-        return path != null ? getRowForPath(path) : -1;
+        TreeNode node = findAndroidNode(path);
+        return nodeList.indexOf(node);
     }
 
     public void setSelectionRow(int row) {
         TreePath path = getPathForRow(row);
-        if (path != null) {
-            setSelectionPath(path);
-        }
+        setSelectionPath(path);
     }
 
-    public void addMouseListener(Object mouseListener) {
-        setOnItemClickListener((parent, view, position, id) -> {
-            // Implémentation à compléter selon les besoins
-        });
+    public int getLeadSelectionRow() {
+        TreePath path = getSelectionPath();
+        return getRowForPath(path);
+    }
+
+    public void addMouseListener(MouseAdapter mouseListener) {
+        for (TreeNode node: nodeList) {
+            node.setClickListener(new TreeNode.TreeNodeClickListener() {
+                @Override
+                public void onClick(TreeNode node, Object value) {
+                    View nodeView = node.getViewHolder().getView();
+
+                    // Crée un faux MotionEvent
+                    long time = System.currentTimeMillis();
+                    float x = nodeView.getX();
+                    float y = nodeView.getY();
+
+                    android.view.MotionEvent motionEvent = android.view.MotionEvent.obtain(
+                            time, time, android.view.MotionEvent.ACTION_UP, x, y, 0
+                    );
+
+                    MouseEvent swingEvent = new MouseEvent(motionEvent, nodeView, MouseEvent.MOUSE_CLICKED);
+
+                    // Déclenche le listener Swing-style
+                    mouseListener.mouseClicked(swingEvent);
+                }
+            });
+        }
     }
 
     public boolean hasFocus() {
-        return super.hasFocus();
+        return getView().hasFocus();
     }
 
     public void addKeyListener(KeyListener listener) {
-        setOnKeyListener((v, keyCode, event) -> {
-            listener.keyPressed(new KeyEvent(event, keyCode));
-            return false;
-        });
+        // Implémentation spécifique à Android
     }
 
     public void addFocusListener(FocusListener listener) {
-        setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                listener.focusGained(new FocusEvent(this));
-            } else {
-                listener.focusLost(new FocusEvent(this));
-            }
-        });
+        // Implémentation spécifique à Android
     }
 
     public void scrollRowToVisible(int row) {
-        TreePath path = getPathForRow(row);
-        if (path != null) {
-            expandPath(path);
-            smoothScrollToPosition(row);
-        }
+        // Implémentation spécifique à Android
     }
 
     public void revalidate() {
-        invalidate();
+        rebuildTree();
     }
 
     public void expandRow(int row) {
-        TreePath path = getPathForRow(row);
-        if (path != null) {
-            expandPath(path);
-        }
+        expandPath(getPathForRow(row));
     }
 
-    public TreePath getNextMatch(final String prefix, final int startingRow, final Position.Bias bias) {
-        if (prefix == null || startingRow < 0) {
-            return null;
-        }
-
-        String searchStr = prefix.toLowerCase();
-        int increment = (bias == Position.Bias.Forward) ? 1 : -1;
-        int max = getRowCount();
-        int row = startingRow;
-
-        do {
-            TreePath path = getPathForRow(row);
-            if (path != null) {
-                TreeNode node = (TreeNode) path.getLastPathComponent();
-                if (node.toString().toLowerCase().startsWith(searchStr)) {
-                    return path;
-                }
+    public TreePath getNextMatch(String prefix, int startingRow, Position.Bias bias) {
+        for (int i = startingRow; i < nodeList.size(); i++) {
+            TreeNode node = nodeList.get(i);
+            String s = node.getValue().toString();
+            if (s.startsWith(prefix)) {
+                return getPathForRow(i);
             }
-            row = (row + increment + max) % max;
-        } while (row != startingRow);
-
+        }
         return null;
     }
+
+
 
     public TreePath getPathForLocation(int x, int y) {
+        for (TreeNode node : nodeList) {
+            if(node.getViewHolder() != null && node.getViewHolder().getNodeView() != null)
+            {
+                View view = node.getViewHolder().getView();
+                if (view != null && view.getVisibility() == View.VISIBLE) {
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    int viewX = location[0];
+                    int viewY = location[1];
+                    int viewWidth = view.getWidth();
+                    int viewHeight = view.getHeight();
 
+                    if (x >= viewX && x <= viewX + viewWidth &&
+                            y >= viewY && y <= viewY + viewHeight) {
+
+                        // On construit le TreePath à partir du nœud cliqué
+                        List<Object> pathList = new ArrayList<>();
+                        TreeNode current = node;
+                        androidUtils.swing.tree.TreeNode currentS;
+                        while (current != null)
+                        {
+                            currentS = nodeMapping.get(current.getValue());
+                            pathList.add(0, currentS);
+                            current = current.getParent();
+
+                        }
+                        return new TreePath(pathList.toArray());
+                    }
+                }
+            }
+
+        }
         return null;
     }
 
-    private boolean isExpanded(TreePath path) {
-        if (path == null) return false;
-        Object[] pathArray = path.getPath();
-        if (pathArray.length < 2) return false;
+    public TreePath getPathForLocation(View view) {
+        for (TreeNode node : nodeList) {
+            if (node.getViewHolder() != null && node.getViewHolder().getNodeView() != null && node.getViewHolder().getView() == view) {
+                // Construire le chemin depuis ce noeud jusqu'à la racine
+                List<Object> pathList = new ArrayList<>();
+                TreeNode current = node;
 
-        TreeNode node = (TreeNode) pathArray[pathArray.length - 2];
-        int groupPos = findGroupPosition(node);
-        return groupPos >= 0 && isGroupExpanded(groupPos);
+                androidUtils.swing.tree.TreeNode currentS;
+                while (current != null)
+                {
+                    currentS = nodeMapping.get(current.getValue());
+                    pathList.add(0, currentS);
+                    current = current.getParent();
+
+                }
+                if (pathList.size() == 0)return null;
+                return new TreePath(pathList.toArray());
+            }
+        }
+        return null;
     }
+
+    public void requestFocus() {
+        getView().requestFocus();
+    }
+
 }

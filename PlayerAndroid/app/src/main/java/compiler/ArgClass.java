@@ -108,7 +108,7 @@ public class ArgClass extends Arg {
 //			final List<Arg> combo = new ArrayList<Arg>();
 //			for (int n = 0; n < numSlots; n++)
 //				combo.add(indices[n] == 0 ? null : args.get(indices[n]-1));
-//			combos.add(combo);
+//			combos.add(combo);getDeclaredConstructors()
 //		}
 
         return combos;
@@ -296,6 +296,8 @@ public class ArgClass extends Arg {
 
                 if (tryConstructors) {
                     // Get list of constructors
+                    System.out.println(cls);
+                    System.out.println(Arrays.toString(cls.getDeclaredConstructors()));
                     executables.addAll(Arrays.asList(cls.getDeclaredConstructors()));
                 } else {
                     // Get list of static construct() methods

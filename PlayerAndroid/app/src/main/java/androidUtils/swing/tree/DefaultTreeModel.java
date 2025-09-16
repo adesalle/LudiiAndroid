@@ -1,42 +1,17 @@
 package androidUtils.swing.tree;
 
-import java.util.List;
-
-import androidUtils.swing.event.TreeModelEvent;
 import androidUtils.swing.event.TreeModelListener;
 
 public class DefaultTreeModel implements TreeModel {
-    private TreeNode root;
-    private List<TreeModelListener> listeners;
-    protected boolean asksAllowsChildren;
+
+    protected TreeNode root;
+
+    protected TreeNode originalNode;
 
     public DefaultTreeModel(TreeNode root) {
-        this(root, false);
-    }
-
-    public DefaultTreeModel(TreeNode root, boolean asksAllowChildren) {
         this.root = root;
-        this.asksAllowsChildren = asksAllowChildren;
+        originalNode = root;
     }
-    
-    public boolean asksAllowsChildren()
-    {
-        return asksAllowsChildren;
-    }
-    
-    
-    @Override
-     public boolean isLeaf(TreeNode node) 
-     {
-        TreeNode treeNode = (TreeNode) node;
-        boolean leaf;
-        if (asksAllowsChildren)
-            leaf = ! treeNode.getAllowsChildren();
-        else 
-            leaf = treeNode.isLeaf();
-        return leaf;
-     }
-
 
     @Override
     public TreeNode getRoot() {
@@ -44,13 +19,27 @@ public class DefaultTreeModel implements TreeModel {
     }
 
     @Override
-    public TreeNode getChild(TreeNode parent, int index) {
-        return ((TreeNode)parent).getChildAt(index);
+    public Object getChild(Object parent, int index) {
+        if (parent instanceof DefaultMutableTreeNode) {
+            return ((DefaultMutableTreeNode) parent).getChildAt(index);
+        }
+        return null;
     }
 
     @Override
-    public int getChildCount(TreeNode parent) {
-        return parent.getChildCount();
+    public int getChildCount(Object parent) {
+        if (parent instanceof DefaultMutableTreeNode) {
+            return ((DefaultMutableTreeNode) parent).getChildCount();
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean isLeaf(TreeNode node) {
+        if (node instanceof DefaultMutableTreeNode) {
+            return ((DefaultMutableTreeNode) node).isLeaf();
+        }
+        return true;
     }
 
     @Override
@@ -59,19 +48,30 @@ public class DefaultTreeModel implements TreeModel {
     }
 
     @Override
+    public void valueForPathChanged(TreePath path, Object newValue) {
+        Object node = path.getLastPathComponent();
+        if (node instanceof DefaultMutableTreeNode) {
+            ((DefaultMutableTreeNode) node).setUserObject(newValue);
+
+        }
+    }
+
+    @Override
     public int getIndexOfChild(TreeNode parent, TreeNode child) {
-        return 0;
+        if (parent instanceof DefaultMutableTreeNode && child instanceof DefaultMutableTreeNode) {
+            return ((DefaultMutableTreeNode) parent).getIndex((DefaultMutableTreeNode) child);
+        }
+        return -1;
     }
 
     @Override
     public void addTreeModelListener(TreeModelListener l) {
-        listeners.add(l);
 
     }
 
     @Override
     public void removeTreeModelListener(TreeModelListener l) {
-        listeners.remove(l);
+
     }
 
     @Override
@@ -79,45 +79,10 @@ public class DefaultTreeModel implements TreeModel {
 
     }
 
-    protected void fireTreeNodesChanged(TreeNode source, TreePath path,
-                                        int[] childIndices, TreeNode[] children) {
-        TreeModelEvent event = new TreeModelEvent(source, path, childIndices, children);
-        for (TreeModelListener listener : listeners) {
-            listener.treeNodesChanged(event);
-        }
-    }
 
-    protected void fireTreeNodesInserted(TreeNode source, TreePath path,
-                                         int[] childIndices, TreeNode[] children) {
-        TreeModelEvent event = new TreeModelEvent(source, path, childIndices, children);
-        for (TreeModelListener listener : listeners) {
-            listener.treeNodesInserted(event);
-        }
-    }
-
-    protected void fireTreeNodesRemoved(TreeNode source, TreePath path,
-                                        int[] childIndices, TreeNode[] children) {
-        TreeModelEvent event = new TreeModelEvent(source, path, childIndices, children);
-        for (TreeModelListener listener : listeners) {
-            listener.treeNodesRemoved(event);
-        }
-    }
-
-    protected void fireTreeStructureChanged(TreeNode source, TreePath path) {
-        TreeModelEvent event = new TreeModelEvent(source, path);
-        for (TreeModelListener listener : listeners) {
-            listener.treeStructureChanged(event);
-        }
-    }
-
-    public Object getChild(Object parent, int index)
-    {
-        return getChild((TreeNode) parent, index);
+    public void setRoot(DefaultMutableTreeNode root) {
+        this.root = root;
     }
 
 
-    public int getChildCount(Object parent)
-    {
-        return getChildCount((TreeNode) parent);
-    }
 }

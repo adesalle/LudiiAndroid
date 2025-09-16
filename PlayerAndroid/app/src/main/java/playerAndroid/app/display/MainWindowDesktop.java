@@ -1,6 +1,7 @@
 package playerAndroid.app.display;
 
 
+import androidUtils.awt.Graphics2D;
 import androidUtils.awt.SVGGraphics2D;
 import androidUtils.imageio.HandlerAction;
 import androidUtils.awt.geom.Point2D;
@@ -134,14 +135,14 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
 
     public MainWindowDesktop(final AndroidApp app) {
         this.app = app;
-        graphics = new Graphics();
+        graphics = new Graphics2D();
 
         // Convertir le seuil de clic de dp en pixels
         final float density = StartAndroidApp.getAppContext().getResources().getDisplayMetrics().density;
         clickThresholdPx = CLICK_THRESHOLD_DP * density;
         setOnTouchListener(this);
         setVisibility(android.view.View.VISIBLE);
-        //zoomBox = new ZoomBox(app, this);
+        zoomBox = new ZoomBox(app, this);
     }
     //-------------------------------------------------------------------------
 
@@ -211,7 +212,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
     {
             try
             {
-
+                final Graphics2D g2d = (Graphics2D) g;
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -250,7 +251,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
 
                 // Paint each panel
                 for (final View panel : panels) {
-                    panel.paint(g);
+                    panel.paint(g2d);
 
                 }
 

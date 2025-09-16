@@ -1,9 +1,6 @@
 package androidUtils.swing.tree;
 
-import java.util.Enumeration;
-
 public interface TreeSelectionModel {
-    // Modes de sélection
     int SINGLE_TREE_SELECTION = 1;
     int CONTIGUOUS_TREE_SELECTION = 2;
     int DISCONTIGUOUS_TREE_SELECTION = 4;
@@ -23,12 +20,8 @@ public interface TreeSelectionModel {
     int getSelectionCount();
 
     boolean isPathSelected(TreePath path);
-    boolean isSelectionEmpty();
-
     void clearSelection();
 
     void addTreeSelectionListener(TreeSelectionListener listener);
     void removeTreeSelectionListener(TreeSelectionListener listener);
-
-    Enumeration<TreePath> getSelectionPathsEnumeration();
 }

@@ -163,9 +163,10 @@ public class MainMenu extends JMenuBar
 			menuItem.addActionListener(al);
 			menu.add(menuItem);
 			menuItem.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_DOWN_MASK));
-			
+
+			/*
 			menu.addSeparator();
-			
+
 			menuItem = new JMenuItem("Create Game");
 			menuItem.addActionListener(al);
 			menu.add(menuItem);
@@ -181,6 +182,7 @@ public class MainMenu extends JMenuBar
 			menuItem = new JMenuItem("Visual Editor (Beta)");
 			menuItem.addActionListener(al);
 			menu.add(menuItem);
+			*/
 		}
 
 		//---------------------------------------------------------------------

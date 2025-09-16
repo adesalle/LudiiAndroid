@@ -26,7 +26,7 @@ public class Polygon extends GeneralPath {
     }
 
     @Override
-    public void acceptFill(Graphics2D graph) {
+    public void acceptFill(Graphics graph) {
         return;
     }
 

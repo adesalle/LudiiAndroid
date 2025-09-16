@@ -1,15 +1,19 @@
 package playerAndroid.app.display.dialogs;
 
+import static androidUtils.swing.JOptionPane.UNINITIALIZED_VALUE;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
-import android.view.Window;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +41,7 @@ import androidUtils.awt.event.KeyEventDispatcher;
 import androidUtils.awt.event.MouseAdapter;
 import androidUtils.awt.event.MouseEvent;
 import androidUtils.awt.image.BufferedImage;
-import androidUtils.imageio.ImageIO;
+import androidUtils.swing.JLabel;
 import androidUtils.swing.JScrollPane;
 import androidUtils.swing.JTextField;
 import androidUtils.swing.event.DocumentEvent;
@@ -56,9 +60,11 @@ import androidUtils.swing.tree.TreePath;
 import androidUtils.swing.WindowConstants;
 import androidUtils.swing.tree.TreeSelectionModel;
 import main.AliasesData;
+import main.Constants;
 import main.FileHandling;
 import playerAndroid.app.AndroidApp;
 import playerAndroid.app.StartAndroidApp;
+import playerAndroid.app.loading.GameLoading;
 
 /**
  * Class for showing a dialog to choose a game to load.
@@ -87,8 +93,10 @@ public class GameLoaderDialog
 		final String initialChoice
 	)
 	{
+		System.out.println(Arrays.toString(choices));
 		final JPanel contentPane = new JPanel();
-		contentPane.setLayout(new GridLayout());
+		contentPane.add(new JTextField("tzqytst"));
+		//contentPane.setLayout(new GridLayout());
 		
 		lastKeyPressed = "";	// reset this since it's static, shared between dialogs
 		
@@ -99,9 +107,10 @@ public class GameLoaderDialog
 		
 		for (final String choice : choices)
 		{
+
 			if (!AndroidApp.devJar && FileHandling.shouldIgnoreLudRelease(choice))
 				continue;
-			
+			System.out.println("why not");
 			String str = choice.replaceAll(Pattern.quote("\\"), "/");
 			if (str.startsWith("/"))
 				str = str.substring(1);
@@ -303,7 +312,8 @@ public class GameLoaderDialog
 	
 		});
 		
-		final JScrollPane treeView = new JScrollPane(tree);
+		final JPanel treeView = new JPanel(tree);
+
 		contentPane.add(treeView, BorderLayout.CENTER);
 		contentPane.add(filterField, BorderLayout.SOUTH);
 		contentPane.setPreferredSize(new Dimension(650, 700));
@@ -371,8 +381,8 @@ public class GameLoaderDialog
 					null, null, null
 				);
 		final JDialog dialog = pane.createDialog("Choose a Game to Load");
+
 		dialog.setIconImage(image);
-		
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		dialog.setModal(true);
 		
@@ -427,19 +437,25 @@ public class GameLoaderDialog
 			@Override
 			public void mouseClicked(final MouseEvent e)
 			{
-		        if (e.getClickCount() == 2) 
-		        {
-		            final TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-		            if (path != null) 
-		            {
-		            	final GameLoaderNode node = (GameLoaderNode) path.getLastPathComponent();
-		            	if (node.fullName.endsWith(".lud"))
-		            	{
-		            		pane.setValue(Integer.valueOf(JOptionPane.OK_OPTION));
-		            		dialog.dispose();
-		            	}
-		            }
-		        }
+				System.out.println("here");
+		        final TreePath path = tree.getPathForLocation(e.getComponent());
+				System.out.println((path != null) + " " + path);
+				if (path != null)
+				{
+					final GameLoaderNode node = (GameLoaderNode) path.getLastPathComponent();
+					System.out.println(node.fullName);
+					if (node.fullName.endsWith(".lud"))
+					{
+						pane.setValue(Integer.valueOf(JOptionPane.OK_OPTION));
+						dialog.dispose();
+
+						// TODO if we want to preserve per-game last-selected-options in preferences, load them here
+						GameLoading.app.manager().settingsManager().userSelections().setRuleset(Constants.UNDEFINED);
+						GameLoading.app.manager().settingsManager().userSelections().setSelectOptionStrings(new ArrayList<String>());
+						GameLoading.loadGameFromMemory(GameLoading.app, node.fullName, GameLoading.debug);
+
+					}
+				}
 		    }
 		});
 		
@@ -464,8 +480,9 @@ public class GameLoaderDialog
 
 		// show the dialog
 		dialog.setVisible(true);
-		final Object selectedValue = pane.getValue();
-		
+
+		Object selectedValue = pane.getValue();
+
 		// get rid of our key event dispatcher again
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(keyDispatcher);
 		
@@ -509,7 +526,7 @@ public class GameLoaderDialog
 	 * 
 	 * @author Dennis Soemers
 	 */
-	private static class GameLoaderNode extends DefaultMutableTreeNode
+	public static class GameLoaderNode extends DefaultMutableTreeNode
 	{
 		/** */
 		private static final long serialVersionUID = 1L;
@@ -522,7 +539,7 @@ public class GameLoaderDialog
 		
 		/** Whether or not it's visible (given current filter) */
 		protected boolean isVisible = true;
-		
+
 		/**
 		 * Constructor
 		 * @param shortName

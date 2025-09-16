@@ -1,5 +1,7 @@
 package main.grammar;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -14,7 +16,8 @@ import main.grammar.Token.TokenType;
  *
  * @author cambolbro
  */
-public class ParseItem {
+public class ParseItem
+{
     // Parse token that this item corresponds to.
     private final Token token;
 
@@ -25,80 +28,94 @@ public class ParseItem {
 
     // List of symbols and grammar clauses that match this item.
     private final List<Instance> instances = new ArrayList<Instance>();
-    // Depth in tree
-    private final int depth;
+
     // Whether this token and its arguments all parse
     private boolean doesParse = false;
+
     // Whether token was visited during parse
     private boolean visited = false;
 
+    // Depth in tree
+    private final int depth;
+
     //-------------------------------------------------------------------------
 
-    public ParseItem(final Token token, final ParseItem parent) {
-        this.token = token;
+    public ParseItem(final Token token, final ParseItem parent)
+    {
+        this.token  = token;
         this.parent = parent;
         depth = (parent == null) ? 0 : parent.depth() + 1;
     }
 
     //-------------------------------------------------------------------------
 
-    public Token token() {
+    public Token token()
+    {
         return token;
     }
 
-    public List<ParseItem> arguments() {
+    public List<ParseItem> arguments()
+    {
         return Collections.unmodifiableList(arguments);
     }
 
-    public ParseItem parent() {
+    public ParseItem parent()
+    {
         return parent;
     }
 
-    public List<Instance> instances() {
+    public List<Instance> instances()
+    {
         return Collections.unmodifiableList(instances);
     }
 
-    public boolean doesParse() {
+    public boolean doesParse()
+    {
         return doesParse;
     }
 
-    public boolean visited() {
+    public boolean visited()
+    {
         return visited;
     }
 
-    public int depth() {
+    public int depth()
+    {
         return depth;
     }
 
     //-------------------------------------------------------------------------
 
-    public void clearInstances() {
+    public void clearInstances()
+    {
         instances.clear();
     }
 
-    public void add(final Instance instance) {
+    public void add(final Instance instance)
+    {
         instances.add(instance);
     }
 
-    public void add(final ParseItem arg) {
+    public void add(final ParseItem arg)
+    {
         arguments.add(arg);
     }
 
     //-------------------------------------------------------------------------
 
 //	private static int DEBUG = 0;
-//	
+//
 //	public void matchSymbols(final Grammar grammar, final Report report)
 //	{
 //		instances.clear();
-//		
+//
 //		Arg arg;
 //		switch (token.type())
 //		{
 //		case Terminal:  // String, number, enum, True, False
 //			arg = new ArgTerminal(token.name(), token.parameterLabel());
 //			arg.matchSymbols(grammar, report);  // instantiates actual object(s), not need for clauses
-//			
+//
 //			for (final Instance instance : arg.instances())
 //				//if (!instance.symbol().isAbstract())
 //					instances.add(instance);
@@ -109,10 +126,10 @@ public class ParseItem {
 //				for (final Instance instance : instances)
 //				{
 //					System.out.println(":: " + instance.toString());
-//						
+//
 //					if (instance.object() != null)
 //						System.out.println("=> " + instance.object());
-//						
+//
 //					if (instance.clauses() != null)
 //						for (final Clause clause : instance.clauses())
 //							System.out.println("---- " + clause.toString());
@@ -138,7 +155,7 @@ public class ParseItem {
 //					// ** This should not occur!
 //					// ** Possibly ludeme has same name as a predefined Grammar ludeme, e.g. State.
 //					// **
-//					System.out.println("** ParseItem.matchSymbols(): Null rule for symbol " + instance.symbol() + 
+//					System.out.println("** ParseItem.matchSymbols(): Null rule for symbol " + instance.symbol() +
 //							", parent is " + (parent == null ? "null" : parent.token()) + ".");
 //				}
 //				else
@@ -147,17 +164,17 @@ public class ParseItem {
 //					instance.setClauses(rule.rhs());
 //				}
 //			}
-//	
+//
 //			if (DEBUG != 0)
-//			{	
+//			{
 //				System.out.println("\nClass token '" + token.name() + "' has " + instances.size() + " instances:");
 //				for (final Instance instance : instances)
 //				{
 //					System.out.println(":: " + instance.toString());
-//						
+//
 //					if (instance.object() != null)
 //						System.out.println("=> " + instance.object());
-//	
+//
 //					if (instance.clauses() != null)
 //						for (final Clause clause : instance.clauses())
 //							System.out.println("---- " + clause.toString());
@@ -172,14 +189,16 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    public boolean parse(final Symbol expected, final Report report, final String tab) {
+    public boolean parse(final Symbol expected, final Report report, final String tab)
+    {
         if (tab != null)
             System.out.println("\n" + tab + "Parsing token " + token.name() + ", expected type is " +
                     (expected == null ? "null" : expected.name()) + ".");
 
         visited = true;
 
-        switch (token.type()) {
+        switch (token.type())
+        {
             case Terminal:
                 return parseTerminal(expected, tab);
             case Array:
@@ -195,22 +214,26 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    private boolean parseTerminal(final Symbol expected, final String tab) {
+    private boolean parseTerminal(final Symbol expected, final String tab)
+    {
         // Handle terminal
         if (tab != null)
             System.out.println(tab + "Handling terminal...");
 
-        for (final Instance instance : instances) {
-            if (tab != null) {
+        for (final Instance instance : instances)
+        {
+            if (tab != null)
+            {
                 System.out.print(tab + "Instance: " + instance.symbol().name());
-                System.out.println(" => " + instance.symbol().returnType().name() + "... ");
+                System.out.println(" => "  + instance.symbol().returnType().name() + "... ");
             }
 
             if (instance.clauses() != null)
                 continue;  // terminals don't have clauses
 
             // Check whether symbol is of expected return type
-            if (expected != null && !expected.compatibleWith(instance.symbol())) {
+            if (expected != null && !expected.compatibleWith(instance.symbol()))
+            {
                 if (tab != null)
                     System.out.println(tab + "No match, move onto next instance...");
                 continue;
@@ -228,21 +251,25 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    private boolean parseArray(final Symbol expected, final Report report, final String tab) {
+    private boolean parseArray(final Symbol expected, final Report report, final String tab)
+    {
         // Handle array
         if (tab != null)
             System.out.println(tab + "Handling array...");
 
-        if (tab != null) {
+        if (tab != null)
+        {
             System.out.println(tab + "> Expected: " + expected.name());
             for (final ParseItem element : arguments)
                 System.out.println(tab + "> " + element.token().name());
         }
 
         // Check that elements can be parsed with the expected type
-        for (int e = 0; e < arguments.size(); e++) {
+        for (int e = 0; e < arguments.size(); e++)
+        {
             final ParseItem element = arguments.get(e);
-            if (!element.parse(expected, report, (tab == null ? null : tab + "   "))) {
+            if (!element.parse(expected, report, (tab == null ? null : tab + "   ")))
+            {
                 // Array fails if any element fails
                 if (tab != null)
                     System.out.println(tab + "   X: Couldn't parse array element " + e + ".");
@@ -260,20 +287,25 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    private boolean parseClass(final Symbol expected, final Report report, final String tab) {
+    private boolean parseClass(final Symbol expected, final Report report, final String tab)
+    {
         // Handle class
         if (tab != null)
             System.out.println(tab + "Handling class...");
 
         // Find possible instances that match expected return type
-        for (final Instance instance : instances) {
-            if (tab != null) {
+
+        for (final Instance instance : instances)
+        {
+            if (tab != null)
+            {
                 System.out.print(tab + "Class instance: " + instance.symbol().name());
-                System.out.print(" => " + instance.symbol().returnType().name() + "... ");
+                System.out.print(" => "  + instance.symbol().returnType().name() + "... ");
             }
 
             // Check whether symbol is of expected return type
-            if (expected != null && !expected.compatibleWith(instance.symbol())) {
+            if (expected != null && !expected.compatibleWith(instance.symbol()))
+            {
                 if (tab != null)
                     System.out.println("no match, move onto next instance...");
                 continue;
@@ -286,25 +318,29 @@ public class ParseItem {
             //if (tab != null)
             //	System.out.println(tab + "Symbol match, checking possible clauses...");
 
-            if (instance.clauses() == null) {
+            if (instance.clauses() == null)
+            {
                 //System.out.println("** No clauses for instance: " + instance);
                 continue;
             }
 
             int c;
-            for (c = 0; c < instance.clauses().size(); c++) {
+            for (c = 0; c < instance.clauses().size(); c++)
+            {
                 final Clause clause = instance.clauses().get(c);
 
                 if (tab != null)
-                    System.out.println(tab + (c + 1) + ". Trying clause: " + clause);
+                    System.out.println(tab + (c+1) + ". Trying clause: " + clause);
 
-                if (arguments.size() > 0 && clause.args() == null) {
+                if (arguments.size() > 0 && clause.args() == null)
+                {
                     if (tab != null)
                         System.out.println(tab + "   X: Item has arguments but clauses does not.");
                     continue;
                 }
 
-                if (arguments.size() > clause.args().size()) {
+                if (arguments.size() > clause.args().size())
+                {
                     if (tab != null)
                         System.out.println(tab + "   X: Too many arguments for this clause.");
                     continue;
@@ -328,19 +364,21 @@ public class ParseItem {
                 final int argsSize = arguments.size();
 
                 // Generate all combinations of on-bits up to the maximum expected size
-                for (int seed = 0; seed < (0x1 << clauseSize); seed++) {
+                for (int seed = 0; seed < (0x1 << clauseSize); seed++)
+                {
                     if (Integer.bitCount(seed) != argsSize)
                         continue;  // wrong number of on-bits
 
-                    final BitSet combo = BitSet.valueOf(new long[]{seed});
+                    final BitSet combo = BitSet.valueOf(new long[] { seed });
 
                     // Try this arg combo
-                    final BitSet subset = (BitSet) combo.clone();
+                    final BitSet subset = (BitSet)combo.clone();
                     subset.and(clause.mandatory());
                     if (!subset.equals(clause.mandatory()))
                         continue;  // some mandatory arguments are null
 
-                    if (tab != null) {
+                    if (tab != null)
+                    {
                         System.out.print(tab + "   Trying arg combo: ");
                         int index = 0;
                         for (int n = 0; n < numSlots; n++)
@@ -352,22 +390,29 @@ public class ParseItem {
 
                     int index = 0;
                     int a;
-                    for (a = 0; a < numSlots; a++) {
-                        if (!combo.get(a)) {
+                    for (a = 0; a < numSlots; a++)
+                    {
+                        if (!combo.get(a))
+                        {
                             // Arg will be null; check that's optional (or an @Or)
                             final ClauseArg clauseArg = clause.args().get(a);
                             final boolean canSkip = clauseArg.optional() || clauseArg.orGroup() > 0;
-                            if (!canSkip) {
+                            if (!canSkip)
+                            {
                                 //System.out.println(tab + "Arg " + a + " can't be null.");
                                 break;  // this arg can't be null
                             }
-                        } else {
+                        }
+                        else
+                        {
                             final ParseItem arg = arguments.get(index++);
+
                             final ClauseArg clauseArg = clause.args().get(a);
 
                             // Check that @Or group is valid (if any)
                             final int orGroup = clauseArg.orGroup();
-                            if (orGroup > 0) {
+                            if (orGroup > 0)
+                            {
                                 //System.out.println("orGroup is " + orGroup);
                                 if (orGroups.get(orGroup))
                                     break;  // too many non-null args in this @Or group
@@ -389,7 +434,8 @@ public class ParseItem {
                                             argName != null && clauseArgName == null
                                             ||
                                             argName != null && !argName.equalsIgnoreCase(clauseArgName)
-                            ) {
+                            )
+                            {
                                 // **
                                 // ** FIXME: This still allows users to misspell argument names,
                                 // **        by capitalising badly.
@@ -399,7 +445,9 @@ public class ParseItem {
                                 break;  // name mismatch
                             }
 
-                            if (!arg.parse(clauseArg.symbol(), report, (tab == null ? null : tab + "   "))) {
+                            if (!arg.parse(clauseArg.symbol(), report, (tab == null ? null : tab + "   ")))
+                            {
+
                                 if (tab != null)
                                     System.out.println(tab + "   X: Couldn't parse arg " + index + ".");
                                 break;
@@ -407,7 +455,9 @@ public class ParseItem {
                         }
                     }
 
-                    if (a >= numSlots) {
+                    if (a >= numSlots)
+                    {
+
                         // This arg combo matches this clause
                         if (tab != null)
                             System.out.println(tab + "++++ Class '" + instance.symbol().name() + "' parses. ++++");
@@ -429,10 +479,12 @@ public class ParseItem {
     /**
      * @return Depth of deepest item that does not parse.
      */
-    public int deepestFailure() {
+    public int deepestFailure()
+    {
         int result = (doesParse || !visited) ? -1 : depth;
 
-        for (final ParseItem arg : arguments) {
+        for (final ParseItem arg : arguments)
+        {
             final int argResult = arg.deepestFailure();
             if (argResult > result)
                 result = argResult;
@@ -441,16 +493,21 @@ public class ParseItem {
         return result;
     }
 
-    public void reportFailures(final Report report, final int failureDepth) {
-        if (!doesParse && visited && depth == failureDepth) {
+    public void reportFailures(final Report report, final int failureDepth)
+    {
+        if (!doesParse && visited && depth == failureDepth)
+        {
             // This token could not be parsed
-            if (parent == null) {
+            if (parent == null)
+            {
                 final String clause = Report.clippedString(tokenClause(), 32);
                 report.addError("Unexpected syntax '" + clause + "'.");
-            } else {
+            }
+            else
+            {
                 final String clause = Report.clippedString(tokenClause(), 24);
                 final String parentClause = Report.clippedString(parent.tokenClause(), 32);
-                report.addError("Unexpected syntax '" + clause + "' in '" + parentClause + "'.");
+                report.addError("Unexpected syntax '" + clause + "' in '" + parentClause +"'.");
             }
         }
 
@@ -460,7 +517,8 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    public String dump(final String indent) {
+    public String dump(final String indent)
+    {
         final String TAB = "    ";
 
         final StringBuilder sb = new StringBuilder();
@@ -482,7 +540,8 @@ public class ParseItem {
 //		if (token.parameterLabel() != null)
 //			sb.append(" (" + token.parameterLabel() + ":)");
 
-        if (arguments.size() > 0) {
+        if (arguments.size() > 0)
+        {
             sb.append("\n");
 
             for (final ParseItem arg : arguments)
@@ -490,7 +549,9 @@ public class ParseItem {
 
             if (token.close() != 0)
                 sb.append(label + indent + token.close());
-        } else {
+        }
+        else
+        {
             if (token.close() != 0)
                 sb.append(token.close());
         }
@@ -501,7 +562,8 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    public String compare() {
+    public String compare()
+    {
         final StringBuilder sb = new StringBuilder();
 
 //		if (token.type() != TokenType.Class)
@@ -510,8 +572,8 @@ public class ParseItem {
 //			return sb.toString();
 //		}
 
-//		final String label = "" + type().name().charAt(0) + type().name().charAt(type().name().length()-1) + ": "; 
-//		final String label = "";  // + token.type().name().charAt(0) + token.type().name().charAt(1) + ": "; 
+//		final String label = "" + type().name().charAt(0) + type().name().charAt(type().name().length()-1) + ": ";
+//		final String label = "";  // + token.type().name().charAt(0) + token.type().name().charAt(1) + ": ";
 
         sb.append("--------------------------\n");
 
@@ -519,21 +581,29 @@ public class ParseItem {
         sb.append(tokenClause());
 
         // 2. Show the potential clauses
-        if (token.type() == TokenType.Array) {
+        if (token.type() == TokenType.Array)
+        {
             sb.append(" => Array\n");
-        } else if (token.type() == TokenType.Terminal) {
+        }
+        else if (token.type() == TokenType.Terminal)
+        {
             if (instances == null || instances.size() < 1)
                 return "** compare(): No instances for terminal " + token.name() + ".\n";
 
             sb.append(" => " + instances.get(0).symbol().cls().getSimpleName() + "\n");
-        } else {
+        }
+        else
+        {
             sb.append("\n");
-            for (final Instance instance : instances) {
-                if (instance != null && instance.clauses() != null) {
-                    for (int c = 0; c < instance.clauses().size(); c++) {
+            for (final Instance instance : instances)
+            {
+                if (instance != null && instance.clauses() != null)
+                {
+                    for (int c = 0; c < instance.clauses().size(); c++)
+                    {
                         final Clause clause = instance.clauses().get(c);
 //						sb.append(clause.toString() + "  ==>  " + clause.symbol().grammarLabel() + "\n");
-                        sb.append("" + (c + 1) + ". " + clause.symbol().grammarLabel() + ": " + clause.toString());
+                        sb.append("" + (c+1) + ". " + clause.symbol().grammarLabel() + ": " + clause.toString());
                         sb.append(" => " + instance.symbol().cls().getSimpleName());
                         sb.append("\n");
                     }
@@ -549,7 +619,8 @@ public class ParseItem {
 
     //-------------------------------------------------------------------------
 
-    public String tokenClause() {
+    public String tokenClause()
+    {
         final StringBuilder sb = new StringBuilder();
 
         if (token.parameterLabel() != null)
@@ -561,7 +632,8 @@ public class ParseItem {
         if (token.name() != null)
             sb.append(token.name());
 
-        for (int a = 0; a < arguments.size(); a++) {
+        for (int a = 0; a < arguments.size(); a++)
+        {
             final ParseItem arg = arguments.get(a);
             if (a > 0 || token.name() != null)
                 sb.append(" ");

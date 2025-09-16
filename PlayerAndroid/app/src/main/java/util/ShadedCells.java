@@ -1,13 +1,11 @@
 package util;
 
-import android.util.Log;
-
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
-import androidUtils.awt.PathIterator;
+import androidUtils.awt.geom.PathIterator;
 import java.util.BitSet;
 
 import game.types.board.SiteType;
@@ -68,7 +66,7 @@ public class ShadedCells {
                 case PathIterator.SEG_LINETO:
                     if (highlights.get(side)) {
                         pathLight.moveTo(centre.getX(), centre.getY());
-                        //pathLight.lineTo(currX, currY);
+                        pathLight.lineTo(currX, currY);
                         pathLight.lineTo(coords[0], coords[1]);
                         pathLight.closePath();
                     }

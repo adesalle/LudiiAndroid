@@ -2,6 +2,7 @@ package app.views;
 
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
 import app.PlayerApp;

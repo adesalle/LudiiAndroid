@@ -104,13 +104,12 @@ public class Parser
             final boolean isVerbose
     )
     {
+        System.out.println("expand");
         if (Completer.needsCompleting(description.rawGameDescription())) {
             String rawGame = description.rawGameDescription();
-//			System.out.println("Raw game description is: \n" + rawGame);
 
             // Remove formatting so that string matching during completion is more likely to work.
             rawGame = Expander.cleanUp(rawGame, report);
-//			System.out.println("Raw game description after cleaning up is: \n" + rawGame);
 
             //final List<Completion> completions = Completer.completeExhaustive(rawGame, description.maxReconstructions(), report);
             final List<Completion> completions = CompleterAndroid.completeSampled(rawGame, description.maxReconstructions(), report);
@@ -123,16 +122,18 @@ public class Parser
             description.setIsRecontruction(true);
         }
 
+
         try {
             try {
                 //report.clear();
                 Expander.expand(description, userSelections, report, isVerbose);
                 if (report.isError()) {
-//					System.out.println("Errors while expanding (A):");
+					System.out.println("Errors while expanding (A):");
 //					for (final String error : report.errors())
 //						System.out.println("* " + error);
                     return false;  // failed to expand -- return error
                 }
+                System.out.println("no error here");
 
                 if (isVerbose) {
                     System.out.println("Define instances:");
@@ -141,7 +142,7 @@ public class Parser
                 }
             } catch (final Exception e) {
                 if (report.isError()) {
-//					System.out.println("Errors while expanding (B):");
+					System.out.println("Errors while expanding (B):");
 //					for (final String error : report.errors())
 //						System.out.println("* " + error);
                     return false;  // failed to expand -- return error
@@ -150,7 +151,7 @@ public class Parser
                 //errors.add("Catching exception from Expander...");  //new String(e.getMessage()));
                 //errors.add("Could not expand game description. Maybe a misplaced bracket pair '(..)' or '{..}'?");
             }
-
+            System.out.println("expand");
             return parseExpanded(description, userSelections, report, allowExamples, isVerbose);
         } catch (final CompilerException e) {
             if (isVerbose)
@@ -222,13 +223,15 @@ public class Parser
             return false;
 
         //--------------- Check expanded text ----------------
-
+        System.out.println("expanded?");
         if (description.expanded() == null) {
 
             // Allow more specific tests above to check the problem
             report.addError("Could not expand. Check that bracket pairs '(..)' and '{..}' match.");
             return false;
         }
+
+        System.out.println("expanded");
 
         // Check for matching quotes in expanded description
         checkQuotes(description.expanded(), report);
@@ -293,15 +296,22 @@ public class Parser
         //System.out.println("\n" + parseTree.dump(""));
 
         // Check against grammar
+        System.out.println("parse tree??");
         description.parseTree().parse(null, report, null);
+        System.out.println(report.isError());
+        System.out.println("parsed");
         //description.parseTree().parse(null, report, "");
         //System.out.println("\n" + description.parseTree().dump(""));
 
         // Look for deepest failure and report all errors at that level
         final int failureDepth = description.parseTree().deepestFailure();
+
         if (failureDepth >= 0)
             description.parseTree().reportFailures(report, failureDepth);
 
+
+
+        System.out.println(report.isError());
         return !report.isError();
     }
 
@@ -574,7 +584,7 @@ public class Parser
 
 //		System.out.println("Known strings:");
 //		for (final String known : knownStrings.values())
-//			System.out.println("> " + known); 
+//			System.out.println("> " + known);
 
         // Check rest of description for strings
         //int c = ee;  // start at end of (equipment ...)

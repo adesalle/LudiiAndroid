@@ -1,68 +1,80 @@
 package androidUtils.swing.tree;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidUtils.awt.Font;
-
 public class DefaultTreeCellRenderer implements TreeCellRenderer {
-    private Context context;
-    private int paddingLeft = 50;
-    private int defaultTextSize = 16;
-    private int selectedTextColor = 0xFF0000FF; // Blue
-    private int defaultTextColor = 0xFF000000; // Black
 
-    private Font font = null;
+    // Configuration visuelle
+    private static final int BACKGROUND_COLOR = Color.WHITE;
+    private static final int TEXT_COLOR = Color.BLACK;
+    private static final int SELECTED_COLOR = Color.parseColor("#3399FF");
+    private static final int INDENT_PER_LEVEL = 30; // en dp
+    private static final int PADDING_VERTICAL = 12; // en dp
+    private static final int PADDING_HORIZONTAL = 8; // en dp
 
-    public DefaultTreeCellRenderer(Context context) {
-        this.context = context;
-    }
 
-    @Override
-    public View getTreeCellView(JTree tree, Object value,
-                                boolean selected, boolean expanded,
-                                boolean leaf, int row) {
-        TextView textView = new TextView(context);
-        textView.setText(value.toString());
-        textView.setTextSize(defaultTextSize);
-        textView.setPadding(paddingLeft * (row + 1), 20, 20, 20);
-
-        if (selected) {
-            textView.setTextColor(selectedTextColor);
-            textView.setBackgroundColor(0x200000FF); // Light blue background
-        } else {
-            textView.setTextColor(defaultTextColor);
-            textView.setBackgroundColor(0x00000000); // Transparent
-        }
-
-        // Optionally add icon based on node state
-        if (leaf) {
-            // Set leaf icon if needed
-        } else if (expanded) {
-            // Set expanded icon
-        } else {
-            // Set collapsed icon
-        }
-
-        return textView;
-    }
 
     @Override
-    public void setFont(Font font) {
-        this.font = font;
+    public View getTreeCellRendererComponent(Context context, JTree tree, Object value,
+                                             boolean selected, boolean expanded,
+                                             boolean leaf, int row, boolean hasFocus) {
+
+        // Convertir dp en pixels
+        int indentPx = dpToPx(context, INDENT_PER_LEVEL);
+        int paddingVertPx = dpToPx(context, PADDING_VERTICAL);
+        int paddingHorzPx = dpToPx(context, PADDING_HORIZONTAL);
+
+        // Conteneur principal
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(Gravity.CENTER_VERTICAL);
+        layout.setBackgroundColor(selected ? SELECTED_COLOR : BACKGROUND_COLOR);
+
+        // Calcul du niveau hiérarchique
+        int level = getNodeLevel(tree, value);
+
+        // Indentation proportionnelle au niveau
+        View indent = new View(context);
+        LinearLayout.LayoutParams indentParams = new LinearLayout.LayoutParams(
+                level * indentPx,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        indent.setLayoutParams(indentParams);
+        layout.addView(indent);
+
+        // Icône (dossier/feuille)
+        ImageView icon = new ImageView(context);
+        icon.setPadding(paddingHorzPx, 0, paddingHorzPx, 0);
+        layout.addView(icon);
+
+        // Texte du noeud
+        TextView text = new TextView(context);
+        text.setText(value.toString());
+        text.setTextColor(selected ? Color.WHITE : TEXT_COLOR);
+        text.setPadding(0, paddingVertPx, paddingHorzPx, paddingVertPx);
+        layout.addView(text);
+
+        return layout;
     }
 
-    // Méthodes de configuration
-    public void setTextColor(int color) {
-        this.defaultTextColor = color;
+    private int getNodeLevel(JTree tree, Object node) {
+        int level = 0;
+        TreeNode currentNode = (TreeNode) node;
+        while (currentNode.getParent() != null) {
+            level++;
+            currentNode = currentNode.getParent();
+        }
+        return level;
     }
 
-    public void setSelectedTextColor(int color) {
-        this.selectedTextColor = color;
-    }
-
-    public void setPaddingLeft(int padding) {
-        this.paddingLeft = padding;
+    private int dpToPx(Context context, int dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 }

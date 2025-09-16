@@ -4,6 +4,7 @@ import android.graphics.Rect;
 
 import java.awt.Shape;
 
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
 
@@ -78,7 +79,7 @@ public abstract class RoundRectangle2D extends Rectangle2D.Double{
 
 
         @Override
-        public void acceptFill(Graphics2D graph) {
+        public void acceptFill(Graphics graph) {
 
         }
 

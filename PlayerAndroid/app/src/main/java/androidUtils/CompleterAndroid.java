@@ -74,6 +74,7 @@ public class CompleterAndroid extends Completer {
         // Create list of alternative Descriptions, as each will need to be expanded
         final Map<String, String> ludMap = getAllLudContents();
         final Map<String, String> defMap = getAllDefContents();
+        System.out.println("sampled " + ludMap.size());
 
         for (int n = 0; n < maxCompletions; n++) {
             Completion comp = new Completion(new String(raw));

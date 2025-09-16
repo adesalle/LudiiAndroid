@@ -2,6 +2,7 @@ package androidUtils.awt.geom;
 
 import android.annotation.SuppressLint;
 import  android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -10,14 +11,18 @@ import android.graphics.RegionIterator;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Graphics2D;
-import androidUtils.awt.PathIterator;
 import androidUtils.awt.Rectangle;
 
 import java.awt.Shape;
 
 public abstract class Path2D implements Shape {
 
+    protected final List<PathIterator.Segment> segments = new ArrayList<>();
+    public List<PathIterator.Segment> getSegments() {
+        return segments;
+    }
 
     public static class Float extends Path2D
     {
@@ -82,6 +87,7 @@ public abstract class Path2D implements Shape {
             if(b)
             {
                 path.addOval(aDouble.getBounds().rectangleBounds, Path.Direction.CW);
+                addOvalSegments(aDouble.getBounds().rectangleBounds);
             }
             else
             {
@@ -91,6 +97,7 @@ public abstract class Path2D implements Shape {
                 path.moveTo(x, y) ;
 
                 path.addOval(aDouble.getBounds().rectangleBounds, Path.Direction.CW);
+                addOvalSegments(aDouble.getBounds().rectangleBounds);
             }
 
 
@@ -125,7 +132,7 @@ public abstract class Path2D implements Shape {
         }
 
         @Override
-        public void acceptFill(Graphics2D graph) {
+        public void acceptFill(Graphics graph) {
             return;
         }
 
@@ -149,17 +156,48 @@ public abstract class Path2D implements Shape {
 
         public PathIterator getPathIterator(AffineTransform transform)
         {
-            return new PathIterator(path);
+            return new PathIterator(this);
         }
 
         public Rectangle2D getBounds2D() {
             return new Rectangle2D.Double(getRect());
         }
+
+        private void addOvalSegments(RectF oval) {
+            float cx = oval.centerX();
+            float cy = oval.centerY();
+            float rx = oval.width() / 2;
+            float ry = oval.height() / 2;
+
+            // Constante magique pour approx Bézier
+            float k = 0.552284749831f;
+
+            PointF[] points = new PointF[] {
+                    new PointF(cx + rx, cy),
+                    new PointF(cx + rx, cy + ry * k), new PointF(cx + rx * k, cy + ry), new PointF(cx, cy + ry),
+                    new PointF(cx - rx * k, cy + ry), new PointF(cx - rx, cy + ry * k), new PointF(cx - rx, cy),
+                    new PointF(cx - rx, cy - ry * k), new PointF(cx - rx * k, cy - ry), new PointF(cx, cy - ry),
+                    new PointF(cx + rx * k, cy - ry), new PointF(cx + rx, cy - ry * k), new PointF(cx + rx, cy),
+            };
+
+            // MoveTo au départ
+            segments.add(new PathIterator.Segment(PathIterator.SEG_MOVETO, points[0]));
+
+            // 4 courbes cubiques
+            for (int i = 0; i < 4; i++) {
+                int idx = 1 + i * 3;
+                segments.add(new PathIterator.Segment(PathIterator.SEG_CUBICTO,
+                        points[idx], points[idx + 1], points[idx + 2]));
+            }
+
+            segments.add(new PathIterator.Segment(PathIterator.SEG_CLOSE));
+        }
+
     }
 
-    public static Path.FillType WIND_EVEN_ODD = Path.FillType.WINDING;
+    public static Path.FillType WIND_EVEN_ODD = Path.FillType.EVEN_ODD;
 
-    public static  Path.FillType WIND_NON_ZERO = Path.FillType.EVEN_ODD;
+    public static  Path.FillType WIND_NON_ZERO = Path.FillType.WINDING;
 
     public static class Double extends Float {
     }

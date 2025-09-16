@@ -269,20 +269,28 @@ public class MoveVisuals {
         final int site = location.site();
         final SiteType type = location.siteType();
         final int containerIdx = ContainerUtil.getContainerId(context, site, type);
-
         final Point2D ToPosnWorld = app.bridge().getContainerStyle(containerIdx).drawnGraphElement(site, type).centroid();
+
         final Point toPosnScreen = app.bridge().getContainerStyle(containerIdx).screenPosn(ToPosnWorld);
+
 
         final int midX = toPosnScreen.x;
         final int midY = toPosnScreen.y;
 
+        System.out.println("win");
+        System.out.println(midX + " " + midY);
+
         g2d.setColor(Color.BLACK);
         int radius = (int) (app.bridge().getContainerStyle(containerIdx).cellRadiusPixels() / 2 * 1.1) + 2;
-        g2d.fillOval(midX - radius, midY - radius, 2 * radius, 2 * radius);
+        //g2d.fillOval(midX - radius, midY - radius, 2 * radius, 2 * radius);
+        g2d.fillArc(midX - radius, midY - radius,2 * radius, 2 * radius, 0, 360);
 
         g2d.setColor(colour);
         radius = app.bridge().getContainerStyle(containerIdx).cellRadiusPixels() / 2;
-        g2d.fillOval(midX - radius, midY - radius, 2 * radius, 2 * radius);
+        //g2d.fillOval(midX - radius, midY - radius, 2 * radius, 2 * radius);
+        g2d.fillArc(midX - radius, midY - radius,2 * radius, 2 * radius, 0, 360);
+
+
     }
 
     //-------------------------------------------------------------------------

@@ -235,8 +235,7 @@ public class JButton extends androidx.appcompat.widget.AppCompatButton implement
         int w = Math.max(1, getWidth());
         int h = Math.max(1, getHeight());
         backBuffer = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(backBuffer);
-        backG = new Graphics(c);
+        backG = new Graphics(backBuffer);
     }
 
     @Override

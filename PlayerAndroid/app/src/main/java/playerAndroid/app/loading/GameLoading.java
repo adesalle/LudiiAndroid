@@ -33,7 +33,9 @@ import playerAndroid.app.display.dialogs.GameLoaderDialog;
 public class GameLoading {
 
     private static int fcReturnVal = JFileChooser.CANCEL_OPTION;
-    private static PlayerApp app = null;
+    public static PlayerApp app = null;
+
+    public static boolean debug = false;
 
     //-------------------------------------------------------------------------
 
@@ -107,6 +109,8 @@ public class GameLoading {
      */
     public static void loadGameFromMemory(final PlayerApp app, final boolean debug)
     {
+        GameLoading.debug = debug;
+        GameLoading.app = app;
         final String[] choices = FileHandling.listGames();
 
         String initialChoice = choices[0];
@@ -120,13 +124,7 @@ public class GameLoading {
         }
         final String choice = GameLoaderDialog.showDialog(AndroidApp.frame(), choices, initialChoice);
 
-       if (choice != null)
-       {
-            // TODO if we want to preserve per-game last-selected-options in preferences, load them here
-            app.manager().settingsManager().userSelections().setRuleset(Constants.UNDEFINED);
-            app.manager().settingsManager().userSelections().setSelectOptionStrings(new ArrayList<String>());
-            loadGameFromMemory(app, choice, debug);
-       }
+
     }
 
     //-------------------------------------------------------------------------
@@ -136,7 +134,6 @@ public class GameLoading {
      */
     public static void loadGameFromMemory(final PlayerApp app, final String gamePath, final boolean debug)
     {
-        System.out.println("inniniin");
         // Get game description from resource
         final StringBuilder sb = new StringBuilder();
 
@@ -158,7 +155,6 @@ public class GameLoading {
                 }
 
                 app.settingsPlayer().setLoadedFromMemory(true);
-                System.out.println(sb.toString());
                 GameSetup.compileAndShowGame(app, sb.toString(), debug);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -3,24 +3,32 @@ package grammar;
 // From: https://github.com/ddopson/java-class-enumerator
 // Reference: https://stackoverflow.com/questions/10119956/getting-class-by-its-name
 
+
+
+import static org.reflections.scanners.Scanners.SubTypes;
+
 import android.content.Context;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import dalvik.system.DexClassLoader;
+import androidUtils.awt.Container;
 import dalvik.system.DexFile;
 import playerAndroid.app.StartAndroidApp;
-
+import org.atteo.classindex.ClassIndex;
+import org.atteo.classindex.IndexAnnotated;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 //-----------------------------------------------------------------------------
 
 /**
@@ -142,25 +150,36 @@ public class ClassEnumerator {
      * @param pkg
      * @return The list of the classes.
      */
+    public static List<Class<?>> getClassesForPackage1(final Package pkg) {
+        System.out.println(pkg.getName());
+        String packageName = pkg.getName();
+        String codePath = StartAndroidApp.getAppContext().getPackageCodePath();
+
+        // Configurer Reflections pour Android
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .forPackage(packageName)
+                .setScanners(Scanners.SubTypes.filterResultsBy(s -> true))
+                .setClassLoaders(new ClassLoader[]{StartAndroidApp.getAppContext().getClassLoader()})
+                .filterInputsBy(input -> input.startsWith(packageName.replace('.', '/')))
+        );
+
+        Set<Class<?>> set = reflections.getSubTypesOf(Object.class);
+        return new ArrayList<>(set);
+    }
+
     public static List<Class<?>> getClassesForPackage(final Package pkg) {
         String packageName = pkg.getName();
+        Context context = StartAndroidApp.getAppContext();
         List<Class<?>> classes = new ArrayList<>();
         try {
-            Context context = StartAndroidApp.getAppContext();
-            // Get the source path of the APK
-            String apkPath = context.getPackageCodePath();
-
-            // Load the APK as a DexFile
-            DexFile dexFile = new DexFile(apkPath);
-            Enumeration<String> classNames = dexFile.entries();
-
-            while (classNames.hasMoreElements()) {
-                String className = classNames.nextElement();
-
-                // Check if the class is inside the requested package
+            DexFile df = new DexFile(context.getPackageCodePath());
+            Enumeration<String> entries = df.entries();
+            while (entries.hasMoreElements()) {
+                String className = entries.nextElement();
                 if (className.startsWith(packageName)) {
                     try {
-                        classes.add(Class.forName(className));
+                        Class<?> clazz = Class.forName(className, false, context.getClassLoader());
+                        classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -171,5 +190,7 @@ public class ClassEnumerator {
         }
         return classes;
     }
+
+
 }
 

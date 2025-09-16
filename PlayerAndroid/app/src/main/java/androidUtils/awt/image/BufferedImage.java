@@ -25,8 +25,7 @@ public class BufferedImage extends Image implements RenderedImage {
 
     private boolean translucent = false;
 
-    private Graphics2D graphics2D = null;
-    private Graphics graphics = null;
+    private Graphics2D graphics = null;
 
     public BufferedImage(int width, int height, Bitmap.Config config) {
         super(width, height, config);
@@ -46,24 +45,15 @@ public class BufferedImage extends Image implements RenderedImage {
     }
 
     public Graphics2D createGraphics() {
-        if(graphics2D == null) {
-            graphics2D = Graphics2D.createGraphics(bitmap);
-            if (translucent) {
-                graphics2D.setTranslucent();
-            }
-        }
-        return graphics2D;
-    }
-
-    public Graphics createGraphicsD() {
         if(graphics == null) {
-            graphics = (Graphics) Graphics.createGraphics(bitmap);
+            graphics = (Graphics2D) Graphics2D.createGraphics(bitmap);
             if (translucent) {
-                graphics2D.setTranslucent();
+                graphics.setTranslucent();
             }
         }
         return graphics;
     }
+
 
     public Image getScaledInstance(int newW, int newH, boolean smooth) {
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newW, newH, smooth);
@@ -120,9 +110,9 @@ public class BufferedImage extends Image implements RenderedImage {
         return raster;
     }
 
-    public Graphics2D getGraphics() {
-        if(graphics2D == null) Graphics2D.createGraphics(bitmap);
-        return graphics2D;
+    public Graphics getGraphics() {
+        if(graphics == null) Graphics.createGraphics(bitmap);
+        return graphics;
     }
 
     public Canvas createCanvas() {

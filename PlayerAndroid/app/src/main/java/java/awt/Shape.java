@@ -1,14 +1,14 @@
 package java.awt;
 
 
-import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Rectangle;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
 
 public interface Shape {
 
-    void acceptFill(Graphics2D graph);
+    void acceptFill(Graphics graph);
 
     Rectangle getBounds();
 

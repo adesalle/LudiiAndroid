@@ -3,7 +3,7 @@ package androidUtils.awt.geom;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Rectangle;
 
 import java.awt.Shape;
@@ -58,7 +58,7 @@ public abstract class Ellipse2D implements Shape {
         }
 
         @Override
-        public void acceptFill(Graphics2D graph) {
+        public void acceptFill(Graphics graph) {
             graph.fill(this);
         }
 

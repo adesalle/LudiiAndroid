@@ -99,7 +99,7 @@ public class ZoomBox extends JPanel
     	final int width = Math.round(ZOOM_AREA);
     	final int height = Math.round(ZOOM_AREA);
     	buffer = new BufferedImage(width-2, height-2, BufferedImage.TYPE_INT_ARGB);
-    	final Graphics g2d = buffer.createGraphicsD();
+    	final Graphics g2d = buffer.createGraphics();
     	final AffineTransform at = new AffineTransform();
 
     	int xPos = (ZOOM_AREA / 2) - p.x;

@@ -1,6 +1,8 @@
 package androidUtils.awt.geom;
 
 import android.graphics.Rect;
+
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Point;
 import java.awt.Shape;
 
@@ -49,7 +51,7 @@ public abstract class Line2D implements Shape {
         }
 
         @Override
-        public void acceptFill(Graphics2D graph) {
+        public void acceptFill(Graphics graph) {
         }
 
         @Override

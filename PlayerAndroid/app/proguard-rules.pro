@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontshrink
+-keep class ** { *; }
+-keepattributes Signature, RuntimeVisibleAnnotations, RuntimeInvisibleAnnotations
+-keepclassmembers class * {
+    public <init>(...);
+    public * parse*(...);
+    public * match*(...);
+}

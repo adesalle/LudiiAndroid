@@ -20,7 +20,6 @@ import androidUtils.swing.JScrollPane;
 import androidUtils.swing.JTextPane;
 import androidUtils.swing.ScrollPaneConstants;
 import androidUtils.swing.text.BadLocationException;
-import androidUtils.swing.text.DefaultEditorKit;
 import androidUtils.swing.text.HTMLDocument;
 import androidUtils.swing.text.HTMLEditorKit;
 import androidUtils.swing.text.Style;

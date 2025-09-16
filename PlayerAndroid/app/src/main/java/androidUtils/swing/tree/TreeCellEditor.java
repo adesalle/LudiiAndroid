@@ -1,12 +1,22 @@
 package androidUtils.swing.tree;
 
 import android.view.View;
+import android.content.Context;
 
 public interface TreeCellEditor {
-    View getTreeCellEditorView(JTree tree, Object value,
-                               boolean selected, boolean expanded,
-                               boolean leaf, int row);
+
+    View getTreeCellEditorComponent(
+            Context context,
+            JTree tree,
+            Object value,
+            boolean selected,
+            boolean expanded,
+            boolean leaf,
+            int row
+    );
+
     Object getCellEditorValue();
-    boolean stopCellEditing();
-    void cancelCellEditing();
+
+
+    boolean isCellEditable(Object event);
 }

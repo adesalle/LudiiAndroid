@@ -4,6 +4,7 @@ import android.graphics.RectF;
 
 import java.awt.Shape;
 
+import androidUtils.awt.Graphics;
 import androidUtils.awt.Graphics2D;
 import androidUtils.awt.Rectangle;
 
@@ -75,8 +76,8 @@ public abstract class Arc2D implements Shape {
         }
 
         @Override
-        public void acceptFill(Graphics2D graph) {
-            return;
+        public void acceptFill(Graphics graph) {
+
         }
 
         @Override

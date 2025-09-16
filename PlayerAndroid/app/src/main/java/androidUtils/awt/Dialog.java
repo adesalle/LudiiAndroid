@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,6 +66,10 @@ public class Dialog extends DialogFragment implements RootPanel {
     public android.app.Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         android.app.Dialog dialog = super.onCreateDialog(savedInstanceState);
         configureDialog(dialog);
+        dialog.setContentView(contentPane,new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT // Doit être match_parent
+        ));
         return dialog;
     }
 
@@ -193,6 +199,7 @@ public class Dialog extends DialogFragment implements RootPanel {
 
     public void setVisible(boolean visible) {
         if (visible) {
+            isShowing = true;
             show();
         } else {
             dismiss();
@@ -201,6 +208,7 @@ public class Dialog extends DialogFragment implements RootPanel {
     }
 
     public void dispose() {
+        isShowing = false;
         dismiss();
     }
 
@@ -334,8 +342,7 @@ public class Dialog extends DialogFragment implements RootPanel {
     }
 
     public boolean isShowing() {
-        android.app.Dialog dialog = getDialog();
-        return dialog != null && dialog.isShowing();
+        return isShowing;
     }
 
     public void setOnShowListener(DialogInterface.OnShowListener o) {
