@@ -223,7 +223,6 @@ public class Parser
             return false;
 
         //--------------- Check expanded text ----------------
-        System.out.println("expanded?");
         if (description.expanded() == null) {
 
             // Allow more specific tests above to check the problem
@@ -231,7 +230,6 @@ public class Parser
             return false;
         }
 
-        System.out.println("expanded");
 
         // Check for matching quotes in expanded description
         checkQuotes(description.expanded(), report);
@@ -296,10 +294,8 @@ public class Parser
         //System.out.println("\n" + parseTree.dump(""));
 
         // Check against grammar
-        System.out.println("parse tree??");
         description.parseTree().parse(null, report, null);
-        System.out.println(report.isError());
-        System.out.println("parsed");
+
         //description.parseTree().parse(null, report, "");
         //System.out.println("\n" + description.parseTree().dump(""));
 

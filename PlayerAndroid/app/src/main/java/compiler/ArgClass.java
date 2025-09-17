@@ -296,8 +296,6 @@ public class ArgClass extends Arg {
 
                 if (tryConstructors) {
                     // Get list of constructors
-                    System.out.println(cls);
-                    System.out.println(Arrays.toString(cls.getDeclaredConstructors()));
                     executables.addAll(Arrays.asList(cls.getDeclaredConstructors()));
                 } else {
                     // Get list of static construct() methods

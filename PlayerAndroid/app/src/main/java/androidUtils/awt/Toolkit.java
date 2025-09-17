@@ -33,8 +33,7 @@ public class Toolkit {
 
     public Dimension getScreenSize() {
         Rect info = StartAndroidApp.startAndroidApp().getWindowManager().getCurrentWindowMetrics().getBounds();
-
-            return new Dimension(info.width(), info.height());
+        return new Dimension(info.width(), info.height());
     }
 
     public String getSystemProperty(String key, String defaultValue) {

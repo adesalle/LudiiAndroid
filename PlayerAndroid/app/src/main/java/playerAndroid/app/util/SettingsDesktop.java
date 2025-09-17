@@ -16,12 +16,18 @@ public class SettingsDesktop
 	/** Default display width for the program (in pixels). */
 	public static int defaultWidth;
 
+	/** Default display height for the program (in pixels). */
+	public static int defaultHeight;
+
     static {
-        defaultWidth = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+        defaultWidth = (int) Math.max((Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+				(Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
+		defaultHeight = (int) Math.min((Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+				(Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
     }
 
-    /** Default display height for the program (in pixels). */
-	public static int defaultHeight = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+
+
 	
 	/** Whether a separate dialog (settings, puzzle, etc.) is open. */
 	public static JDialog openDialog = null;

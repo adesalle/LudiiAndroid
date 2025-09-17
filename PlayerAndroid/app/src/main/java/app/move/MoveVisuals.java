@@ -277,8 +277,6 @@ public class MoveVisuals {
         final int midX = toPosnScreen.x;
         final int midY = toPosnScreen.y;
 
-        System.out.println("win");
-        System.out.println(midX + " " + midY);
 
         g2d.setColor(Color.BLACK);
         int radius = (int) (app.bridge().getContainerStyle(containerIdx).cellRadiusPixels() / 2 * 1.1) + 2;

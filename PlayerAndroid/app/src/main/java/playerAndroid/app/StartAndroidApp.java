@@ -2,63 +2,29 @@ package playerAndroid.app;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.content.Context;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ContentFrameLayout;
-import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
+import android.view.Window;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Arrays;
 
 import androidUtils.ZipManager;
 import androidUtils.awt.Dialog;
-import androidUtils.awt.FlowLayout;
 import androidUtils.awt.Graphics;
 import androidUtils.awt.MouseInfo;
 import androidUtils.awt.SVGGraphics2D;
-import androidUtils.awt.Toolkit;
-import androidUtils.awt.event.ItemEvent;
-import androidUtils.swing.JButton;
-import androidUtils.swing.JComboBox;
-import androidUtils.swing.JDialog;
 import androidUtils.swing.JFrame;
 
-import androidUtils.swing.JLabel;
-import androidUtils.swing.JPanel;
-import androidUtils.swing.JScrollPane;
-import androidUtils.swing.JTextArea;
-import androidUtils.swing.JTextField;
-import androidUtils.swing.WindowConstants;
-import androidUtils.swing.tree.DefaultMutableTreeNode;
-import androidUtils.swing.tree.DefaultTreeCellRenderer;
-import androidUtils.swing.tree.JTree;
-import app.playerandroid.R;
+
 import manager.Manager;
 import manager.ai.AIDetails;
-
-import androidUtils.awt.event.OnOptionSelectedListener;
 
 public class StartAndroidApp extends AppCompatActivity {
 
@@ -89,6 +55,7 @@ public class StartAndroidApp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setupInitialVariable();
 
@@ -114,8 +81,10 @@ public class StartAndroidApp extends AppCompatActivity {
         androidApp = new AndroidApp();
         appContext = this;
 
+        System.out.println("before svg");
         //ZipManager.extractSvgs(".lud");
         ZipManager.extractSvgs(".svg");
+        System.out.println("after svg");
 
     }
 
