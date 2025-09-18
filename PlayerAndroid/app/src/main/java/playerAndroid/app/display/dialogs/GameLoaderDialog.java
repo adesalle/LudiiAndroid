@@ -93,9 +93,8 @@ public class GameLoaderDialog
 		final String initialChoice
 	)
 	{
-		System.out.println(Arrays.toString(choices));
 		final JPanel contentPane = new JPanel();
-		contentPane.add(new JTextField("tzqytst"));
+		contentPane.add(new JTextField("Name of Game"));
 		//contentPane.setLayout(new GridLayout());
 		
 		lastKeyPressed = "";	// reset this since it's static, shared between dialogs

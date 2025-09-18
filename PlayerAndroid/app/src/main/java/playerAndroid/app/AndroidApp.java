@@ -4,16 +4,11 @@ import android.content.res.AssetManager;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.view.ViewParent;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -29,7 +24,6 @@ import androidUtils.awt.image.BufferedImage;
 import androidUtils.swing.ImageIcon;
 import androidUtils.swing.JFileChooser;
 import androidUtils.JSONObject;
-import androidUtils.awt.Dimension;
 import androidUtils.awt.EventQueue;
 import androidUtils.awt.Point;
 import androidUtils.awt.Rectangle;

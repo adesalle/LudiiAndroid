@@ -3,7 +3,7 @@ package playerAndroid.app.loading;
 import androidUtils.awt.Color;
 import androidUtils.awt.Rectangle;
 import androidUtils.awt.RenderingHints;
-import androidUtils.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,9 +25,8 @@ import playerAndroid.app.AndroidApp;
 import app.PlayerApp;
 import playerAndroid.app.display.MainWindowDesktop;
 import playerAndroid.app.display.SVGWindow;
-import playerAndroid.app.menu.MainMenu;
+import playerAndroid.app.menu.MainMenuOld;
 import app.utils.GameUtil;
-import app.utils.SVGUtil;
 import game.Game;
 import graphics.svg.SVGtoImage;
 import manager.Referee;
@@ -140,8 +139,8 @@ public class MiscLoading
 
 			try 
 			(
-				final InputStreamReader reader = 
-					new InputStreamReader(MainMenu.class.getResourceAsStream(trialFile), "UTF-8");		
+                    final InputStreamReader reader =
+					new InputStreamReader(MainMenuOld.class.getResourceAsStream(trialFile), "UTF-8");
 			)
 			{
 				final MatchRecord loadedRecord = MatchRecord.loadMatchRecordFromInputStream(reader, game);
