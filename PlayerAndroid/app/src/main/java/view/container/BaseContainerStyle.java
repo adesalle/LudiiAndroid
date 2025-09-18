@@ -17,6 +17,7 @@ import androidUtils.awt.SVGGraphics2D;
 
 import bridge.Bridge;
 import game.equipment.container.Container;
+import game.functions.region.sites.simple.SitesOuter;
 import game.types.board.SiteType;
 import main.Constants;
 import metadata.graphics.util.PieceStackType;
@@ -370,9 +371,11 @@ public abstract class BaseContainerStyle implements ContainerStyle
                     final Point2D.Double offsetDistance = StackVisuals.calculateStackOffset(bridge, context, container(), componentStackType, containerPlacement.cellRadiusPixels(), location.level(), location.site(), location.siteType(), stackSize, localState, value);
 
                     g2d.setColor(new Color(0, 0, 0, transparencyAmount));
-                    g2d.fillOval((int) (drawPosn.getX()-2 - sz/2 + offsetDistance.x), (int) (drawPosn.getY()-2 - sz/2 + offsetDistance.y), sz+4, sz+4);
-                    g2d.setColor(new Color(0, 127, 255, transparencyAmount));
-                    g2d.fillOval((int) (drawPosn.getX() - sz/2 + offsetDistance.x), (int) (drawPosn.getY() - sz/2 + offsetDistance.y), sz, sz);
+                    //g2d.fillOval((int) (drawPosn.getX()-2 - sz/2 + offsetDistance.x), (int) (drawPosn.getY()-2 - sz/2 + offsetDistance.y), sz+4, sz+4);
+                    g2d.fillArc((int) (drawPosn.getX()-2 - sz/2 + offsetDistance.x), (int) (drawPosn.getY()-2 - sz/2 + offsetDistance.y), sz+4, sz+4,0, 360);
+                    g2d.setColor(new Color(255, 0, 0, transparencyAmount));
+                    //g2d.fillOval((int) (drawPosn.getX() - sz/2 + offsetDistance.x), (int) (drawPosn.getY() - sz/2 + offsetDistance.y), sz, sz);
+                    g2d.fillArc((int) (drawPosn.getX() - sz/2 + offsetDistance.x), (int) (drawPosn.getY() - sz/2 + offsetDistance.y), sz, sz, 0, 360);
                 }
             }
         }
@@ -380,6 +383,7 @@ public abstract class BaseContainerStyle implements ContainerStyle
         // Possible to move locations
         else
         {
+
             if (!bridge.settingsVC().selectedFromLocation().equals(new FullLocation(Constants.UNDEFINED)) && !context.trial().over() && bridge.settingsVC().showPossibleMoves())
             {
                 for (final Location location : LocationUtil.getLegalToLocations(bridge, context))
@@ -405,9 +409,11 @@ public abstract class BaseContainerStyle implements ContainerStyle
                         final Point2D.Double offsetDistance = StackVisuals.calculateStackOffset(bridge, context, container(), componentStackType, containerPlacement.cellRadiusPixels(), location.level(), location.site(), location.siteType(), stackSize, localState, value);
 
                         g2d.setColor(new Color(0, 0, 0, transparencyAmount));
-                        g2d.fillOval((int) (drawPosn.getX()-2 - sz/2 + offsetDistance.x), (int) (drawPosn.getY()-2 - sz/2 + offsetDistance.y), sz+4, sz+4);
+                        //g2d.fillOval((int) (drawPosn.getX()-2 - sz/2 + offsetDistance.x), (int) (drawPosn.getY()-2 - sz/2 + offsetDistance.y), sz+4, sz+4);
+                        g2d.fillArc((int) (drawPosn.getX()-2 - sz/2 + offsetDistance.x), (int) (drawPosn.getY()-2 - sz/2 + offsetDistance.y), sz+4, sz+4,0, 360);
                         g2d.setColor(new Color(255, 0, 0, transparencyAmount));
-                        g2d.fillOval((int) (drawPosn.getX() - sz/2 + offsetDistance.x), (int) (drawPosn.getY() - sz/2 + offsetDistance.y), sz, sz);
+                        //g2d.fillOval((int) (drawPosn.getX() - sz/2 + offsetDistance.x), (int) (drawPosn.getY() - sz/2 + offsetDistance.y), sz, sz);
+                        g2d.fillArc((int) (drawPosn.getX() - sz/2 + offsetDistance.x), (int) (drawPosn.getY() - sz/2 + offsetDistance.y), sz, sz, 0, 360);
                     }
                 }
             }

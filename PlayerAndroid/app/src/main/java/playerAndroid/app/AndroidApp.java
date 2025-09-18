@@ -369,6 +369,7 @@ public class AndroidApp extends PlayerApp {
 
                     return;
                 }
+                bridge().settingsVC().setShowPossibleMoves(true);
 
                 if (firstTry)
                     TrialLoading.loadStartTrial(this);

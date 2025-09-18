@@ -22,6 +22,7 @@ import androidUtils.awt.geom.affineTransform.AffineTransformObject;
 import androidUtils.awt.geom.Line2D;
 import androidUtils.awt.image.BufferedImage;
 
+import com.caverock.androidsvg.RenderOptions;
 import com.caverock.androidsvg.SVG;
 
 public class Graphics{
@@ -699,11 +700,13 @@ public class Graphics{
         canvas.drawPaint(paint);
     }
 
-    public void renderToCanvas(SVG svg, int width, int height)
+    public void renderToCanvas(SVG svg, int width, int height, RenderOptions options)
     {
         btp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(btp);
-        svg.renderToCanvas(canvas);
+
+        svg.renderToCanvas(canvas, options);
+
     }
 
 

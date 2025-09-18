@@ -57,6 +57,9 @@ public class SVGGraphics2D extends Graphics2D {
     }
 
 
+    public AffineTransform getTransform() {
+        return at;
+    }
 
 
 
@@ -86,9 +89,6 @@ public class SVGGraphics2D extends Graphics2D {
     }
 
 
-    public AffineTransform getTransform() {
-        return at;
-    }
 
     public String getSVGDocument() {
         return SVGGraphics2D.bitmapToBase64(btp);

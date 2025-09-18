@@ -1,18 +1,22 @@
 package graphics.svg;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Picture;
+import android.graphics.drawable.PictureDrawable;
+import android.widget.ImageView;
 
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
+import androidUtils.awt.Point;
 import androidUtils.awt.geom.Ellipse2D;
 import androidUtils.awt.geom.GeneralPath;
 import androidUtils.awt.geom.Point2D;
 import androidUtils.awt.geom.Rectangle2D;
 
+import com.caverock.androidsvg.RenderOptions;
 import com.caverock.androidsvg.SVG;
-import com.caverock.androidsvg.SVGParseException;
+
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -22,8 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
+import androidUtils.awt.image.BufferedImage;
 import graphics.svg.SVGPathOp.PathOpType;
 import main.StringRoutines;
 import main.math.MathRoutines;
@@ -43,7 +50,7 @@ public class SVGtoImage {
             };
 
     //-------------------------------------------------------------------------
-    final boolean verbose = false;
+    final boolean verbose = true;
 
     //-------------------------------------------------------------------------
 
@@ -113,7 +120,8 @@ public class SVGtoImage {
         {
 
             stream = StartAndroidApp.startAndroidApp().getInputStreamFromFilesDir(filePath);
-            loadFromReader(g2d, null, rectangle, borderColour, fillColour, rotation);
+            final BufferedReader reader = getBufferedReaderFromImagePath(filePath);
+            loadFromReader(g2d, reader, rectangle, borderColour, fillColour, rotation);
         }
         catch (Exception e)
         {
@@ -137,40 +145,23 @@ public class SVGtoImage {
     (
             final Graphics2D g2d, final BufferedReader bufferedReader, final Rectangle2D rectangle,
             final Color borderColour, final Color fillColour, final int rotation
-    )  {
+    )
+    {
         // Load the string from file
-        try {
-
-            SVG svg = SVG.getFromInputStream(stream);
-
-            g2d.save();
-            g2d.rotate(rotation, rectangle.getWidth() / 2f, rectangle.getHeight() / 2f);
-
-            if (borderColour.toArgb() != Integer.MIN_VALUE || fillColour.toArgb() != Integer.MIN_VALUE) {
-                Paint paint = new Paint();
-                if (borderColour.toArgb() != Integer.MIN_VALUE) {
-                    paint.setColor(borderColour.toArgb());
-                    paint.setStyle(Paint.Style.STROKE);
-                    paint.setStrokeWidth(2f); // Épaisseur de la bordure
-                }
-                if (fillColour.toArgb() != Integer.MIN_VALUE) {
-                    paint.setColor(fillColour.toArgb());
-                    paint.setStyle(Paint.Style.FILL);
-                }
-                g2d.drawPaint(paint);
-            }
-
-            // 3. Redimensionner et dessiner
-            svg.setDocumentWidth("90%");
-            svg.setDocumentHeight("90%");
-            g2d.renderToCanvas(svg, (int) rectangle.getWidth(), (int) rectangle.getHeight());
-            g2d.restore();
-            //loadFromSource(g2d, svg, rectangle, borderColour, fillColour, rotation);
-        }catch(Exception e)
+        String svg = "";
+        String line = null;
+        try
         {
-            return;
+            while ((line = bufferedReader.readLine()) != null)
+                svg += line + "\n";
+            bufferedReader.close();
+        }
+        catch (final Exception ex)
+        {
+            ex.printStackTrace();
         }
 
+        loadFromSource(g2d, svg, rectangle, borderColour, fillColour, rotation);
     }
 
     //-------------------------------------------------------------------------
@@ -178,7 +169,6 @@ public class SVGtoImage {
     /**
      * Load SVG from the SVG source string.
      * Specify how much to shift the image from the center point using the x and y parameters.
-     *
      * @param g2d
      * @param svg
      * @param borderColour
@@ -189,7 +179,8 @@ public class SVGtoImage {
     (
             final Graphics2D g2d, final String svg, final Rectangle2D rectangle,
             final Color borderColour, final Color fillColour, final int rotation
-    ) {
+    )
+    {
         final SVGtoImage temp = new SVGtoImage();
 
         final List<List<SVGPathOp>> paths = new ArrayList<>();
@@ -204,6 +195,7 @@ public class SVGtoImage {
                             paths, bounds, rotation
                     );
         }
+
     }
 
     /**
@@ -327,12 +319,12 @@ public class SVGtoImage {
         try {
             System.out.println("SVGToImage " + filePath);
             stream = StartAndroidApp.startAndroidApp().getInputStreamFromFilesDir(filePath);
-            return null;
+            return new BufferedReader(new InputStreamReader(stream));
         } catch (final Exception e) {
             // Could not find SVG within resource folder, might be an absolute path.
             try {
                 stream = new FileInputStream(filePath);
-                return null;
+                return new BufferedReader(new InputStreamReader(stream));
             } catch (final FileNotFoundException e1) {
                 e.printStackTrace();
                 e1.printStackTrace();
@@ -1111,6 +1103,7 @@ public class SVGtoImage {
                         path.closePath();
 
                         if (fillColour != null) {
+                            System.out.println("filllllllll pathhhhhhhhhhhhhhhhh");
                             // Fill the full image footprint in the player's colour
                             g2d.setPaint(fillColour);
                             g2d.fill(path);
