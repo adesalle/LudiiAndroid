@@ -468,7 +468,6 @@ public class EvaluationDialog extends JDialog
 					weightsCopy.add(new Double(d.doubleValue()));
 				
 				AIPlayer.AIEvalution(app, report, numberIterations, maxTurns, thinkTime, AIName, metrics, weightsCopy, useDatabaseTrialsCheckBox.isSelected());
-				AndroidApp.view().tabPanel().select(TabView.PanelAnalysis);
 			}
 		});
 		

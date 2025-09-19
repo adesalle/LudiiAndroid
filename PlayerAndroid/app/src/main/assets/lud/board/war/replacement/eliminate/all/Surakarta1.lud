@@ -29,8 +29,4 @@
         }
     )
 
-    (ai
-        "Tic-Tac-Toe_ai"
-    )
-
 )

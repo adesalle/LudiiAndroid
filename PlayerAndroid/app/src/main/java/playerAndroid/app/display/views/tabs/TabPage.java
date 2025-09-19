@@ -216,52 +216,8 @@ public abstract class TabPage extends View
      */
     public void addText(final String str)
     {
-        if (SettingsExhibition.exhibitionVersion)
-            textArea.setText(textArea.getText() + str);
+       textArea.setText(textArea.getText() + str);
 
-        StyleConstants.setForeground(textstyle, fontColour);
-        try
-        {
-            if (this instanceof InfoPage || this instanceof RulesPage)
-            {
-                final String htmlString = str.replaceAll("\n", "<br>");
-
-                final HTMLEditorKit editorKit = (HTMLEditorKit)textArea.getEditorKit();
-                doc = (HTMLDocument)textArea.getDocument();
-                try
-                {
-                    // NOTE. This line can sometimes cause freezes when running tutorial generation. Not sure why...
-                    if (!app.settingsPlayer().isPerformingTutorialVisualisation())
-                        editorKit.insertHTML(doc, doc.getLength(), htmlString, 0, 0, null);
-
-                }
-                catch (final IOException e1)
-                {
-                    e1.printStackTrace();
-                }
-
-                final StringWriter writer = new StringWriter();
-                try
-                {
-                    editorKit.write(writer, doc, 0, doc.getLength());
-                }
-                catch (final IOException e)
-                {
-                    e.printStackTrace();
-                }
-
-                solidText = Objects.requireNonNull(textArea.getText()).toString().replaceAll("\n", "");
-            }
-            else
-            {
-                doc.insertString(doc.getLength(), str, textstyle);
-                solidText = doc.getText(0, doc.getLength());
-            }
-        }
-        catch (final BadLocationException ex)
-        {
-            ex.printStackTrace();
-        }
     }
 
     //-------------------------------------------------------------------------

@@ -628,7 +628,6 @@ public class SettingsDialogOld extends JDialog
 			public void actionPerformed(final ActionEvent e)
 			{
 				app.settingsPlayer().setMoveFormat(MoveFormat.valueOf(comboBoxFormat.getSelectedItem().toString()));
-				AndroidApp.view().tabPanel().page(TabView.PanelMoves).updatePage(context);
 			}
 		});
 

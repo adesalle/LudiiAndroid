@@ -822,24 +822,19 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void addTextToStatusPanel(String text) {
-        EventQueue.invokeLater(() ->
-        {
-            view.tabPanel().page(TabView.PanelStatus).addText(text);
-        });
+
     }
 
     @Override
     public void addTextToAnalysisPanel(String text) {
-        EventQueue.invokeLater(() ->
-        {
-            view.tabPanel().page(TabView.PanelAnalysis).addText(text);
-        });
+
     }
 
     @Override
     public void selectAnalysisTab() {
-        view.tabPanel().select((TabView.PanelAnalysis));
+
     }
+
 
     @Override
     public void repaint() {
@@ -849,25 +844,19 @@ public class AndroidApp extends PlayerApp {
 
     @Override
     public void reportForfeit(int playerForfeitNumber) {
-        final String message = "Player " + playerForfeitNumber + " has resigned Game " + manager().settingsNetwork().getActiveGameId() + ".\nThe Game is Over.\n";
-        if (!view.tabPanel().page(TabView.PanelStatus).text().contains(message))
-            addTextToStatusPanel(message);
+
     }
 
     @Override
     public void reportTimeout(int playerForfeitNumber) {
-        final String message = "Player " + playerForfeitNumber + " has timed out for Game " + manager().settingsNetwork().getActiveGameId() + ".\nThe Game is Over.\n";
-        if (!view.tabPanel().page(TabView.PanelStatus).text().contains(message))
-            addTextToStatusPanel(message);
+
     }
 
     @Override
     public void reportDrawAgreed() {
-        //final String lastLine = view.tabPanel().page(TabView.PanelStatus).text().split("\n")[view.tabPanel().page(TabView.PanelStatus).text().split("\n").length-1];
-        final String message = "All players have agreed to a draw, for Game " + manager().settingsNetwork().getActiveGameId() + ".\nThe Game is Over.\n";
-        if (!view.tabPanel().page(TabView.PanelStatus).text().contains(message))
-            addTextToStatusPanel(message);
+
     }
+
 
     @Override
     public void updateFrameTitle(boolean alsoUpdateMenu) {

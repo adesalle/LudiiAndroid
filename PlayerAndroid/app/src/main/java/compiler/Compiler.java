@@ -459,7 +459,6 @@ public class Compiler {
             //System.out.println("\nCompiler.compileTask() token tree:\n" + tokenTree);
             report.addLogLine("\nCompiler.compileTask() token tree:\n" + tokenTree);
         }
-
         if (tokenTree.type() == null) {
             //System.out.println("** Compiler.compileTask(): Null token tree.");
             report.addLogLine("** Compiler.compileTask(): Null token tree.");

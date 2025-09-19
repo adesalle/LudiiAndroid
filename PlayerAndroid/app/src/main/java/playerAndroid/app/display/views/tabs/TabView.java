@@ -30,13 +30,7 @@ public class TabView extends View
     public final static int fontSize = 16;
 
     /** Tab Page values. */
-    public static final int PanelStatus = 0;
-    public static final int PanelMoves = 1;
-    public static final int PanelTurns = 2;
-    public static final int PanelAnalysis = 3;
-    public static final int PanelLudeme = 4;
-    public static final int PanelRules = 5;
-    public static final int PanelInfo = 6;
+    public static final int PanelRules = 0;
 
     //-------------------------------------------------------------------------
 
@@ -60,10 +54,10 @@ public class TabView extends View
         final int toolHeight = AndroidApp.view().toolPanel().placement().height;
         int boardSize = AndroidApp.view().getBoardPanel().boardSize();
 
-        int startX = boardSize;
+        int startX = boardSize - 100;
         int startY = AndroidApp.view().getPlayerPanel().placement().height;
         int width  = AndroidApp.view().getWidth() - boardSize;
-        int height = AndroidApp.view().getHeight() - AndroidApp.view().getPlayerPanel().placement().height - toolHeight;
+        int height = AndroidApp.view().getHeight() - AndroidApp.view().getPlayerPanel().placement().height - toolHeight -100;
 
         if (SettingsExhibition.exhibitionVersion)
         {
@@ -85,27 +79,15 @@ public class TabView extends View
 
         // Add tab pages
         final Rectangle tabPagePlacement = new Rectangle(placement.x + 10, placement.y + TabView.fontSize + 6, placement.width - 16, placement.height - TabView.fontSize - 20);
-        final TabPage statusPage   = new StatusPage(app, tabPagePlacement, " Status ",   "", PanelStatus, this);
-        final TabPage movesPage    = new MovesPage(app, tabPagePlacement, " Moves ",    "", PanelMoves, this);
-        final TabPage turnsPage    = new TurnsPage(app, tabPagePlacement, " Turns",     "", PanelTurns, this);
-        final TabPage analysisPage = new AnalysisPage(app, tabPagePlacement, " Analysis ", "", PanelAnalysis, this);
-        final TabPage ludemePage   = new LudemePage(app, tabPagePlacement, " Ludeme  ",  "", PanelLudeme, this);
         final TabPage rulesPage    = new RulesPage(app, tabPagePlacement, " Rules ",    "", PanelRules, this);
-        final TabPage infoPage     = new InfoPage(app, tabPagePlacement, " Info  ",    "", PanelInfo, this);
-        pages.add(statusPage);
-        pages.add(movesPage);
-        pages.add(turnsPage);
-        pages.add(analysisPage);
-        pages.add(ludemePage);
         pages.add(rulesPage);
-        pages.add(infoPage);
 
         resetTabs();
 
         select(app.settingsPlayer().tabSelected());
 
         if (SettingsExhibition.exhibitionVersion)
-            select(5);
+            select(0);
 
         for (final View view : pages)
             AndroidApp.view().getPanels().add(view);

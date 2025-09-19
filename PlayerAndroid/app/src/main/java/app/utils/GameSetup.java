@@ -47,6 +47,7 @@ public class GameSetup {
 
             app.loadGameSpecificPreferences();
             GameUtil.resetGame(app, false);
+
         } catch (final Exception e) {
             e.printStackTrace();
             app.reportError(e.getMessage());

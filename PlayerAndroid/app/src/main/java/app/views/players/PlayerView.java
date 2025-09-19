@@ -54,7 +54,7 @@ public class PlayerView extends View {
         if (SettingsExhibition.exhibitionVersion)
                 boardSize = app.getPanels().get(0).placement().width;        // Allows for custom board sizes.
 
-        int startX = boardSize + 8;
+        int startX = boardSize-100;
         int startY = 8;
         int width = app.width() - boardSize;
         int height = (int) (app.height() * maxPanelPercentageHeight / numPlayers);

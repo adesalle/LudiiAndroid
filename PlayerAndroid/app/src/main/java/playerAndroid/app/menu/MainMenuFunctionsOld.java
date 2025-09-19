@@ -928,12 +928,6 @@ public class MainMenuFunctionsOld extends JMenuBar
         }
         else if (source.getText().equals("Evaluate AI vs. AI"))
         {
-            if (!app.manager().settingsManager().agentsPaused())
-            {
-                AndroidApp.view().tabPanel().page(TabView.PanelAnalysis).addText("Cannot start evaluation of AIs when agents are not paused!");
-                return;
-            }
-
             final EvalAIsThread evalThread = EvalAIsThread.construct(app.manager().ref(),
                     AIDetails.convertToAIList(app.manager().aiSelected()), app.manager());
             app.manager().settingsManager().setAgentsPaused(app.manager(), false);
@@ -943,10 +937,6 @@ public class MainMenuFunctionsOld extends JMenuBar
         else if (source.getText().startsWith("Evaluation Dialog"))
         {
             EvaluationDialog.showDialog(app);
-        }
-        else if (source.getText().equals("Clear Status Panel"))
-        {
-            AndroidApp.view().tabPanel().page(TabView.PanelStatus).clear();
         }
         else if (source.getText().startsWith("Compile Game (Debug)"))
         {

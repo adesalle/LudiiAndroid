@@ -47,7 +47,9 @@ public class RulesPage extends TabPage
 		final Game game = app.contextSnapshot().getContext(app).game();
 		try
 		{
+			System.out.println("try add Rules");
 			final Metadata metadata = game.metadata();
+			System.out.println(metadata);
 			if (metadata != null)
 			{				
 				// rules tab
@@ -67,6 +69,8 @@ public class RulesPage extends TabPage
 						}
 						else
 						{
+							System.out.println("adding");
+							System.out.println(s.trim());
 							addText(s.trim());
 							addText("\n\n");
 						}
@@ -99,8 +103,8 @@ public class RulesPage extends TabPage
 					}
 				}
 				
-				clear();
-				addText(solidText);
+				//clear();
+				//addText(solidText);
 			}
 		}
 		catch (final Exception e)
