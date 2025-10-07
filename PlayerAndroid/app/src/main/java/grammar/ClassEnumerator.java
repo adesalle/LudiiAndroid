@@ -151,7 +151,6 @@ public class ClassEnumerator {
      * @return The list of the classes.
      */
     public static List<Class<?>> getClassesForPackage1(final Package pkg) {
-        System.out.println(pkg.getName());
         String packageName = pkg.getName();
         String codePath = StartAndroidApp.getAppContext().getPackageCodePath();
 

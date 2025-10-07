@@ -53,7 +53,6 @@ public class ZipManager {
     }
 
     public static File getFile(String name, String type) {
-        System.out.println("getFile called");
         Context context = StartAndroidApp.getAppContext();
         if (type.equals(".lud")) return new File(context.getFilesDir(), EXTRACT_DIR_LUD + "/" + name);
         return new File(context.getFilesDir(), EXTRACT_DIR_SVG + "/" + name);

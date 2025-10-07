@@ -76,6 +76,7 @@ public class ArgArray extends Arg {
                     final Class<?> expected, final int depth, final Report report,
                     final Call callNode, final Map<String, Boolean> hasCompiled
             ) {
+
         final String key = "Array of " + expected.getName();
         if (!hasCompiled.containsKey(key))
             hasCompiled.put(key, Boolean.FALSE);

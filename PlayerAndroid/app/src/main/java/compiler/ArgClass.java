@@ -247,7 +247,9 @@ public class ArgClass extends Arg {
         Call call = null;
 
         for (int inst = 0; inst < instances.size(); inst++) {
+
             final Instance instance = instances.get(inst);
+
             if (depth != -1) {
                 report.addLogLine(pre + "-- instance " + inst + ": " + instance);
             }
@@ -256,6 +258,7 @@ public class ArgClass extends Arg {
             if (cls == null) {
                 continue;
             }
+
 
             if (expected.isArray()) {
                 final Class<?> elementType = expected.getComponentType();
@@ -286,7 +289,6 @@ public class ArgClass extends Arg {
 
             // Ensure that an entry exist for this expected class (but beware that return type may be compiled instead).
             final String key = expected.getName();
-            //System.out.println("AC key: " + key);
             if (!hasCompiled.containsKey(key))
                 hasCompiled.put(key, Boolean.FALSE);
 
@@ -482,6 +484,7 @@ public class ArgClass extends Arg {
                                     call.addArg(new Call(CallType.Null));
                                 }
                             } else {
+                                if(argIn.symbolName != null && argIn.symbolName.equals("ai"))continue;
                                 // This argIn must compile!
                                 if (name[slot] != null && (argIn.parameterName() == null || !argIn.parameterName().equals(name[slot]))) {
                                     // argIn name does not match named constructor parameter
@@ -515,6 +518,8 @@ public class ArgClass extends Arg {
 
                                 final Call callDummy = (callNode == null) ? null : new Call(CallType.Null);
 
+                                if(types[slot].getName().equals("metadata.ai.Ai")) break;
+
                                 final Object match = argIn.compile
                                         (
                                                 types[slot],
@@ -523,6 +528,7 @@ public class ArgClass extends Arg {
                                                 callDummy,
                                                 hasCompiled
                                         );
+
 
                                 if (match == null) {
                                     // Can't compile argIn for this constructor parameter

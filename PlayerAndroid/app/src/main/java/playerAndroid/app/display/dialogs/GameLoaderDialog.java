@@ -109,7 +109,6 @@ public class GameLoaderDialog
 
 			if (!AndroidApp.devJar && FileHandling.shouldIgnoreLudRelease(choice))
 				continue;
-			System.out.println("why not");
 			String str = choice.replaceAll(Pattern.quote("\\"), "/");
 			if (str.startsWith("/"))
 				str = str.substring(1);
@@ -436,9 +435,7 @@ public class GameLoaderDialog
 			@Override
 			public void mouseClicked(final MouseEvent e)
 			{
-				System.out.println("here");
 		        final TreePath path = tree.getPathForLocation(e.getComponent());
-				System.out.println((path != null) + " " + path);
 				if (path != null)
 				{
 					final GameLoaderNode node = (GameLoaderNode) path.getLastPathComponent();

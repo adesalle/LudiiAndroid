@@ -37,7 +37,6 @@ public class JMenuBar extends LinearLayout {
         JMenuButton button = new JMenuButton(context, menu);
         button.setText(menu.getTitle());
         button.setOnClickListener(v -> {
-            System.out.println("clicked");
             menu.showMenuPopup(button);
         });
 

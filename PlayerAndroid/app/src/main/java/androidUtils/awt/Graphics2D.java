@@ -30,6 +30,12 @@ public class Graphics2D extends Graphics{
         super(bt);
     }
 
+    public static Graphics createGraphics(Bitmap btp)
+    {
+        return new Graphics2D(btp);
+
+    }
+
     @Override
     public Graphics2D create(int x, int y, int width, int height) {
         Graphics2D g2dnew = new Graphics2D();

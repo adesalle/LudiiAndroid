@@ -321,7 +321,6 @@ public class JOptionPane extends ConstraintLayout {
         buttonPanel.setOrientation(LinearLayout.HORIZONTAL);
 
         Object[] buttons = getButtonsToShow();
-        System.out.println("button to show " + Arrays.toString(buttons));
         for (int i = 0; i < buttons.length; i++) {
             Button button = new Button(StartAndroidApp.getAppContext());
             button.setText(buttons[i].toString());

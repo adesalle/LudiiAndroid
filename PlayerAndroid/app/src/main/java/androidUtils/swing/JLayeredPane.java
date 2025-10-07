@@ -120,7 +120,6 @@ public class JLayeredPane extends LinearLayout implements ViewComponent {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        System.out.println("Layered Panel " + getWidth() + " " + getHeight());
         canvas.drawColor(Color.BLACK.toArgb());
     }
 }

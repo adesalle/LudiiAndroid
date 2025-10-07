@@ -79,10 +79,7 @@ public class Metadata implements MetadataItem, Serializable {
         }
 
         // Set AI metadata.
-        if (ai != null)
-            this.ai = ai;
-        else
-            this.ai = new Ai(null, null, null, null, null, null);
+        this.ai = new Ai(null, null, null, null, null, null);
 
         // Set Recon metadata.
         if (recon != null)

@@ -427,7 +427,7 @@ public class Compiler {
 //		 * ludemes automatically generated as defaults for enclosing ludemes
 //		 * that can but do not actually appear in the game description. 
 //		 */
-//		final Map<String, String> ignoreNonCompiledLudemes = new HashMap<String, String>();
+		final Map<String, String> ignoreNonCompiledLudemes = new HashMap<String, String>();
 //		{
 ////			ignoreNonCompiledLudemes.put("java.lang.Integer", "java.lang.Integer");
 ////			ignoreNonCompiledLudemes.put("java.lang.String",  "java.lang.String");
@@ -442,7 +442,7 @@ public class Compiler {
 ////			ignoreNonCompiledLudemes.put("game.mode.Mode",          "game.mode.Mode");
 ////			ignoreNonCompiledLudemes.put("game.functions.intArray.state.Rotations", "game.functions.intArray.state.Rotations");
 ////			ignoreNonCompiledLudemes.put("metadata.graphics.Graphics",        "metadata.graphics.Graphics");
-////			ignoreNonCompiledLudemes.put("metadata.ai.heuristics.Heuristics", "metadata.ai.heuristics.Heuristics");
+			ignoreNonCompiledLudemes.put("metadata.ai.Ai", "metadata.ai.Ai");
 ////			ignoreNonCompiledLudemes.put("game.equipment.container.board.Track", "game.equipment.container.board.Track");
 //			//ignoreNonCompiledLudemes.put("",  "");
 //			//ignoreNonCompiledLudemes.put("",  "");
@@ -510,15 +510,14 @@ public class Compiler {
 
         // Check fragments that did not compile
         for (final Map.Entry<String, Boolean> entry : hasCompiled.entrySet()) {
-            //System.out.println("key: " + entry.getKey());
 
             if (entry.getValue() == Boolean.TRUE)
                 continue;  // item did compile
 
             final String path = entry.getKey();
 
-//			if (ignoreNonCompiledLudemes.containsKey(path))
-//				continue;  // ignore certain classes
+			if (ignoreNonCompiledLudemes.containsKey(path))
+				continue;  // ignore certain classes
 
             final Symbol symbol = grammar.findSymbolByPath(path);
             if (symbol == null)  // || !symbol.usedInDescription())

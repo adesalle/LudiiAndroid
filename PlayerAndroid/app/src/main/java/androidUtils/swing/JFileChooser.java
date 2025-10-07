@@ -145,7 +145,6 @@ public class JFileChooser {
     private void handlePickerResult(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && data != null) {
             Uri uri = data.getData();
-            System.out.println("uri..." + uri);
             if (uri != null) {
                 selectedFileUri = uri;
                 returnValue = APPROVE_OPTION;
@@ -228,7 +227,6 @@ public class JFileChooser {
 
     public File getSelectedFile() {
         if (selectedFileUri == null) return null;
-        System.out.println("selected file ");
         Context context = StartAndroidApp.getAppContext();
         try {
             return UriToFileConverter.convert(context, selectedFileUri);

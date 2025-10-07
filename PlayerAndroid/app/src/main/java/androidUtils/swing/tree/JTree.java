@@ -70,7 +70,6 @@ public class JTree extends AndroidTreeView {
 
     public void rebuildTree() {
         TreeNode root = convertToAndroidTreeNode(model.getRoot());
-        System.out.println(((GameLoaderDialog.GameLoaderNode)model.getRoot()).fullName);
         nodeMapping.put(root.getPath(), model.getRoot());
         setRoot(root);
         nodeList.clear();
@@ -106,17 +105,14 @@ public class JTree extends AndroidTreeView {
     private TreeNode findAndroidNode(TreePath path) {
         Object[] nodes = path.getPath();
         androidUtils.swing.tree.TreeNode current = model.getRoot();
-        System.out.println(Arrays.toString(path.getPath()));
         for (int i = 1; i < nodes.length; i++) {
             Object target = nodes[i];
             boolean found = false;
 
             for (int j = 0; j < current.getChildCount(); j++) {
                 androidUtils.swing.tree.TreeNode child = current.getChildAt(j);
-                System.out.println(child.getUserObject() + " " + target);
 
                 if (child.getUserObject().toString().equals(target.toString())) {
-                    System.out.println(child.getUserObject() + " " + target);
                     current = child;
                     found = true;
                     break;
