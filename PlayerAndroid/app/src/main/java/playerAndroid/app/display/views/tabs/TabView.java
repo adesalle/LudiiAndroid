@@ -54,10 +54,10 @@ public class TabView extends View
         final int toolHeight = AndroidApp.view().toolPanel().placement().height;
         int boardSize = AndroidApp.view().getBoardPanel().boardSize();
 
-        int startX = boardSize - 100;
+        int startX = boardSize - 120;
         int startY = AndroidApp.view().getPlayerPanel().placement().height;
         int width  = AndroidApp.view().getWidth() - boardSize;
-        int height = AndroidApp.view().getHeight() - AndroidApp.view().getPlayerPanel().placement().height - toolHeight -100;
+        int height = AndroidApp.view().getHeight() - AndroidApp.view().getPlayerPanel().placement().height - toolHeight -120;
 
         if (SettingsExhibition.exhibitionVersion)
         {
