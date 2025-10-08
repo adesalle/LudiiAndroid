@@ -34,6 +34,7 @@ public class ImageUtil {
             }
         }
 
+/*
         // Pass 2: Look for exact match outside of the Jar, at root location.
         final File svgImage = new File(".");
         final String fileName = imageName.toLowerCase();
@@ -46,6 +47,7 @@ public class ImageUtil {
                 }
             }
         }
+*/
 
         // Handle predefined image types that do not have an SVG
         if (Arrays.asList(ImageConstants.customImageKeywords).contains(imageNameLower))

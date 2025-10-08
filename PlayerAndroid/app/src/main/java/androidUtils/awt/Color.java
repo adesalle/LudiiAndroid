@@ -40,11 +40,11 @@ public class Color {
     }
 
 
-    private static android.graphics.Color color(int a, int r, int g, int b)
+    private static android.graphics.Color color(int r, int g, int b, int a)
     {
         return android.graphics.Color.valueOf(android.graphics.Color.argb(a, r, g, b));
     }
-    private static android.graphics.Color color(float a, float r, float g, float b)
+    private static android.graphics.Color color(float r, float g, float b, float a)
     {
         return android.graphics.Color.valueOf(android.graphics.Color.argb(a, r, g, b));
     }

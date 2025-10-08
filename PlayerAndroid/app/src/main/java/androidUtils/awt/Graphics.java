@@ -5,9 +5,11 @@ import static androidUtils.awt.RenderingHints.*;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.Log;
 
@@ -185,6 +187,7 @@ public class Graphics{
     public void setPaint(RadialGradientPaint rgp)
     {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.WHITE.toArgb());
         paint.setShader(rgp.rg);
     }
 
@@ -504,8 +507,12 @@ public class Graphics{
     {
 
         paint.setStyle(Paint.Style.FILL);
+        canvas.save();
+        canvas.translate((float) ellipse.x, (float) ellipse.y);
+        canvas.drawOval(0, 0,  (float) ellipse.w, (float) ellipse.h , paint);
+        canvas.restore();
         //canvas.drawCircle((float) ellipse.x, (float) ellipse.y, (float) (ellipse.w/2d), paint);
-        canvas.drawOval((float) ellipse.x, (float) ellipse.y, (float) ellipse.w, (float) ellipse.h, paint);
+
         //canvas.drawOval(bounds, paint);
         paint = new Paint(paint);
         

@@ -1,5 +1,7 @@
 package graphics;
 
+import android.view.View;
+
 import androidUtils.awt.BasicStroke;
 import androidUtils.awt.Color;
 import androidUtils.awt.Graphics2D;
@@ -254,6 +256,7 @@ public class ImageProcessing
 
         rgp = new RadialGradientPaint(new Point(x0 + r, y0 + r), r, distsH, colorsH);
         g2d.setPaint(rgp);
+
         g2d.fill(new Ellipse2D.Double(x0, y0, r * 1.666, r * 1.666));
     }
 

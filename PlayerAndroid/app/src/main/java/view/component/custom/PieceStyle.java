@@ -50,9 +50,8 @@ public class PieceStyle extends BaseComponentStyle {
         g2d = getBackground(g2d, context, containerIndex, localState, value, imageSize);
         Log.i("PieceStyle l 51", "file path = " + filePath);
         if (filePath != null) {
-            if (filePath.equalsIgnoreCase("ball") || filePath.equalsIgnoreCase("seed") || filePath.equalsIgnoreCase("marker")) filePath = "svg_cache/svg/shapes/disc.svg";
             if (Arrays.asList(ImageConstants.customImageKeywords).contains(filePath)) {
-
+                System.out.println(filePath);
                 int posnX = (imageSize - scaledImageSizeX) / 2;
                 int posnY = (imageSize - scaledImageSizeX) / 2;
 
@@ -64,11 +63,11 @@ public class PieceStyle extends BaseComponentStyle {
 
                 if (filePath.equalsIgnoreCase("ball") || filePath.equalsIgnoreCase("seed")) {
 
-                    if (scaledImageSizeX > 1)
+                    //if (scaledImageSizeX > 1)
                         ImageProcessing.ballImage(g2d, posnX, posnY, scaledImageSizeX / 2, fillColour);
                 } else if (filePath.equalsIgnoreCase("marker")) {
 
-                    if (scaledImageSizeX > 1)
+                    //if (scaledImageSizeX > 1)
                         ImageProcessing.markerImage(g2d, posnX, posnY, scaledImageSizeX / 2, fillColour);
                 } else if (filePath.equalsIgnoreCase("ring")) {
 
