@@ -7,7 +7,7 @@
 #### 1. Download the APK
 
 Click on the following link **from your phone** to download the APK:  
-📥 [https://github.com/adesalle/LudiiAndroid/releases/download/android/ludiiAndroid.apk](https://github.com/adesalle/LudiiAndroid/releases/download/android/LudiiAndroid.apk)
+📥 [https://github.com/adesalle/LudiiAndroid/releases/download/android/ludiiAndroid.apk](https://github.com/adesalle/LudiiAndroid/releases/download/android/ludiiAndroid.apk)
 
 **Alternative**: You can also download the APK on a computer and transfer it to your phone via a USB connection or other method.
 
@@ -34,7 +34,7 @@ Click on the following link **from your phone** to download the APK:
 #### 1. Téléchargement de l'APK
 
 Cliquez sur le lien suivant **depuis votre téléphone** pour télécharger l'APK :  
-📥 [https://github.com/adesalle/LudiiAndroid/releases/download/android/ludiiAndroid.apk](https://github.com/adesalle/LudiiAndroid/releases/download/android/LudiiAndroid.apk)
+📥 [https://github.com/adesalle/LudiiAndroid/releases/download/android/ludiiAndroid.apk](https://github.com/adesalle/LudiiAndroid/releases/download/android/ludiiAndroid.apk)
 
 **Alternative** : Vous pouvez aussi télécharger l'APK sur un ordinateur et le transférer sur votre téléphone via une connexion USB ou autre méthode.
 
