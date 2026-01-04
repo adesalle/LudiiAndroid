@@ -10,6 +10,7 @@ import androidUtils.awt.Rectangle;
 import app.PlayerApp;
 import app.utils.SettingsExhibition;
 import app.views.View;
+import game.Game;
 import other.context.Context;
 import playerAndroid.app.AndroidApp;
 import playerAndroid.app.display.views.tabs.pages.*;
@@ -27,7 +28,7 @@ public class TabView extends View
     public final static Color bgColour = new Color(255, 255, 230);
 
     /** Size of tab headings. */
-    public final static int fontSize = 16;
+    public final static int fontSize = 28;
 
     /** Tab Page values. */
     public static final int PanelRules = 0;
@@ -77,9 +78,10 @@ public class TabView extends View
 
         placement.setBounds(startX, startY, width, height);
 
+        final Game game = app.contextSnapshot().getContext(app).game();
         // Add tab pages
         final Rectangle tabPagePlacement = new Rectangle(placement.x + 10, placement.y + TabView.fontSize + 6, placement.width - 16, placement.height - TabView.fontSize - 20);
-        final TabPage rulesPage    = new RulesPage(app, tabPagePlacement, " Rules ",    "", PanelRules, this);
+        final TabPage rulesPage    = new RulesPage(app, tabPagePlacement, " Rules of " + game.name(),    "", PanelRules, this);
         pages.add(rulesPage);
 
         resetTabs();

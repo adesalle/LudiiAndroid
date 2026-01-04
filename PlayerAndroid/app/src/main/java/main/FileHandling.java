@@ -63,9 +63,9 @@ public class FileHandling {
                 try {
                     // Try loading from memory in IDE
                     // Start with known .lud file
-                    final URL url = FileHandling.class.getResource("/lud/board/space/line/Tic-Tac-Toe.lud");
+                    final URL url = FileHandling.class.getResource("/lud/Tic-Tac-Toe.lud");
                     String path = new File(url.toURI()).getPath();
-                    path = path.substring(0, path.length() - "board/space/line/Tic-Tac-Toe.lud".length());
+                    path = path.substring(0, path.length() - "Tic-Tac-Toe.lud".length());
 
                     // Get the list of .lud files in this directory and subdirectories
                     visit(path, names);

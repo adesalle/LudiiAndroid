@@ -47,11 +47,10 @@ public class JPanel extends LinearLayout implements ViewComponent{
     public static final int TOP_ALIGNMENT = 4;
     public static final int BOTTOM_ALIGNMENT = 8;
 
-    // Combinaisons prédéfinies
     public static final int TOP_LEFT = TOP_ALIGNMENT | LEFT_ALIGNMENT;
     public static final int TOP_CENTER = TOP_ALIGNMENT | CENTER_ALIGNMENT;
     public static final int TOP_RIGHT = TOP_ALIGNMENT | RIGHT_ALIGNMENT;
-    public static final int CENTER_LEFT = CENTER_ALIGNMENT | LEFT_ALIGNMENT; // Note: CENTER est déjà horizontal
+    public static final int CENTER_LEFT = CENTER_ALIGNMENT | LEFT_ALIGNMENT;
     public static final int CENTER_CENTER = CENTER_ALIGNMENT | CENTER_ALIGNMENT;
     public static final int CENTER_RIGHT = CENTER_ALIGNMENT | RIGHT_ALIGNMENT;
     public static final int BOTTOM_LEFT = BOTTOM_ALIGNMENT | LEFT_ALIGNMENT;
@@ -62,15 +61,12 @@ public class JPanel extends LinearLayout implements ViewComponent{
     protected Graphics graphics;
     private Border border;
     private Layout layoutManager;
-
     private int alignment = TOP_LEFT;
-
     private final List<FocusListener> focusListeners = new ArrayList<>();
     private final List<HierarchyListener> hierarchyListeners = new ArrayList<>();
     private final List<MouseListener> mouseListeners = new ArrayList<>();
     private final List<MouseMotionListener> mouseMotionListeners = new ArrayList<>();
     private final List<KeyListener> keyListeners = new ArrayList<>();
-
     private final JPanel panel;
 
     public JPanel() {
@@ -93,7 +89,6 @@ public class JPanel extends LinearLayout implements ViewComponent{
 
 
     }
-
     public JPanel(Layout layout) {
         super(StartAndroidApp.getAppContext());
         panel = this;
@@ -102,15 +97,10 @@ public class JPanel extends LinearLayout implements ViewComponent{
         //setLayout();
 
     }
-
-    public JPanel(JTree tree)
-    {
+    public JPanel(JTree tree) {
         this();
         add(tree.getView());
     }
-
-
-    @SuppressLint("ClickableViewAccessibility")
     private void init() {
         paint = new Paint();
         paint.setColor(0xFFFFFFFF); // White background by default
@@ -137,14 +127,11 @@ public class JPanel extends LinearLayout implements ViewComponent{
             return used;
         });
     }
-
-
     public void add(View comp) {
         add(comp, null); // Appelle la méthode avec contraintes
     }
     public void add(JSeparator comp) {
     }
-
     public void add(View comp, Object constraints) {
         addView(comp);
         if (layoutManager != null) {
@@ -153,29 +140,21 @@ public class JPanel extends LinearLayout implements ViewComponent{
             layoutManager.applyLayout(this);
         }
     }
-
     public void remove(View child)
     {
         removeView(child);
     }
-
     public void removeAll()
     {
         removeAllViews();
     }
-
     public void setToolTipText(String text) {
         setContentDescription(text);
     }
-
-
     public void paint(Graphics g) {
         dispatchDraw(g.getCanvas());
     }
-
-
-    public void setLayout(Layout layout)
-    {
+    public void setLayout(Layout layout) {
         layoutManager = layout;
         setLayout();
     }
@@ -186,18 +165,15 @@ public class JPanel extends LinearLayout implements ViewComponent{
         }
         requestLayout();
     }
-
     public void repaint() {
         invalidate();
     }
-
     public Graphics getGraphics() {
         if (graphics == null) {
             graphics = new Graphics();
         }
         return graphics;
     }
-
     public void setOpaque(boolean isOpaque) {
         setHasTransientState(!isOpaque);
 
@@ -207,24 +183,19 @@ public class JPanel extends LinearLayout implements ViewComponent{
             getBackground().setAlpha(128);
         }
     }
-
     public void setGraphics(Graphics graphics) {
         this.graphics = graphics;
     }
-
     public void repaint(Rectangle rectangle) {
         invalidate();
     }
-
     public void revalidate() {
         invalidate();
     }
-
     public void setPreferredSize(Dimension dimension) {
         setMinimumWidth(dimension.width);
         setMinimumHeight(dimension.height);
     }
-
     public void setBorder(EmptyBorder emptyBorder) {
         this.border = emptyBorder;
         if (emptyBorder != null) {
@@ -237,16 +208,12 @@ public class JPanel extends LinearLayout implements ViewComponent{
         }
         invalidate();
     }
-
     public void setBorder(Border border) {
         this.border = border;
         invalidate();
     }
-
-
     protected void paintComponent(Graphics g) {
     }
-
     public void setVisible(boolean visible) {
         if(visible)setVisibility(VISIBLE);
         else setVisibility(INVISIBLE);
@@ -259,36 +226,28 @@ public class JPanel extends LinearLayout implements ViewComponent{
     public void setLocation(Point point) {
         setLocation(point.x, point.y);
     }
-
     public Point getLocation()
     {
         return new Point(getX(), getY());
     }
-
     public Dimension getPreferredSize() {
         return new Dimension(getMeasuredWidth(), getMeasuredHeight());
     }
-
     public Dimension getMinimumSize() {
         return new Dimension(getMinimumWidth(), getMeasuredHeight());
     }
-
     public void setMinimumSize(Dimension dimension) {
         setMinimumWidth(dimension.width);
         setMinimumHeight(dimension.height);
     }
-
-    public void setPosition(int l, int t)
-    {
+    public void setPosition(int l, int t) {
         setLeft(l);
         setTop(t);
     }
-
     public void setSize(Dimension dimension)
     {
         setSize(dimension.width, dimension.height);
     }
-
     public void setSize(int width, int height) {
         setRight(getLeft() + width);
         setBottom(getTop() + height);
@@ -301,7 +260,6 @@ public class JPanel extends LinearLayout implements ViewComponent{
             invalidate();
         }
     }
-
     public void setForeground(Color color) {
         // Implémentation de base - peut être étendue selon les besoins
         if (color != null) {
@@ -309,22 +267,17 @@ public class JPanel extends LinearLayout implements ViewComponent{
             invalidate();
         }
     }
-
     public boolean isVisible() {
         return getVisibility() == View.VISIBLE;
     }
-
     public void setBounds(int x, int y, int width, int height) {
         setX(x);
         setY(y);
         setLayoutParams(new LinearLayout.LayoutParams(width, height));
     }
-
     public Rectangle getBounds() {
         return new Rectangle((int)getX(), (int)getY(), getWidth(), getHeight());
     }
-
-
     public void addHierarchyListener(HierarchyListener listener) {
         if (!hierarchyListeners.contains(listener)) {
             hierarchyListeners.add(listener);
@@ -337,7 +290,6 @@ public class JPanel extends LinearLayout implements ViewComponent{
             }
         });
     }
-
     public void addFocusListener(FocusListener listener) {
         if (!focusListeners.contains(listener)) {
             focusListeners.add(listener);
@@ -351,20 +303,17 @@ public class JPanel extends LinearLayout implements ViewComponent{
             }
         });
     }
-
     public void addMouseListener(MouseListener listener) {
         if (!mouseListeners.contains(listener)) {
             mouseListeners.add(listener);
         }
 
     }
-
     public void addMouseMotionListener(MouseMotionListener listener) {
         if (!mouseMotionListeners.contains(listener)) {
             mouseMotionListeners.add(listener);
         }
     }
-
     public void addKeyListener(KeyListener listener) {
         if (!keyListeners.contains(listener)) {
             keyListeners.add(listener);
@@ -390,7 +339,6 @@ public class JPanel extends LinearLayout implements ViewComponent{
             });
         }
     }
-
     public void scrollRectToVisible(Rectangle rect) {
         // Calcule les coordonnées du rectangle à rendre visible
         int scrollX = Math.max(0, rect.x);
@@ -403,50 +351,36 @@ public class JPanel extends LinearLayout implements ViewComponent{
             scrollTo(scrollX, scrollY);
         }
     }
-
-    // Implémentation des méthodes abstraites restantes
     @Override
     public void setFont(Font font) {
 
     }
-
     @Override
     public Font getFont() {
         return null;
     }
-
     @Override
     public Dimension getSize() {
         return new Dimension(getWidth(), getHeight());
     }
-
-
     public void setDoubleBuffered(boolean doubleBuffered) {
         // Android gère déjà le double buffering
         setLayerType(doubleBuffered ? LAYER_TYPE_HARDWARE : LAYER_TYPE_NONE, null);
     }
-
-
-
-
     public void setAlignment(int align) {
         this.alignment = align;
         updateLayoutGravity();
     }
-
-
     public void setAlignmentX(int horizontal) {
         // Conserve le vertical actuel
         this.alignment = (this.alignment & 0xC) | (horizontal & 0x3);
         updateLayoutGravity();
     }
-
     public void setAlignmentY(int vertical) {
         // Conserve l'horizontal actuel
         this.alignment = (this.alignment & 0x3) | (vertical & 0xC);
         updateLayoutGravity();
     }
-
     private void updateLayoutGravity() {
         int gravity = 0;
 
@@ -470,16 +404,11 @@ public class JPanel extends LinearLayout implements ViewComponent{
             setLayoutParams(params);
         }
     }
-
-
-
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         // Standard layout - don't modify the coordinates
         super.onLayout(changed, l, t, r, b);
     }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // Let parent measure first

@@ -215,7 +215,6 @@ public class GraphUtil {
             g2d.fillArc(drawPosn.x - r, drawPosn.y - r, 2 * r + 1, 2 * r + 1, 0, 360);
         }
 
-        StartAndroidApp.setSvgGraphics(g2d);
         return g2d.getSVGDocument();
     }
 

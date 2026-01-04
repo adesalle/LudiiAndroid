@@ -116,7 +116,8 @@ public class GameLoading {
         String initialChoice = choices[0];
         for (final String choice : choices)
         {
-            if (app.manager().savedLudName() != null && app.manager().savedLudName().endsWith(choice.replaceAll(Pattern.quote("\\"), "/")))
+            if (app.manager().savedLudName() != null &&
+                    app.manager().savedLudName().endsWith(choice.replaceAll(Pattern.quote("\\"), "/")))
             {
                 initialChoice = choice;
                 break;

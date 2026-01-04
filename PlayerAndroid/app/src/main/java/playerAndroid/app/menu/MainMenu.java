@@ -28,6 +28,7 @@ import androidUtils.swing.KeyStroke;
 import androidUtils.swing.UIManager;
 import androidUtils.swing.menu.JMenu;
 import androidUtils.swing.menu.JMenuBar;
+import androidUtils.swing.menu.JMenuButton;
 import androidUtils.swing.menu.JMenuItem;
 import playerAndroid.app.AndroidApp;
 import app.PlayerApp;
@@ -78,7 +79,7 @@ public class MainMenu extends JMenuBar
         final ActionListener al = app;
         final ItemListener il = app;
 
-        JMenuItem menuItem;
+        JMenu menuItem;
         JCheckBoxMenuItem cbMenuItem;
 
         UIManager.put("Menu.font", new Font("Arial", Font.PLAIN, 16));
@@ -88,26 +89,21 @@ public class MainMenu extends JMenuBar
 
         //---------------------------------------------------------------------
 
-        JMenu menu = new JMenu("Menu");
+        menuItem = new JMenu("IA");
+        JMenuButton button = add(menuItem);
+        button.addActionListener(al);
+        menuItem = new JMenu("Load Game");
+        button = add(menuItem);
+        button.addActionListener(al);
 
-        this.add(menu);
+        menuItem = new JMenu("Restart");
+        button = add(menuItem);
+        button.addActionListener(al);
 
-        menuItem = new JMenuItem("IA");
-        menuItem.addActionListener(al);
-        menu.add(menuItem);
-
-        menuItem = new JMenuItem("Load Game");
-        menuItem.addActionListener(al);
-        menu.add(menuItem);
-
-        menuItem = new JMenuItem("Restart");
-        menuItem.addActionListener(al);
-        menu.add(menuItem);
-
-        menuItem = new JMenuItem("Play/Pause");
-        menuItem.addActionListener(al);
+        menuItem = new JMenu("Play/Pause");
+        button = add(menuItem);
+        button.addActionListener(al);;
         setProportionalWeights(true);
-        menu.add(menuItem);
     }
 
 

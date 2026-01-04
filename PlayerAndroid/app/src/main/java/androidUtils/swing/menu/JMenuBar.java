@@ -3,6 +3,7 @@ package androidUtils.swing.menu;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class JMenuBar extends LinearLayout {
         ));
     }
 
-    public JMenu add(JMenu menu)
+    public JMenuButton add(JMenu menu)
     {
         menus.add(menu);
         menu.setParent(this);
@@ -41,11 +42,11 @@ public class JMenuBar extends LinearLayout {
         });
 
         addView(button);
-        return menu;
+        return button;
     }
 
 
-    public JMenu addMenu(String title) {
+    public JMenuButton addMenu(String title) {
         JMenu menu = new JMenu(context);
         menu.setTitle(title);
         return add(menu);

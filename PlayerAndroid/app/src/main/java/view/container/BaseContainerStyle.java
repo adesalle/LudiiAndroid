@@ -311,7 +311,7 @@ public abstract class BaseContainerStyle implements ContainerStyle
             return;
 
         final int transparencyAmount = 63;  //125; // between 0 and 255
-        final int sz = Math.min(16, (int)(0.4 * containerPlacement.cellRadiusPixels()));
+        final int sz = Math.min(24, (int)(0.4 * containerPlacement.cellRadiusPixels()));
 
         // Possible consequence move locations
         if (bridge.settingsVC().selectingConsequenceMove())

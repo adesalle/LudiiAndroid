@@ -1,11 +1,13 @@
 package androidUtils.swing;
 
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import androidUtils.awt.Color;
 import androidUtils.awt.Component;
 import androidUtils.awt.Dimension;
 import androidUtils.awt.Font;
@@ -33,6 +35,9 @@ public class JCheckBox extends androidx.appcompat.widget.AppCompatCheckBox imple
     }
 
     protected void init(String text) {
+        setTextColor(Color.WHITE.toArgb());
+        setButtonTintList(ColorStateList.valueOf(Color.WHITE.toArgb()));
+
         if (text != null) {
             setText(text);
         }

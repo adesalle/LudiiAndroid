@@ -30,6 +30,7 @@ public class BufferedImage extends Image implements RenderedImage {
     public BufferedImage(int width, int height, Bitmap.Config config) {
         super(width, height, config);
 
+
     }
 
     public BufferedImage(int width, int height, int type) {

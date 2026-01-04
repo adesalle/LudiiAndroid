@@ -50,6 +50,7 @@ public class JTree extends AndroidTreeView {
         this.selectionModel = new DefaultTreeSelectionModel();
         this.cellRenderer = new DefaultTreeCellRenderer();
         this.cellEditor = new DefaultTreeCellEditor();
+
         setDefaultAnimation(true);
         rebuildTree();
     }

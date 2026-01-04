@@ -62,7 +62,7 @@ import utils.AIFactory;
 
 public class AndroidApp extends PlayerApp {
 
-    public static final String AppName = "Ludii Player";
+    public static final String AppName = "Ludii";
     public static boolean devJar = false;
 
     protected static JFrameListener frame;
@@ -286,8 +286,6 @@ public class AndroidApp extends PlayerApp {
                 e.printStackTrace();
             }
 
-            System.out.println("default " + SettingsDesktop.defaultWidth + " " + SettingsDesktop.defaultHeight);
-
             view = new MainWindowDesktop(this);
             view.setLayoutParams(new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -306,10 +304,10 @@ public class AndroidApp extends PlayerApp {
 
             try
             {
-                if (settingsPlayer().defaultX() == -1 || settingsPlayer().defaultY() == -1)
+//                if (settingsPlayer().defaultX() == -1 || settingsPlayer().defaultY() == -1)
                     frame.setLocationRelativeTo(null);
-                else
-                    frame.setLocation(settingsPlayer().defaultX(), settingsPlayer().defaultY());
+//                else
+//                    frame.setLocation(settingsPlayer().defaultX(), settingsPlayer().defaultY());
 
                 //if (settingsPlayer().frameMaximised())
                     //frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
@@ -329,7 +327,6 @@ public class AndroidApp extends PlayerApp {
 
 
             loadInitialGame(true);
-
 
         }
         catch (final Exception e)
@@ -364,6 +361,7 @@ public class AndroidApp extends PlayerApp {
                     return;
                 }
                 bridge().settingsVC().setShowPossibleMoves(true);
+                settingsPlayer().setShowEndingMove(true);
 
                 if (firstTry)
                     TrialLoading.loadStartTrial(this);

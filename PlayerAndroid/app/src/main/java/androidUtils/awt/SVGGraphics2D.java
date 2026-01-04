@@ -33,15 +33,12 @@ public class SVGGraphics2D extends Graphics2D {
 
 
     }
-
     private SVGGraphics2D() {
         super();
     }
-    public SVGGraphics2D(Bitmap btp)
-    {
+    public SVGGraphics2D(Bitmap btp) {
         super(btp);
     }
-
     @Override
     public Graphics2D create() {
         SVGGraphics2D g2dnew = new SVGGraphics2D();
@@ -55,14 +52,9 @@ public class SVGGraphics2D extends Graphics2D {
         g2dnew.clip = clip.copy();
         return g2dnew;
     }
-
-
     public AffineTransform getTransform() {
         return at;
     }
-
-
-
     public static String bitmapToBase64(Bitmap bitmap) {
         if (bitmap == null || bitmap.isRecycled()) return null;
 
@@ -74,8 +66,6 @@ public class SVGGraphics2D extends Graphics2D {
             return null;
         }
     }
-
-
     public static Bitmap base64ToBitmap(String base64) {
         if (base64 == null || base64.isEmpty()) return null;
 
@@ -87,20 +77,16 @@ public class SVGGraphics2D extends Graphics2D {
             return null;
         }
     }
-
-
-
     public String getSVGDocument() {
         return SVGGraphics2D.bitmapToBase64(btp);
     }
-
-    public static BufferedImage getBufferedImageFrom64(String string64)
-    {
+    public static BufferedImage getBufferedImageFrom64(String string64) {
         Bitmap bt = SVGGraphics2D.base64ToBitmap(string64);
         return new BufferedImage(bt);
     }
-
     public String getSVGElement() {
         return getSVGDocument();
     }
 }
+
+

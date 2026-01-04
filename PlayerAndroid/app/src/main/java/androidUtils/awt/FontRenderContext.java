@@ -35,9 +35,7 @@ public class FontRenderContext {
 
     public Rectangle2D getStringBounds(String text, Graphics2D g2d)
     {
-        Rect result = new Rect();
-        paint.getTextBounds(text,0, text.length(), result );
-        return new Rectangle2D.Double(result);
+        return g2d.font.getStringBounds(text, g2d.getFontRenderContext());
     }
 
     public boolean isAntiAliased() {

@@ -32,7 +32,7 @@ public class PlayerView extends View {
     /**
      * Font.
      */
-    public Font playerNameFont = new Font("Arial", Font.PLAIN, 16);
+    public Font playerNameFont = new Font("Arial", Font.PLAIN, 24);
 
 
 

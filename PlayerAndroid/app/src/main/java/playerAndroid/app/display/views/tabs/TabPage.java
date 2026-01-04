@@ -141,7 +141,7 @@ public abstract class TabPage extends View
             textArea.setBackground(new ColorDrawable(Color.black.toArgb()));
             fontColour = Color.white;
             textArea.setForeground(new ColorDrawable(fontColour.toArgb()));
-            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         }
 
@@ -305,9 +305,10 @@ public abstract class TabPage extends View
             g2d.setColor(light);
 
         final String str = title();
+
         final Rectangle2D bounds = g2d.getFontMetrics().getStringBounds(str, g2d);
 
-        final int tx = titleRect.x + (int)((titleRect.width / 2 - bounds.getWidth()/2));
+        final int tx = titleRect.x + (int)((double) titleRect.width / 2 - bounds.getWidth()/2);
         final int ty = titleRect.y + titleRect.height / 2 + 5;
         g2d.drawString(str, tx, ty);
 

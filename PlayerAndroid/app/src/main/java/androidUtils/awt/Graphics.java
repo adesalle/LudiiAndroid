@@ -5,11 +5,9 @@ import static androidUtils.awt.RenderingHints.*;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.Log;
 
@@ -28,28 +26,19 @@ import com.caverock.androidsvg.RenderOptions;
 import com.caverock.androidsvg.SVG;
 
 public class Graphics{
-
     Canvas canvas;
     Paint paint = new Paint();
-
     Font font;
     int fontSize;
-
     Bitmap btp;
-
     AffineTransform at = null;
-
     private Color backgroundColor = Color.WHITE;
-
     protected Shape clip;
-
     private DashPathEffect dashEffect;
     private float[] dashEffectArray = new float[0];
     private float dashPhase = 0;
 
-
-    public Graphics(Canvas canvas, Bitmap btp)
-    {
+    public Graphics(Canvas canvas, Bitmap btp) {
 
         this.btp = btp;
         this.canvas = canvas;
@@ -58,8 +47,7 @@ public class Graphics{
         font = new Font(Typeface.SANS_SERIF, 12);
 
     }
-    public Graphics()
-    {
+    public Graphics() {
         btp = Bitmap.createBitmap(500, 300, Bitmap.Config.ARGB_8888);
         this.canvas = new Canvas(btp);
         canvas.disableZ();
@@ -67,46 +55,34 @@ public class Graphics{
         this.clip = new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight());
         font = new Font(Typeface.SANS_SERIF, 12);
     }
-
-    public Graphics(Bitmap bt)
-    {
+    public Graphics(Bitmap bt) {
         btp = bt;
         this.canvas = new Canvas(btp);
 
         this.clip = new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight());
         font = new Font(Typeface.SANS_SERIF, 12);
     }
-
     public Graphics(Canvas canvas) {
         this(canvas, Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB));
         canvas.setBitmap(btp);
     }
-
-    public void setCanvas(Canvas canvas)
-    {
+    public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
         this.clip = new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight());
     }
-
-    public Canvas getCanvas()
-    {
+    public Canvas getCanvas() {
         return canvas;
     }
-
-    public Bitmap getBitmap()
-    {
+    public Bitmap getBitmap() {
         return btp;
     }
-
     public Paint getPaint() {
         return paint;
     }
-
     public void setBitmap(Bitmap btp) {
         this.btp = btp;
         canvas = new Canvas(btp);
     }
-
     public Graphics create() {
 
         Graphics g2dnew = new Graphics();
@@ -119,7 +95,6 @@ public class Graphics{
         g2dnew.clip = clip.copy();
         return g2dnew;
     }
-
     public Graphics create(int x, int y, int width, int height) {
         Graphics g2dnew = new Graphics();
 
@@ -156,63 +131,44 @@ public class Graphics{
 
         return g2dnew;
     }
-
-    public static Graphics createGraphics(Bitmap btp)
-    {
+    public static Graphics createGraphics(Bitmap btp) {
         return new Graphics(btp);
 
     }
-
-
-
-    public void setFont(Typeface typeface, int fontSize)
-    {
+    public void setFont(Typeface typeface, int fontSize) {
         paint.setTextSize(fontSize);
         paint.setTypeface(typeface);
         font = new Font(typeface,fontSize);
         this.fontSize = fontSize;
         
     }
-
-    public void setFont(Font font)
-    {
+    public void setFont(Font font) {
         this.font = font;
         this.fontSize = font.getSize();
         paint.setTextSize(fontSize);
         paint.setTypeface(font.getFont());
-        
 
     }
-
-    public void setPaint(RadialGradientPaint rgp)
-    {
+    public void setPaint(RadialGradientPaint rgp) {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE.toArgb());
         paint.setShader(rgp.rg);
     }
-
     public void setPaint(Color color) {
         paint.setColor(color.toArgb());
     }
-
-
     public Font getFont()
     {
         return font;
     }
-
-
     public void setColor(int color)
     {
         paint.setColor(color);
     }
-    public void setColor(Color color)
-    {
+    public void setColor(Color color) {
         paint.setColor(color.toArgb());
     }
-
-    public void setStroke(Stroke stroke)
-    {
+    public void setStroke(Stroke stroke) {
         paint.setStrokeWidth( stroke.getWidth());
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap( stroke.getCap());
@@ -221,7 +177,6 @@ public class Graphics{
         setDashArray(stroke.getDashArray(), stroke.getDashPhase());
 
     }
-
     public void setDashArray(float[] dashArray, float phase) {
         if (dashArray != null) {
             // Validate dash array
@@ -245,12 +200,9 @@ public class Graphics{
         dashPhase = phase;
         paint.setPathEffect(dashEffect);
     }
-
-    public Stroke getStroke()
-    {
+    public Stroke getStroke() {
         return new BasicStroke(paint.getStrokeWidth(), paint.getStrokeCap(), paint.getStrokeJoin(), paint.getStrokeMiter(),dashEffectArray, dashPhase);
     }
-
     public void setRenderingHint(RenderingHints.Key key, Object value) {
 
         if(key.equals(KEY_ANTIALIASING))
@@ -286,20 +238,14 @@ public class Graphics{
                     paint.setSubpixelText(true);
                 }
     }
-
-    public void resetPaint()
-    {
+    public void resetPaint() {
         paint = new Paint();
         paint.setAlpha(1);
     }
-
     public void setBackground(Color color) {
         backgroundColor = color;
         clearCanvas();
     }
-
-
-
     public void clearCanvas() {
         Paint originalPaint = new Paint(paint);
 
@@ -310,16 +256,12 @@ public class Graphics{
         paint = originalPaint;
         
     }
-
-    public Rectangle2D getStringBounds(String text)
-    {
+    public Rectangle2D getStringBounds(String text) {
         Rect result = new Rect();
         paint.getTextBounds(text,0, text.length(), result );
         return new Rectangle2D.Double(result);
     }
-
-    public void draw(Shape shape)
-    {
+    public void draw(Shape shape) {
         if (shape instanceof Line2D.Double) {
             draw((Line2D.Double) shape);
         } else if (shape instanceof Ellipse2D.Double) {
@@ -336,33 +278,25 @@ public class Graphics{
         }
         
     }
-
-    public void draw(GeneralPath path)
-    {
+    public void draw(GeneralPath path) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(path.getPath(), paint);
         paint = new Paint(paint);
         
     }
-
-    public void draw(Ellipse2D.Double ellipse)
-    {
+    public void draw(Ellipse2D.Double ellipse) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawOval((float) ellipse.x, (float) ellipse.y, (float) ellipse.w, (float) ellipse.h, paint);
         paint = new Paint(paint);
         
     }
-
-    public void draw(Line2D.Double line)
-    {
+    public void draw(Line2D.Double line) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawLine(line.getX1(), line.getY1(), line.getX2(), line.getY2(), paint);
         paint = new Paint(paint);
         
     }
-
-    public void drawString(String text, int x, int y)
-    {
+    public void drawString(String text, int x, int y) {
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);          // Lissage activé (essentiel)
         paint.setSubpixelText(true);
@@ -370,34 +304,20 @@ public class Graphics{
         paint = new Paint(paint);
         
     }
-
-
-
     public void drawRoundRect(int x, int y, int w, int h, int a, int z) {
-
         paint.setStyle(Paint.Style.STROKE);
         RectF rectF = new RectF((float)x, (float)y, (float)(w + x), (float)(h + y));
         canvas.drawRoundRect(rectF, a, z, paint);
         paint = new Paint(paint);
         
     }
-
-
     public void drawRoundRect(float x, float y, float w, float h, float a, float z) {
         paint.setStyle(Paint.Style.STROKE);
         RectF rectF = new RectF(x, y, w + x, h + y);
         canvas.drawRoundRect(rectF, a, z, paint);
         paint = new Paint(paint);
     }
-
-    public void drawRoundRect(RectF rect, int i, int i1) {
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRoundRect(rect, i, i1, paint);
-        paint = new Paint(paint);
-    }
-
-    public void drawImage(Image image, int x, int y, Paint paint)
-    {
+    public void drawImage(Image image, int x, int y, Paint paint) {
 
         Paint p = null;
         if (paint != null)
@@ -417,12 +337,8 @@ public class Graphics{
 
 
     }
-
-    public void drawImage(BufferedImage img, int srcX, int srcY,
-                          int srcWidth, int srcHeight,
-                          int destX, int destY,
-                          int destWidth, int destHeight,
-                          Object observer) {
+    public void drawImage(BufferedImage img, int srcX, int srcY, int srcWidth, int srcHeight,
+                          int destX, int destY, int destWidth, int destHeight, Object observer) {
         if (img == null) return;
 
         Rect srcRect = new Rect(srcX, srcY, srcX + srcWidth, srcY + srcHeight);
@@ -430,24 +346,18 @@ public class Graphics{
 
         canvas.drawBitmap(img.getBitmap(), srcRect, destRect, null);
     }
-    public void drawImage(BufferedImage image, Paint op, int x, int y)
-    {
+    public void drawImage(BufferedImage image, Paint op, int x, int y) {
         drawImage(image, x, y, op);
 
     }
-
-
-    public void drawRect(float x, float y, float w, float h)
-    {
+    public void drawRect(float x, float y, float w, float h) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(x, y, (w + x), (h + y), paint);
         Log.e("G2D 443", "drawRect");
         paint = new Paint(paint);
         
     }
-
-    public GeneralPath drawPolygon(int[] x, int[] y, float w)
-    {
+    public GeneralPath drawPolygon(int[] x, int[] y, float w) {
         GeneralPath path = new GeneralPath();
 
         path.moveTo(x[0], y[0]);
@@ -467,44 +377,32 @@ public class Graphics{
         return path;
 
     }
-
-
-    public void drawLine(float x, float y, float w, float h)
-    {
+    public void drawLine(float x, float y, float w, float h) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawLine(x, y, (w + x), (h + y), paint);
         paint = new Paint(paint);
         
     }
-
-    public void drawOval(int x, int y, int w, int h)
-    {
+    public void drawOval(int x, int y, int w, int h) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawOval((float)x, (float)y, (float)(w + x), (float)(h + y), paint);
         paint = new Paint(paint);
         
     }
-
-
-    public void drawArc(int x, int y, int r, int r1, int startAngle, int endAngle)
-    {
+    public void drawArc(int x, int y, int r, int r1, int startAngle, int endAngle) {
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawArc(x, y, r, r1, startAngle, endAngle, true, paint);
         paint = new Paint(paint);
         
     }
-
-    public void drawArc(Arc2D.Double arc)
-    {
+    public void drawArc(Arc2D.Double arc) {
         paint.setStyle(Paint.Style.STROKE);
         RectF arc2d = arc.getArc();
         canvas.drawArc(arc2d.left, arc2d.top, arc2d.width() - arc2d.left, arc2d.height() - arc2d.top, arc.getStartAngle(), arc.getEndAngle(), true, paint);
         paint = new Paint(paint);
         
     }
-
-    public void  fill(Ellipse2D.Double ellipse)
-    {
+    public void  fill(Ellipse2D.Double ellipse) {
 
         paint.setStyle(Paint.Style.FILL);
         canvas.save();
@@ -518,15 +416,11 @@ public class Graphics{
         
     }
 
-    public void fill(Shape shape)
-    {
+    public void fill(Shape shape) {
         shape.acceptFill(this);
         
     }
-
-
-    public void fill(GeneralPath path)
-    {
+    public void fill(GeneralPath path) {
         Paint newPaint = new Paint(paint);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawPath(path.getPath(), paint);
@@ -534,48 +428,38 @@ public class Graphics{
         paint = newPaint;
         
     }
-
-    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle)
-    {
+    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawArc(x, y, x + width, y + height, startAngle, arcAngle, true, paint);
         paint = new Paint(paint);
         
     }
-    public void fillRect(float x, float y, float w, float h)
-    {
+    public void fillRect(float x, float y, float w, float h) {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(x, y, (w + x), (h + y), paint);
         paint = new Paint(paint);
         
     }
-
-    public void fillRect(int x, int y, int w, int h)
-    {
+    public void fillRect(int x, int y, int w, int h) {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect((float)x, (float)y, (float)(w + x), (float)(h + y), paint);
         paint = new Paint(paint);
         
     }
-
-    public void fillRoundRect(int x, int y, int w, int h, int a, int z)
-    {
+    public void fillRoundRect(int x, int y, int w, int h, int a, int z) {
         paint.setStyle(Paint.Style.FILL);
         RectF rectF = new RectF((float)x, (float)y, (float)(w + x), (float)(h + y));
         canvas.drawRoundRect(rectF, a, z, paint);
         paint = new Paint(paint);
         
     }
-
     public void fillOval(int x, int y, int w, int h) {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawOval(x, y, w, h, paint);
         paint = new Paint(paint);
         
     }
-
-    public GeneralPath fillPolygon(int[] x, int[] y, float w)
-    {
+    public GeneralPath fillPolygon(int[] x, int[] y, float w) {
         paint.setStyle(Paint.Style.FILL);
         GeneralPath path = new GeneralPath();
 
@@ -595,44 +479,31 @@ public class Graphics{
         return path;
 
     }
-
     public void dispose()
     {
-        if(btp != null) btp.recycle();
     }
-
-
     public void rotate(double radians, double v, double v1) {
         canvas.rotate((float) Math.toDegrees(radians), (float) v, (float) v1);
     }
-
     public void rotate(int rotate) {
         canvas.rotate((float) Math.toDegrees(rotate));
     }
-
     public void translate(int x, int y)
     {
         canvas.translate(x, y);
     }
-
-
     public void setTranslucent()
     {
         paint.setAlpha(128);
     }
-
-
-    public void setComposite(AlphaComposite composite)
-    {
+    public void setComposite(AlphaComposite composite) {
         float alpha = composite.getAlpha();
         if(alpha != -1) paint.setAlpha((int) (alpha * 255));
         paint.setXfermode(composite.getComposite());
         
 
     }
-
-    public void transform(AffineTransform at)
-    {
+    public void transform(AffineTransform at) {
         for (AffineTransformObject obj: at.getAto()) {
             obj.performPost();
 
@@ -640,10 +511,7 @@ public class Graphics{
         
         this.at = at;
     }
-
-
-    public void setTransform(AffineTransform at)
-    {
+    public void setTransform(AffineTransform at) {
         for (AffineTransformObject obj: at.getAto()) {
             obj.performSet();
 
@@ -651,22 +519,18 @@ public class Graphics{
         
         this.at = at;
     }
-
     public FontRenderContext getFontRenderContext()
     {
         return new FontRenderContext(paint);
     }
-
     public FontRenderContext getFontMetrics()
     {
         return new FontRenderContext(paint);
     }
-
     public Shape getClip()
     {
         return clip;
     }
-
     public void setClip(Shape clip) {
         if (clip == null) {
             this.clip = new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -674,49 +538,36 @@ public class Graphics{
             this.clip = clip;
         }
     }
-
     public Color getColor() {
         return new Color(paint.getColor());
     }
-
-
-
     public int getWidth() {
         if (canvas != null) return canvas.getWidth();
         return btp.getWidth();
     }
-
-
     public int getHeight() {
         if (canvas != null) return canvas.getHeight();
         return btp.getHeight();
     }
-
     public void save()
     {
         canvas.save();
     }
-
     public void restore()
     {
         canvas.restore();
     }
-
     public void drawPaint(Paint paint)
     {
         canvas.drawPaint(paint);
     }
-
-    public void renderToCanvas(SVG svg, int width, int height, RenderOptions options)
-    {
+    public void renderToCanvas(SVG svg, int width, int height, RenderOptions options) {
         btp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(btp);
 
         svg.renderToCanvas(canvas, options);
 
     }
-
-
     public AffineTransform getTransform() {
 
         return at;

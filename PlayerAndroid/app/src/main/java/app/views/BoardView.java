@@ -95,7 +95,7 @@ public final class BoardView extends View {
         app.bridge().getContainerStyle(context.board().index()).draw(g2d, PlaneType.COSTS, context);
         app.bridge().getContainerStyle(context.board().index()).draw(g2d, PlaneType.POSSIBLEMOVES, context);
 
-        // Originally in the overlay view, but moved here to work with web app.
+/*        // Originally in the overlay view, but moved here to work with web app.
         if (
                 app.settingsPlayer().showEndingMove()
                         &&
@@ -105,7 +105,7 @@ public final class BoardView extends View {
                         &&
                         !app.settingsPlayer().sandboxMode()
         )
-            MoveVisuals.drawEndingMove(app, g2d, context);
+            MoveVisuals.drawEndingMove(app, g2d, context);*/
 
         paintDebug(g2d, Color.CYAN);
     }

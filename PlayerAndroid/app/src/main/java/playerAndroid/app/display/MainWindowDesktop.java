@@ -210,8 +210,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
 
     public void paintComponent(final Graphics g)
     {
-            try
-            {
+            try {
                 final Graphics2D g2d = (Graphics2D) g;
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -229,8 +228,7 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
                 System.out.println(width + " x " + height);
                 System.out.println(getWidth() + " x " + getHeight());
 
-                if (panels.isEmpty() || width != getWidth() || height != getHeight())
-                {
+                if (panels.isEmpty() || width != getWidth() || height != getHeight()) {
                     width = getWidth();
                     height = getHeight();
                     createPanels();
@@ -262,6 +260,8 @@ public class MainWindowDesktop extends JPanel implements TouchListener, Serializ
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     isPainting = false;
                 }, 500);
+
+
 
             }
             catch (final Exception e)

@@ -94,7 +94,7 @@ public class GameLoaderDialog
 	)
 	{
 		final JPanel contentPane = new JPanel();
-		contentPane.add(new JTextField("Name of Game"));
+		//contentPane.add(new JTextField("Name of Game"));
 		//contentPane.setLayout(new GridLayout());
 		
 		lastKeyPressed = "";	// reset this since it's static, shared between dialogs
@@ -313,7 +313,7 @@ public class GameLoaderDialog
 		final JPanel treeView = new JPanel(tree);
 
 		contentPane.add(treeView, BorderLayout.CENTER);
-		contentPane.add(filterField, BorderLayout.SOUTH);
+		//contentPane.add(filterField, BorderLayout.SOUTH);
 		contentPane.setPreferredSize(new Dimension(650, 700));
 		
 		// try to make our dialog resizable

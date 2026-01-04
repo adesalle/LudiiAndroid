@@ -11,27 +11,22 @@ import androidUtils.awt.geom.Rectangle2D;
 import androidUtils.awt.image.BufferedImage;
 
 public class Graphics2D extends Graphics{
-
     public Graphics2D(Canvas canvas, Bitmap btp) {
         super(canvas, btp);
     }
     public Graphics2D() {
         super();
     }
-
     public Graphics2D(Canvas canvas) {
         super(canvas, Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB));
         canvas.setBitmap(btp);
 
     }
-
-    public Graphics2D(Bitmap bt)
-    {
+    public Graphics2D(Bitmap bt) {
         super(bt);
     }
 
-    public static Graphics createGraphics(Bitmap btp)
-    {
+    public static Graphics createGraphics(Bitmap btp) {
         return new Graphics2D(btp);
 
     }
