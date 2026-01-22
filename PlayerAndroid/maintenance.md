@@ -4,8 +4,8 @@
 1.  Retrieve the updated code for the classic (desktop) version of Ludii.
 2.  Replace the code in the Android version with this newly retrieved code.
 3.  Adapt the import statements to use the **AndroidUtils** classes.
-4.  If the update adds new functions or classes from `awt`, `swing`, or other packages not compatible with Android, they must be re-implemented for Android. Follow the same pattern used for the classes already ported (in androitUtils package)
-
+4.  If an update introduces new functions or classes from AWT, Swing, or other packages that are incompatible with Android, these must be re-implemented for Android by following the same pattern used for the classes already ported in the androidUtils package.
+   
 ## Exceptions & Special Cases
 Modifications have been made to the following classes, making their update more complex. **Always review the code of these specific items before merging updates to avoid breaking the application:**
 
@@ -23,4 +23,5 @@ Modifications have been made to the following classes, making their update more 
 1.  Revert to the last known stable version of the code.
 
 2.  To identify the faulty update, you can perform a file-by-file comparison and update, testing the application after each change.
+
 
